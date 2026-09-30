@@ -34,14 +34,14 @@
 - Security: initial threat model for the whole platform.
 
 ### Phase 1 — MVP Build (Weeks 9–30)
-Core scope: Sign-up/login (PRD §6.1), Account Management, Domestic Payments & Transfers, Card Services, Notifications, Support.
+Core scope: Sign-up/login (PRD §6.1, incl. passkeys FR-54 and session management FR-55), Account Management, Domestic Payments & Transfers (incl. bill pay and scheduled payments), Card Services, Notifications, Support (incl. chat), light/dark theming (FR-62). Matches the PRD §10 Release Roadmap.
 - Sprint 0 of this phase: environment setup (dev/staging/prod), CI/CD pipeline, base microservice scaffolding, API gateway configuration.
 - Feature build proceeds service-by-service per TRD §3, with contract-first API design (OpenAPI specs agreed before backend/frontend work starts in parallel).
 - Weekly design-QA sync to catch UX drift from the design system early.
 - End of phase: internal alpha release (staff-only), closed to real customer data.
 
 ### Phase 2 — Extended Features (Weeks 31–46)
-International Transfers, Encrypted Banking, Crypto/Binance Funding, Admin Portal full-control features, Wealth/Private Banking extended features (§6.11 categories I–L in the PRD).
+International Transfers, Encrypted Banking, Crypto/Binance Funding, Admin Portal full-control features, and the remaining extended features (PRD §6.11 categories A–L, incl. SME bulk payments and Wealth/Private Banking extended features I–L).
 - Encrypted Banking and Crypto Funding features are gated behind a **compliance sign-off checkpoint** before entering this phase's sprint backlog, per the flags raised in the PRD (FR-13n3, FR-13x).
 - Admin Portal built in parallel by a semi-dedicated sub-team, given its distinct desktop-first design system.
 - Beta release to a limited external customer cohort at the end of this phase.
@@ -57,7 +57,7 @@ International Transfers, Encrypted Banking, Crypto/Binance Funding, Admin Portal
 ### Phase 4 — Launch & Stabilization (Weeks 57–60+)
 - Phased/staged rollout (percentage-based feature flag rollout to production traffic).
 - Hypercare period: elevated on-call coverage, daily bug-triage standup.
-- Post-launch retrospective and backlog grooming for Phase 5 (Open Banking, AI features — currently out of scope per prior discussion).
+- Post-launch retrospective and backlog grooming for Phase 5 (Open Banking, AI features — currently out of scope per PRD §5.2 and §10).
 
 ## 4. Environment Strategy
 | Environment | Purpose | Data |
@@ -89,7 +89,7 @@ Promotion between environments is automated via the CI/CD pipeline (GitOps); no 
 | Unit tests (≥80% coverage target) | Engineers | Every commit |
 | Contract tests | Engineers | Every commit affecting an API |
 | Integration tests | QA + Engineers | Every merge to release branch |
-| End-to-end tests (critical flows: login, transfer, card freeze, international transfer, admin edit-with-approval) | QA (automated) | Nightly + pre-release |
+| End-to-end tests (critical flows: login, transfer, card freeze, international transfer, admin transaction correction with maker-checker approval) | QA (automated) | Nightly + pre-release |
 | Manual exploratory testing | QA | Each sprint, focused on new features |
 | Accessibility testing | QA + Design | Each release affecting UI |
 | Security testing (SAST/DAST) | Security Engineer | Every pipeline run |

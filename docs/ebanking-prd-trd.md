@@ -77,7 +77,7 @@ Customers expect banking to be as easy as any consumer app: instant account visi
   12. **Account provisioning** — on approval, the core system provisions the account(s) selected in step 2 (with auto-generated account number/IBAN per TRD §3.6a for standard accounts, or immediately for Encrypted Banking per FR-13n1); any initial deposit from step 10 is processed and credited once the account is active; welcome notification sent.
 - FR-1a: Application status tracking — customer can see registration/application progress (submitted, under review, approved, rejected, additional info required) in-app or via a status-check link before full login is available.
 - FR-1b: Save-and-resume — an incomplete registration can be resumed later (time-limited, e.g., 7 days) without re-entering already-captured data.
-- FR-1c: **Account type selection details** — the account-type picker shows a short description, key features, currency options, and any minimum-balance/eligibility requirement for each product, and allows changing the selection before step 8 (KYC/AML screening) without restarting the flow.
+- FR-1c: **Account type selection details** — the account-type picker shows a short description, key features, currency options, and any minimum-balance/eligibility requirement for each product, and allows changing the selection before step 8 (KYC/AML screening) without restarting the flow. The picker lists only products enabled in the current release (feature-flagged); products delivered in later phases per §10 (Multi-Currency Sub-Account FR-42, Junior/Family FR-89, Encrypted Banking FR-13m) appear once they go live.
 - FR-1d: **Initial deposit details** — the deposit step shows supported funding methods (external transfer, card, crypto), estimated time-to-credit per method, and clearly marks the account as "pending funding" if the customer chooses "fund later"; a follow-up reminder notification is sent if the account remains unfunded after a configurable period.
 
 **B. Login Flow**
@@ -172,7 +172,7 @@ The admin portal gives authorized bank staff full operational control of the pla
 - FR-25: View, search, and filter all transactions system-wide (not just per-customer).
 - FR-26: Approve, hold, reverse, or cancel pending transactions (including international transfers) within policy limits.
 - FR-27: Override/release transactions flagged by the fraud/risk engine, with mandatory justification note.
-- FR-27a: **Directly edit transaction records** — admin can modify a transaction's fields (amount, currency, date/timestamp, type/category, description/reference, status) after creation, for correction or support purposes, not only reverse/cancel/hold it. Every direct edit captures before/after values, a mandatory justification note, and requires maker-checker dual approval before the change is applied (per FR-77–78), and is fully visible in the audit trail (FR-37).
+- FR-27a: **Correct transaction records** — admin can correct an erroneous posted transaction (wrong amount, currency, value date, type, or account), but posted ledger entries are **never modified or deleted in place**. A correction is executed as new, linked ledger entries: (1) a reversal entry (TXN-33) that exactly offsets the original, and (2) where a corrected posting is needed, a replacement entry carrying the correct values (amount, value date, transaction type, or account), booked under the correct transaction type. Both entries reference the original transaction (`corrects_transaction_id`), carry a mandatory justification note, require maker-checker dual approval before posting (per FR-77–78), and are fully visible in the audit trail (FR-37); the customer's history and statements show the original, the reversal, and the corrected entry. Only non-financial metadata that does not change the ledger or issued statements (budgeting category tag, internal notes) may be edited in place, versioned with before/after values per FR-77. Pending or on-hold transactions that are not yet posted are handled via approve/hold/release/cancel (FR-26–27), not field edits. Standalone manual adjustments with no underlying transaction (e.g., a goodwill credit) are booked as TXN-32 under the same justification and approval rules.
 
 **Card Control**
 - FR-28: Issue, block, unblock, or cancel any customer card; adjust limits and channel controls on behalf of a customer.
@@ -197,14 +197,14 @@ The admin portal gives authorized bank staff full operational control of the pla
 - FR-39: Export data (transactions, customers, audit logs) for offline analysis, respecting data-privacy controls.
 
 **Universal Edit Access**
-- FR-76: Admin can **view and edit every data field and record across every module of the platform** — not limited to the areas listed above. This explicitly includes modules added later in this document: Encrypted Banking applications/status (FR-13r), international transfer records and beneficiary details, crypto/Binance deposit records and limits (FR-13w), savings goals/budgets, standing orders and direct-debit mandates, virtual/physical card configurations, wealth/investment advisory notes (FR-72), estate-planning cases (FR-73), trust/foundation applications (FR-74), loyalty/rewards balances, transaction-type reference data (§6.12), and deposit-protection/FATCA-CRS flags (FR-71, FR-75).
+- FR-76: Admin can **view and edit every data field and record across every module of the platform** — not limited to the areas listed above — with two exceptions: posted ledger entries and the balances derived from them are corrected only through new linked entries (FR-27a), and the audit log is read-only. This explicitly includes modules added later in this document: Encrypted Banking applications/status (FR-13r), international transfer records and beneficiary details, crypto/Binance deposit records and limits (FR-13w), savings goals/budgets, standing orders and direct-debit mandates, virtual/physical card configurations, wealth/investment advisory notes (FR-72), estate-planning cases (FR-73), trust/foundation applications (FR-74), loyalty/rewards balances, transaction-type reference data (§6.12), and deposit-protection/FATCA-CRS flags (FR-71, FR-75).
 - FR-77: Any edit made by an admin to customer-facing or financial data is versioned (before/after values captured) and requires a mandatory justification note, feeding the audit trail (FR-37) — this applies uniformly across all modules in FR-76, not only the transaction/customer edits already listed above.
-- FR-78: Edits to regulated or high-sensitivity fields (KYC status, balances, IBAN/account numbers, encryption-tier status, trust/foundation structures) additionally require maker-checker dual approval before taking effect, consistent with the Control Principle below.
+- FR-78: Edits to regulated or high-sensitivity fields (KYC status, balance adjustments and transaction corrections per FR-27a, IBAN/account numbers, encryption-tier status, trust/foundation structures) additionally require maker-checker dual approval before taking effect, consistent with the Control Principle below.
 
 | Module | Admin Edit Scope |
 |---|---|
 | Customers & Accounts | Full CRUD (FR-22–24, FR-76) |
-| Transactions (all types, §6.12) | Full CRUD — view, hold, reverse, cancel, and **directly edit any field** (amount, date, type, status, reference) with before/after logging (FR-25–27, FR-27a, FR-32) |
+| Transactions (all types, §6.12) | View, approve, hold, release, reverse, cancel, and **correct** via linked reversal + replacement entries — posted entries are never edited in place or deleted; in-place edits limited to non-financial metadata (category tag, internal notes), with before/after logging (FR-25–27, FR-27a) |
 | International Transfers | View, hold, edit beneficiary/routing data, cancel/reverse pending transfers |
 | Encrypted Banking | View application status, approve/reject, edit tier settings/limits (not raw encryption keys — legal-process only) |
 | Crypto/Binance Deposits | View, edit limits, flag/reverse suspicious deposits |
@@ -218,7 +218,7 @@ The admin portal gives authorized bank staff full operational control of the pla
 | Compliance (AML, sanctions, FATCA/CRS, deposit-protection flags) | Full CRUD on records and review actions (FR-35–36, FR-71, FR-75) |
 | Audit Log | Read-only by design — never editable, even by super-admin |
 
-> **Control principle:** "Full control" is implemented as *comprehensive coverage of admin functions across every module*, not unrestricted, untracked access for any single admin — every capability above is scoped by RBAC, requires a justification note and, for regulated/high-sensitivity fields, maker-checker dual approval, and is logged immutably (with before/after values) to satisfy audit and regulatory requirements. The one deliberate exception is the audit log itself, which remains permanently read-only to preserve its integrity as evidence.
+> **Control principle:** "Full control" is implemented as *comprehensive coverage of admin functions across every module*, not unrestricted, untracked access for any single admin — every capability above is scoped by RBAC, requires a justification note and, for regulated/high-sensitivity fields, maker-checker dual approval, and is logged immutably (with before/after values) to satisfy audit and regulatory requirements. There are two deliberate exceptions, both to preserve integrity as evidence: the audit log itself, which remains permanently read-only, and posted ledger entries, which are append-only — financial corrections are always new, linked entries (FR-27a), so every balance can be reconstructed from its full history.
 
 ### 6.11 Extended Feature Set
 
@@ -286,7 +286,7 @@ The admin portal gives authorized bank staff full operational control of the pla
 - FR-85: **Mortgage/loan calculator** — self-service, no-login-required estimate tool (amount, term, indicative rate, monthly payment) accessible from the app or public site.
 - FR-86: **Loan/mortgage application** — customer can submit a mortgage or personal loan application in-app, upload supporting documents, and track application status through underwriting stages.
 - FR-87: **Bancassurance** — customer can browse, purchase, and manage insurance products (life, travel, property/home) offered in partnership with an insurance provider, with policies visible alongside banking products.
-- FR-88: **Credit score view** — customer can view their credit score/rating (sourced from a credit bureau integration, future phase per §10 Third-Party Integrations) with basic explanatory factors.
+- FR-88: **Credit score view** — customer can view their credit score/rating (sourced from a credit bureau integration, TRD §10 Third-Party Integrations; scheduled per the §10 Release Roadmap) with basic explanatory factors.
 
 **K. Family & Lifestyle**
 - FR-89: **Junior/family accounts** — parent/guardian can open and manage a linked account for a minor, with parental controls (spending limits, category restrictions, allowance/pocket-money auto-transfers, and view-only or restricted access for the minor via their own login).
@@ -333,11 +333,11 @@ The platform must classify, process, and display every transaction under one of 
 | TXN-29 | Incoming salary/payroll credit | Credit | Income | — |
 | TXN-30 | General incoming credit (third-party payer) | Credit | Income | — |
 | TXN-31 | Loyalty/rewards redemption (Cumulus) | Credit/Debit | Rewards | FR-65 |
-| TXN-32 | Admin-initiated manual adjustment/correction | Debit/Credit | Admin | FR-26, requires justification note |
-| TXN-33 | Reversal of a failed/returned transaction | Credit/Debit | System | Auto-generated |
+| TXN-32 | Admin-initiated manual adjustment/correction | Debit/Credit | Admin | FR-26, FR-27a; standalone adjustments with no underlying transaction; requires justification note and maker-checker approval |
+| TXN-33 | Reversal (failed/returned transaction, or admin reversal/correction) | Credit/Debit | System / Admin | Auto-generated for failed/returned; admin-initiated per FR-26/FR-27a; exactly offsets the linked original |
 | TXN-34 | Account closure final settlement | Debit/Credit | Admin | Admin-initiated |
 
-> Every transaction type carries a **status** (pending, processing, completed, failed, reversed, on-hold) and, where applicable, a **hold reason** (fraud review, sanctions screening, compliance review) as defined in FR-13 and FR-26/FR-27. Admin can directly edit any transaction field post-creation per FR-27a, subject to maker-checker approval and audit logging.
+> Every transaction type carries a **status** (pending, processing, completed, failed, reversed, on-hold) and, where applicable, a **hold reason** (fraud review, sanctions screening, compliance review) as defined in FR-13 and FR-26/FR-27. Posted transactions are append-only: admin corrections are made through a linked reversal (TXN-33) and, where needed, a linked replacement entry per FR-27a, subject to maker-checker approval and audit logging, never by editing the original.
 
 ## 7. Non-Functional Requirements
 | Category | Requirement |
@@ -349,7 +349,7 @@ The platform must classify, process, and display every transaction under one of 
 | Accessibility | WCAG 2.1 AA |
 | Scalability | Support 1M+ registered users, 10K concurrent sessions at launch, horizontally scalable |
 | Localization | Multi-language support (configurable); CHF as base/default currency, local currency formatting per locale |
-| Auditability | Full audit trail for all financial transactions and admin actions, immutable logs |
+| Auditability | Full audit trail for all financial transactions and admin actions, immutable logs; append-only transaction ledger (corrections are new linked entries, FR-27a) |
 
 ## 8. Success Metrics (KPIs)
 - Digital adoption rate (% of active customers using the app monthly)
@@ -366,12 +366,16 @@ The platform must classify, process, and display every transaction under one of 
 - As a Swiss bank, the platform and its operations must comply with **FINMA** regulatory requirements, and customer deposits fall under the **esisuisse** depositor-protection scheme (disclosed to customers per FR-75).
 
 ## 10. Release Roadmap (indicative)
+Phases and week ranges match [`development-process.md`](./development-process.md) §3, which holds the detailed plan.
+
 | Phase | Scope | Target |
 |---|---|---|
-| Phase 0 | Discovery, compliance review, architecture sign-off | Month 1–2 |
-| Phase 1 (MVP) | Onboarding, accounts, transfers, cards, notifications | Month 3–7 |
-| Phase 2 | Bill pay expansion, SME features, chat support | Month 8–10 |
-| Phase 3 | Open banking APIs, FX/international transfers | Month 11+ |
+| Phase 0 — Discovery & Foundations | Compliance review (incl. FR-13n3, FR-13x), architecture sign-off, design-system foundations, vendor selection | Weeks 1–8 (≈ Months 1–2) |
+| Phase 1 — MVP | §5.1 scope: onboarding & login (§6.1, incl. passkeys FR-54 and session management FR-55), accounts (§6.2), domestic payments & transfers incl. bill pay and scheduled payments (§6.3), cards (§6.7), notifications (§6.8), support incl. chat (§6.9), light/dark theming (FR-62) | Weeks 9–30 (≈ Months 3–7) |
+| Phase 2 — Extended Features | International transfers (§6.4), Encrypted Banking (§6.5) and crypto funding (§6.6), each behind a compliance sign-off gate; full Admin Portal (§6.10); remaining extended features incl. SME bulk payments (§6.11 A–L) | Weeks 31–46 (≈ Months 8–11) |
+| Phase 3 — Hardening & Launch Prep | Penetration test, load testing, FINMA pre-launch review, accessibility audit, DR drill | Weeks 47–56 (≈ Months 11–13) |
+| Phase 4 — Launch & Stabilization | Staged rollout, hypercare | Weeks 57–60+ (≈ Month 14+) |
+| Not scheduled | Open banking APIs and chatbot/AI assistant (§5.2) | Post-launch, per Phase 4 backlog grooming |
 
 ---
 
@@ -476,7 +480,8 @@ flowchart LR
 ### 3.8 Admin/Back-Office Service
 - Dedicated internal-only service (separate deployment, network-isolated from public internet, VPN/private-network access only) exposing full administrative control over **every module** in the platform: customers, accounts, transactions (all types per PRD §6.12), international transfers, Encrypted Banking, crypto/Binance deposits, cards, savings/budgets/standing orders/direct debits, wealth/advisory/estate/trust records, loyalty & rewards, notifications/content, configuration, users/roles, and compliance records (per PRD §6.10 Universal Edit Access, FR-76–78).
 - Acts as a thin orchestration/authorization layer that proxies edit calls to each domain service's own admin-write API (Account, Payments, Card, Encrypted Banking, Crypto Funding, Wealth Integration, Loyalty Integration, etc.) rather than owning that data itself — keeping each domain service as the source of truth while giving the Admin Service a single consistent RBAC/approval/audit gate in front of all of them.
-- Enforces fine-grained RBAC (per FR-33/FR-34) and maker-checker approval workflows for sensitive/regulated-field edits (KYC status, balances, IBAN/account numbers, encryption-tier status, trust/foundation structures) as well as transaction reversal, limit overrides, and international transfer holds/releases (FR-77–78).
+- Enforces fine-grained RBAC (per FR-33/FR-34) and maker-checker approval workflows for sensitive/regulated-field edits (KYC status, balance adjustments, IBAN/account numbers, encryption-tier status, trust/foundation structures) as well as transaction reversal and correction, limit overrides, and international transfer holds/releases (FR-77–78).
+- Transaction corrections (PRD FR-27a) are submitted to the owning domain service as a linked reversal (TXN-33) and, where needed, a linked replacement posting once approved; the Admin Service never issues in-place updates or deletes against posted ledger entries, and balances are never written directly.
 - All write actions require step-up MFA re-authentication, capture before/after field values, and generate an audit event before execution; the audit log itself is exposed only as read-only, even to super-admin roles.
 - Exposes configuration APIs for limits, fee schedules, FX margins, biller directory, transfer-corridor availability, and transaction-type reference data, consumed by the relevant domain services at runtime (no code deploy needed for business-parameter changes).
 
@@ -486,14 +491,16 @@ flowchart LR
 
 ## 4. Data Model (high-level entities)
 - `Customer` (id, KYC status, contact info, linked accounts)
-- `Account` (id, customer_id, type, balance, base_currency [default: CHF], status)
-- `Transaction` (id, account_id, type [enum — see PRD §6.12 Transaction Type List, e.g. TXN-01..TXN-34], amount, currency, status [pending/processing/completed/failed/reversed/on-hold], hold_reason [fraud_review/sanctions_screening/compliance_review — nullable], timestamp, reference_id)
+- `Account` (id, customer_id, type, balance [derived from posted transactions; never written directly], base_currency [default: CHF], status)
+- `Transaction` (id, account_id, type [enum — see PRD §6.12 Transaction Type List, e.g. TXN-01..TXN-34], amount, currency, status [pending/processing/completed/failed/reversed/on-hold], hold_reason [fraud_review/sanctions_screening/compliance_review — nullable], timestamp, reference_id, corrects_transaction_id [nullable — set on reversal and replacement entries that reverse or correct another transaction, PRD FR-27a])
 - `Card` (id, account_id, masked_pan, status, limits)
 - `Payee` (id, customer_id, payee_details, verified_flag)
 - `Device` (id, customer_id, device_fingerprint, trust_status)
 - `AuditLog` (id, actor, action, entity, timestamp, metadata)
 
 > Note: PII and cardholder data must be tokenized/encrypted at the field level; PANs stored only as tokens per PCI-DSS scope reduction.
+>
+> Note: once a `Transaction` is posted, its financial fields (account_id, type, amount, currency, timestamp) are immutable and the row is never deleted; corrections are new rows linked via `corrects_transaction_id` (PRD FR-27a).
 
 ## 5. API Design Principles
 - RESTful JSON APIs (or GraphQL for BFF aggregation), versioned (`/v1/...`).
@@ -535,7 +542,8 @@ flowchart LR
     - `GET/PATCH /admin/v1/customers/{id}`
     - `POST /admin/v1/transactions/{id}/reverse`
     - `POST /admin/v1/transactions/{id}/release` (release fraud/compliance hold)
-    - `PATCH /admin/v1/transactions/{id}` (direct field-level edit — amount, date, type, status, reference; requires maker-checker approval)
+    - `POST /admin/v1/transactions/{id}/corrections` (submit a correction — reversal plus optional replacement entry, per PRD FR-27a; requires maker-checker approval)
+    - `PATCH /admin/v1/transactions/{id}/metadata` (edit non-financial metadata only — category tag, internal notes; versioned)
     - `PATCH /admin/v1/config/limits`
     - `PATCH /admin/v1/config/fx-margins`
     - `POST /admin/v1/roles` / `POST /admin/v1/admin-users`
@@ -588,9 +596,9 @@ flowchart LR
 | Philanthropy/donation advisory | Extends **Wealth Integration Service** (case management) | Case-tracking pattern; may integrate with a donor-advised-fund administrator API |
 | ESG/sustainable investing | Extends **Wealth Integration Service** | ESG metadata/scoring fields on fund/portfolio records, sourced from data provider (e.g., MSCI ESG, Morningstar Sustainability) |
 | Mortgage/loan calculator | **Lending Service** (public-facing calculator endpoint) | Stateless calculation; no auth required; rate table sourced from Lending Service config |
-| Loan/mortgage application | **Lending Service** | Application workflow with document upload (reuses Document Vault, §3.6a-equivalent), status tracked through underwriting stages, integrates with CBS/loan origination system |
+| Loan/mortgage application | **Lending Service** | Application workflow with document upload (reuses the Document Vault Service above, FR-60), status tracked through underwriting stages, integrates with CBS/loan origination system |
 | Bancassurance | **Insurance Integration Service** | Partner insurer API integration for quote, purchase, and policy management; policies surfaced read/write via BFF |
-| Credit score view | Extends **Lending Service** | Read-only integration with credit bureau (future-phase per §10) |
+| Credit score view | Extends **Lending Service** | Read-only integration with credit bureau (§10 Third-Party Integrations; phase per PRD §10 Release Roadmap) |
 | Junior/family accounts | Extends **Account Service** + Auth Service | Guardian-minor account link with restricted permission profile; auto-transfer rules reuse Standing Order scheduler |
 | Safe deposit box booking | **Branch Services Booking Service** | Branch inventory/availability system integration; booking/appointment workflow similar to RM Scheduling Service |
 | Referral program | Extends **Loyalty Integration Service** | Referral code generation/tracking; reward credit triggered on referee's qualifying action (e.g., first deposit) |
