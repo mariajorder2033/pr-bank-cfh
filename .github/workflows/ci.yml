@@ -1,0 +1,38 @@
+# Commit and build stages of the pipeline in development-process.md §6.
+name: CI
+
+on:
+  push:
+    branches: [main, 'release/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Lint and format
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit and contract tests
+        run: npm test
+      - name: Lint OpenAPI contracts
+        run: npm run lint:contracts
+      - name: Build
+        run: npm run build
+      - name: Dependency vulnerability scan (production dependencies)
+        run: npm audit --omit=dev --audit-level=high

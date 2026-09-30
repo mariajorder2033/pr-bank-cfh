@@ -1,0 +1,15 @@
+{
+  "name": "@pr-bank/api-contracts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Contract-first OpenAPI specifications for the customer-facing API (TRD §5).",
+  "exports": {
+    "./openapi.yaml": "./openapi.yaml"
+  },
+  "scripts": {
+    "lint": "redocly lint openapi.yaml"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^2.57.0"
+  }
+}

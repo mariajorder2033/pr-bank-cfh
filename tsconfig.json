@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/domain" },
+    { "path": "packages/design-tokens" },
+    { "path": "services/account-service" }
+  ]
+}

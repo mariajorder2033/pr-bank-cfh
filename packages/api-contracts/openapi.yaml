@@ -1,0 +1,447 @@
+openapi: 3.1.0
+info:
+  title: Customer API
+  version: 0.1.0
+  description: |
+    Customer-facing API for the e-banking platform (TRD §5). Draft for contract review:
+    per development-process.md §3, backend and frontend build against this spec once it is
+    agreed.
+
+    Conventions:
+    - Amounts are decimal strings, never floating-point numbers. Signed amounts are negative
+      for debits and positive for credits.
+    - CHF is the base currency.
+    - Errors use the `Error` schema.
+
+    Authentication and registration endpoints are added once the identity provider is chosen
+    (development-process.md §3, Phase 0).
+servers:
+  - url: /
+security:
+  - bearerAuth: []
+tags:
+  - name: Accounts
+    description: Balances and transaction history (PRD §6.2).
+  - name: Transfers
+    description: Own-account and domestic transfers (PRD §6.3).
+  - name: Cards
+    description: Card overview and freeze/unfreeze (PRD §6.7).
+paths:
+  /v1/accounts:
+    get:
+      tags: [Accounts]
+      operationId: listAccounts
+      summary: List the customer's accounts with real-time balances (FR-5)
+      responses:
+        '200':
+          description: The authenticated customer's accounts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/accounts/{accountId}/transactions:
+    get:
+      tags: [Accounts]
+      operationId: listAccountTransactions
+      summary: Transaction history for one account, newest first (FR-6)
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - name: from
+          in: query
+          description: Only transactions at or after this instant.
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: Only transactions before this instant.
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: Transactions, newest first.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/transfers:
+    post:
+      tags: [Transfers]
+      operationId: createTransfer
+      summary: Transfer to an own account or a domestic IBAN, now or on a future date (FR-8–FR-10)
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          description: Client-generated key; retries with the same key never create a second transfer (TRD §3.3).
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '202':
+          description: Accepted for processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: The amount is above the step-up threshold and the token has no step-up MFA claim (FR-12).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: The idempotency key was already used with a different request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/transfers/{transferId}/status:
+    get:
+      tags: [Transfers]
+      operationId: getTransferStatus
+      summary: Transfer status with its reference/tracking ID (FR-13)
+      parameters:
+        - name: transferId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/cards:
+    get:
+      tags: [Cards]
+      operationId: listCards
+      summary: List the customer's cards with masked numbers and expiry (FR-14)
+      responses:
+        '200':
+          description: The authenticated customer's cards.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/cards/{cardId}/freeze:
+    post:
+      tags: [Cards]
+      operationId: freezeCard
+      summary: Freeze a card instantly (FR-15)
+      parameters:
+        - $ref: '#/components/parameters/CardId'
+      responses:
+        '200':
+          description: The card, now frozen. Freezing a frozen card is a no-op.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/cards/{cardId}/unfreeze:
+    post:
+      tags: [Cards]
+      operationId: unfreezeCard
+      summary: Unfreeze a card (FR-15)
+      parameters:
+        - $ref: '#/components/parameters/CardId'
+      responses:
+        '200':
+          description: The card, now active. Unfreezing an active card is a no-op.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: OAuth 2.0 / OIDC access token (TRD §5). The subject claim is the customer ID.
+  parameters:
+    AccountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+    CardId:
+      name: cardId
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    BadRequest:
+      description: The request failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: No such resource for this customer. Other customers' resources also return 404.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          examples: [not_found, unauthorized, bad_request, step_up_required]
+        message:
+          type: string
+    Currency:
+      type: string
+      enum: [CHF, EUR, USD, GBP]
+    Money:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:
+          type: string
+          pattern: '^-?\d+(\.\d+)?$'
+          examples: ['1250.50', '-42.00']
+        currency:
+          $ref: '#/components/schemas/Currency'
+    Account:
+      type: object
+      required: [id, type, name, iban, currency, status, bookedBalance, availableBalance]
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [current, savings]
+        name:
+          type: string
+        iban:
+          type: string
+          pattern: '^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          type: string
+          enum: [active, pending_funding, frozen, closed]
+        bookedBalance:
+          $ref: '#/components/schemas/Money'
+        availableBalance:
+          description: Booked balance less debits still in flight.
+          allOf:
+            - $ref: '#/components/schemas/Money'
+    AccountList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+    Transaction:
+      type: object
+      required:
+        - id
+        - accountId
+        - type
+        - typeName
+        - amount
+        - status
+        - holdReason
+        - timestamp
+        - referenceId
+        - correctsTransactionId
+        - category
+      properties:
+        id:
+          type: string
+        accountId:
+          type: string
+        type:
+          description: Transaction type code from PRD §6.12.
+          type: string
+          pattern: '^TXN-\d{2}$'
+        typeName:
+          type: string
+        amount:
+          $ref: '#/components/schemas/Money'
+        status:
+          type: string
+          enum: [pending, processing, completed, failed, reversed, on-hold]
+        holdReason:
+          type: [string, 'null']
+          enum: [fraud_review, sanctions_screening, compliance_review, null]
+        timestamp:
+          type: string
+          format: date-time
+        referenceId:
+          type: string
+        correctsTransactionId:
+          description: Set on reversal and replacement entries; the transaction they reverse or correct (FR-27a).
+          type: [string, 'null']
+        category:
+          type: [string, 'null']
+    TransactionList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+    TransferRequest:
+      type: object
+      required: [fromAccountId, amount, destination]
+      additionalProperties: false
+      properties:
+        fromAccountId:
+          type: string
+        amount:
+          type: object
+          required: [amount, currency]
+          additionalProperties: false
+          properties:
+            amount:
+              description: Positive amount to send.
+              type: string
+              pattern: '^\d+(\.\d{1,2})?$'
+            currency:
+              $ref: '#/components/schemas/Currency'
+        destination:
+          oneOf:
+            - $ref: '#/components/schemas/OwnAccountDestination'
+            - $ref: '#/components/schemas/IbanDestination'
+          discriminator:
+            propertyName: kind
+            mapping:
+              own_account: '#/components/schemas/OwnAccountDestination'
+              iban: '#/components/schemas/IbanDestination'
+        executionDate:
+          description: Future execution date for a scheduled transfer (FR-10). Omit to execute now.
+          type: string
+          format: date
+        reference:
+          description: Payment reference shown to the creditor.
+          type: string
+          maxLength: 140
+    OwnAccountDestination:
+      type: object
+      required: [kind, accountId]
+      additionalProperties: false
+      properties:
+        kind:
+          const: own_account
+        accountId:
+          type: string
+    IbanDestination:
+      type: object
+      required: [kind, iban, creditorName]
+      additionalProperties: false
+      properties:
+        kind:
+          const: iban
+        iban:
+          type: string
+        creditorName:
+          type: string
+          maxLength: 70
+    Transfer:
+      type: object
+      required: [id, status, referenceId, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [pending, processing, completed, failed, on-hold]
+        referenceId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Card:
+      type: object
+      required: [id, accountId, maskedPan, brand, expiry, status, virtual]
+      properties:
+        id:
+          type: string
+        accountId:
+          type: string
+        maskedPan:
+          type: string
+          pattern: '^•••• \d{4}$'
+        brand:
+          type: string
+          enum: [visa, mastercard]
+        expiry:
+          type: string
+          pattern: '^(0[1-9]|1[0-2])/\d{2}$'
+        status:
+          type: string
+          enum: [active, frozen, blocked]
+        virtual:
+          description: True for a virtual card awaiting or without a physical card (FR-50).
+          type: boolean
+    CardList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'

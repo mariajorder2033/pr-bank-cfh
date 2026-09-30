@@ -1,0 +1,21 @@
+{
+  "name": "@pr-bank/design-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Design tokens (ui-ux-design.md §2) as TypeScript, CSS custom properties and JSON.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./dist/tokens.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node dist/build.js"
+  }
+}

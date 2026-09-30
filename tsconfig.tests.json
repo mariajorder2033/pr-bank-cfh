@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "paths": {
+      "@pr-bank/domain": ["./packages/domain/src/index.ts"],
+      "@pr-bank/design-tokens": ["./packages/design-tokens/src/index.ts"]
+    }
+  },
+  "include": ["packages/*/src/**/*.ts", "services/*/src/**/*.ts", "vitest.config.ts"]
+}
