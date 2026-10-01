@@ -32,6 +32,7 @@ describe('Ledger', () => {
       status: 'completed',
       timestamp: at,
       referenceId: 'ref-salary',
+      description: 'Test entry',
     });
   });
 
@@ -46,13 +47,14 @@ describe('Ledger', () => {
         amount: CHF('-100'),
         timestamp: at,
         referenceId: 'r',
+        description: 'Test entry',
       });
       expect(balance()).toBe('5000.00');
       expect(formatAmount(ledger.availableBalance('acc-1'))).toBe('4900.00');
     });
 
     it('enforces the direction of debit-only and credit-only types', () => {
-      const base = { accountId: 'acc-1', timestamp: at, referenceId: 'r' };
+      const base = { accountId: 'acc-1', timestamp: at, referenceId: 'r', description: 'x' };
       expect(() => ledger.record({ ...base, id: 'a', type: 'TXN-18', amount: CHF('50') })).toThrow(
         /debit-only/,
       );
@@ -65,7 +67,7 @@ describe('Ledger', () => {
     });
 
     it('rejects the wrong currency, duplicate IDs and unknown accounts', () => {
-      const base = { type: 'TXN-30', timestamp: at, referenceId: 'r' } as const;
+      const base = { type: 'TXN-30', timestamp: at, referenceId: 'r', description: 'x' } as const;
       expect(() =>
         ledger.record({ ...base, id: 'x', accountId: 'acc-eur', amount: CHF('1') }),
       ).toThrow(LedgerError);
@@ -78,7 +80,13 @@ describe('Ledger', () => {
     });
 
     it('does not accept reversals or manual adjustments through record()', () => {
-      const base = { accountId: 'acc-1', timestamp: at, referenceId: 'r', amount: CHF('1') };
+      const base = {
+        accountId: 'acc-1',
+        timestamp: at,
+        referenceId: 'r',
+        description: 'x',
+        amount: CHF('1'),
+      };
       expect(() => ledger.record({ ...base, id: 'a', type: 'TXN-32' })).toThrow(/only through/);
       expect(() => ledger.record({ ...base, id: 'b', type: 'TXN-33' })).toThrow(/only through/);
     });
@@ -99,6 +107,7 @@ describe('Ledger', () => {
         amount: CHF('-200'),
         timestamp: at,
         referenceId: 'r',
+        description: 'Test entry',
       });
     });
 
@@ -131,13 +140,18 @@ describe('Ledger', () => {
         status: 'completed',
         timestamp: at,
         referenceId: 'r-card',
+        description: 'Test entry',
         category: 'Shopping',
       });
     });
 
     it('reverses by booking an offsetting, linked entry and keeps the original', () => {
       const reversal = ledger.reverse('card', { id: 'rev', timestamp: at, referenceId: 'return' });
-      expect(reversal).toMatchObject({ type: 'TXN-33', correctsTransactionId: 'card' });
+      expect(reversal).toMatchObject({
+        type: 'TXN-33',
+        correctsTransactionId: 'card',
+        description: 'Reversal: Test entry',
+      });
       expect(formatAmount(reversal.amount)).toBe('100.00');
       expect(ledger.get('card')).toMatchObject({ status: 'reversed' });
       expect(formatAmount(ledger.get('card')!.amount)).toBe('-100.00');
@@ -165,6 +179,7 @@ describe('Ledger', () => {
         correctsTransactionId: 'card',
         category: 'Shopping',
         referenceId: 'corr-1',
+        description: 'Test entry',
       });
       expect(ledger.history('acc-1').map((tx) => tx.id)).toEqual([
         'salary',
@@ -228,7 +243,13 @@ describe('Ledger', () => {
           id: 'adj-1',
           makerId: 'ops-alice',
           justification: 'Goodwill credit for outage',
-          payload: { id: 'goodwill', accountId: 'acc-1', amount: CHF('25'), timestamp: at },
+          payload: {
+            id: 'goodwill',
+            accountId: 'acc-1',
+            amount: CHF('25'),
+            timestamp: at,
+            description: 'Goodwill credit',
+          },
         }),
         'ops-bob',
         at,

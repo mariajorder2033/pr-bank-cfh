@@ -53,6 +53,7 @@ export async function createFixture() {
     type: 'TXN-29' | 'TXN-16' | 'TXN-10',
     amount: string,
     timestamp: string,
+    description: string,
   ) =>
     ledger.record({
       id,
@@ -62,10 +63,11 @@ export async function createFixture() {
       status: 'completed',
       timestamp,
       referenceId: `ref-${id}`,
+      description,
     });
-  record('t1', 'TXN-29', '5000', '2026-09-25T08:00:00Z');
-  record('t2', 'TXN-16', '-42.50', '2026-09-27T12:30:00Z');
-  record('t3', 'TXN-10', '-120', '2026-09-29T09:15:00Z');
+  record('t1', 'TXN-29', '5000', '2026-09-25T08:00:00Z', 'Salary September');
+  record('t2', 'TXN-16', '-42.50', '2026-09-27T12:30:00Z', 'Corner Bakery');
+  record('t3', 'TXN-10', '-120', '2026-09-29T09:15:00Z', 'City Utilities');
   ledger.record({
     id: 't4',
     accountId: 'acc-1',
@@ -73,6 +75,7 @@ export async function createFixture() {
     amount: CHF('-300'),
     timestamp: '2026-09-30T16:00:00Z',
     referenceId: 'ref-t4',
+    description: 'A. Muster',
   });
 
   const app = buildApp({

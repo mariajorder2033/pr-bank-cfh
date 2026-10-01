@@ -2,7 +2,7 @@
   "name": "@pr-bank/design-tokens",
   "version": "0.0.0",
   "private": true,
-  "description": "Design tokens (ui-ux-design.md §2) as TypeScript, CSS custom properties and JSON.",
+  "description": "Design tokens (ui-ux-design.md \u00a72) as TypeScript, CSS custom properties and JSON.",
   "type": "module",
   "exports": {
     ".": {
@@ -16,6 +16,6 @@
     "dist"
   ],
   "scripts": {
-    "build": "node dist/build.js"
+    "build": "tsc -b && node dist/build.js"
   }
 }

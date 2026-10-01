@@ -302,6 +302,7 @@ components:
         - holdReason
         - timestamp
         - referenceId
+        - description
         - correctsTransactionId
         - category
       properties:
@@ -327,6 +328,9 @@ components:
           type: string
           format: date-time
         referenceId:
+          type: string
+        description:
+          description: Booking text shown on statements, such as the merchant, payee or payer.
           type: string
         correctsTransactionId:
           description: Set on reversal and replacement entries; the transaction they reverse or correct (FR-27a).

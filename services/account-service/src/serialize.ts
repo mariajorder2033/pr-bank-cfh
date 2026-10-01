@@ -33,6 +33,7 @@ export function toTransactionDto(tx: Transaction) {
     holdReason: tx.holdReason,
     timestamp: tx.timestamp,
     referenceId: tx.referenceId,
+    description: tx.description,
     correctsTransactionId: tx.correctsTransactionId,
     category: tx.category,
   };

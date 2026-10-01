@@ -24,6 +24,7 @@ Two feature areas are gated behind Legal/Compliance sign-off before build starts
 
 | Path                                                   | What it is                                                                                                                  |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| [`apps/web`](apps/web)                                 | Customer web app (ui-ux-design.md §4): login, dashboard, account history, transfers, cards, settings. Runnable in demo mode |
 | [`packages/domain`](packages/domain)                   | Shared domain model: money in minor units, IBAN (ISO 13616), transaction types, append-only ledger, maker-checker approvals |
 | [`packages/design-tokens`](packages/design-tokens)     | Design tokens from `ui-ux-design.md` §2, generated as CSS custom properties and JSON, with WCAG contrast tests              |
 | [`packages/api-contracts`](packages/api-contracts)     | OpenAPI 3.1 contract for the customer API (accounts, transactions, transfers, cards)                                        |

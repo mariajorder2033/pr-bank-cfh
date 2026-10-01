@@ -83,6 +83,7 @@ describe('account service', () => {
       expect(items[2]).toMatchObject({
         type: 'TXN-16',
         typeName: 'Card purchase — point of sale',
+        description: 'Corner Bakery',
         amount: { amount: '-42.50', currency: 'CHF' },
         status: 'completed',
       });

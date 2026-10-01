@@ -48,6 +48,8 @@ export interface Transaction {
   /** Value date/time, ISO-8601. */
   readonly timestamp: string;
   readonly referenceId: string;
+  /** Booking text shown on statements: merchant, payee or payer. Part of the financial record. */
+  readonly description: string;
   /** Set on reversal and replacement entries: the transaction they reverse or correct. */
   readonly correctsTransactionId: string | null;
   /** Budgeting category tag: non-financial metadata, editable after posting. */
@@ -61,6 +63,7 @@ export interface NewTransaction {
   readonly amount: Money;
   readonly timestamp: string;
   readonly referenceId: string;
+  readonly description: string;
   readonly status?: 'pending' | 'processing' | 'completed';
   readonly category?: string | null;
 }
@@ -82,6 +85,8 @@ export interface CorrectionPayload {
     readonly accountId?: string;
     /** Defaults to the original's value date. */
     readonly timestamp?: string;
+    /** Defaults to the original's booking text. */
+    readonly description?: string;
   };
 }
 
@@ -91,6 +96,7 @@ export interface AdjustmentPayload {
   readonly accountId: string;
   readonly amount: Money;
   readonly timestamp: string;
+  readonly description: string;
 }
 
 export type LedgerErrorCode =
@@ -207,6 +213,7 @@ export class Ledger {
         holdReason: null,
         timestamp: entry.timestamp,
         referenceId: entry.referenceId,
+        description: `Reversal: ${original.description}`,
         correctsTransactionId: original.id,
         category: original.category,
       }),
@@ -242,6 +249,7 @@ export class Ledger {
         holdReason: null,
         timestamp: replacement.timestamp ?? original.timestamp,
         referenceId: request.id,
+        description: replacement.description ?? original.description,
         correctsTransactionId: original.id,
         category: original.category,
       });
@@ -258,7 +266,7 @@ export class Ledger {
   /** Standalone manual adjustment (TXN-32) with no underlying transaction, e.g. a goodwill credit. */
   adjust(request: ApprovalRequest<AdjustmentPayload>): Transaction {
     assertApproved(request);
-    const { id, accountId, amount, timestamp } = request.payload;
+    const { id, accountId, amount, timestamp, description } = request.payload;
     return this.#insert(
       this.#validate({
         id,
@@ -269,6 +277,7 @@ export class Ledger {
         holdReason: null,
         timestamp,
         referenceId: request.id,
+        description,
         correctsTransactionId: null,
         category: null,
       }),
