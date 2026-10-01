@@ -48,6 +48,22 @@ npm run build           # compiles all packages and generates design-token CSS/J
 
 CI runs the same checks, plus a dependency vulnerability scan, on every pull request.
 
+## Deployment
+
+The backend and both frontends are containerised and deploy to Google Cloud Run with one command:
+
+```sh
+deploy/gcp/deploy.sh YOUR_GCP_PROJECT_ID
+```
+
+Or run the whole stack locally:
+
+```sh
+docker compose up --build   # web :8080, admin :8081, account service :8082
+```
+
+See [`deploy/gcp/README.md`](deploy/gcp/README.md) for details, ingress settings, and backend OIDC configuration.
+
 ## Contributing
 
 Trunk-based development with short-lived feature branches, pull-request review, and Conventional Commits. See `docs/development-process.md` §5.

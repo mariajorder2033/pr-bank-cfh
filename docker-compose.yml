@@ -1,0 +1,36 @@
+# Run the whole stack locally with one command:
+#   docker compose up --build
+#
+# Then open:
+#   http://localhost:8080  — customer web app (self-contained demo mode)
+#   http://localhost:8081  — admin portal
+#   http://localhost:8082  — account service (health at /health)
+#
+# This mirrors the Cloud Run topology; production deploys use deploy/gcp.
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - '8080:8080'
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    ports:
+      - '8081:8080'
+
+  account-service:
+    build:
+      context: .
+      dockerfile: services/account-service/Dockerfile
+    ports:
+      - '8082:8080'
+    environment:
+      # Point these at your identity provider. The service refuses to start without them.
+      OIDC_JWKS_URL: ${OIDC_JWKS_URL:-https://idp.example/.well-known/jwks.json}
+      OIDC_ISSUER: ${OIDC_ISSUER:-https://idp.example}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE:-customer-api}
