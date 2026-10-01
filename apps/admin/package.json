@@ -1,0 +1,32 @@
+{
+  "name": "@pr-bank/admin",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Back-office admin portal (PRD §6.10), desktop-first.",
+  "type": "module",
+  "scripts": {
+    "predev": "npm run build --workspace @pr-bank/design-tokens",
+    "dev": "vite",
+    "prebuild": "npm run build --workspace @pr-bank/design-tokens",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@pr-bank/design-tokens": "0.0.0",
+    "@pr-bank/domain": "0.0.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router": "^8.4.0"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^30.1.1",
+    "vite": "^8.3.2"
+  }
+}

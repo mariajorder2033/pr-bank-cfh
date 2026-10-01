@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "tsc -b && npm run build --workspace @pr-bank/design-tokens",
-    "typecheck": "tsc -b && tsc -p tsconfig.tests.json && tsc -p apps/web/tsconfig.json",
+    "typecheck": "tsc -b && tsc -p tsconfig.tests.json && tsc -p apps/web/tsconfig.json && tsc -p apps/admin/tsconfig.json",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "test": "vitest run",
