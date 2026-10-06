@@ -1,9 +1,17 @@
 # VM Panel (Node.js + React)
 
-## 1. Before you start
-1. Reserve a static external IP for the VM in GCP.
-2. DNS A records: `panel`, `@` and `www` -> that IP (with Cloudflare, use "DNS only").
-3. GCP firewall: allow tcp:80 and tcp:443 from anywhere; keep tcp:22 limited.
+## 1. Fastest: create everything from Cloud Shell (one command)
+Open Cloud Shell in the Google Cloud console, upload the zip (menu > Upload), then:
+
+    unzip -o vm-panel-deshjure.zip && bash vm-panel/deploy/gcp-create.sh yourdomain.com
+
+`deploy/gcp-create.sh` reserves a static IP, opens tcp:80/443 for this VM only, creates an Ubuntu 24.04 VM
+(`e2-small` in `asia-south1` by default; override with `REGION=... ZONE=... MACHINE=...`), shows the three DNS
+A records to add at your registrar (`@`, `www`, `panel`) and waits until they work, then uploads this folder
+and runs `deploy/setup.sh` on the VM. It reuses resources that already exist and never deletes anything.
+
+If you already have a VM, skip this and use section 2 on the VM instead (DNS A records `@`, `www`, `panel` ->
+the VM's static IP; GCP firewall allowing tcp:80 and tcp:443).
 
 ## 2. Install (one command, Ubuntu/Debian)
 Upload this folder (or its zip) to the VM, then from inside it:
