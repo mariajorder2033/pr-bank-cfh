@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # One-shot installer for the VM panel on an Ubuntu/Debian Google Cloud VM (CLAUDE.md steps 1-7).
-# Run from the unzipped vm-panel folder:   sudo bash deploy/setup.sh [domain] [customer-app-port]
+# Run from the unzipped vm-panel folder:   sudo bash deploy/setup.sh [domain] [customer-app-port | panel-only]
+#   panel-only: this VM serves only panel.<domain>; the customer's app runs on another VM, so the
+#   main domain is left alone (its DNS points to the app VM).
 # Safe to re-run (e.g. after uploading a new version): keeps the secrets, the database,
 # customer files, the nginx site and the HTTPS certificates.
 set -euo pipefail
 
 DOMAIN=${1:-deshjure.shop}
 APP_PORT=${2:-8080}               # port of the customer's own app, served on https://$DOMAIN
+PANEL_ONLY=0; [ "$APP_PORT" = panel-only ] && PANEL_ONLY=1
 PANEL_HOST="panel.$DOMAIN"
 APP_DIR=/opt/vm-panel
 ENV_FILE=/etc/vm-panel/panel.env  # root-only: JWT secret and super admin login
@@ -23,15 +26,20 @@ die(){ printf '\033[31mERROR\033[0m %s\n' "$*" >&2; exit 1; }
 command -v apt-get >/dev/null || die "Only Ubuntu/Debian is supported."
 [ -f "$SRC/server/index.js" ] && [ -f "$SRC/client/package.json" ] || die "Run it from inside the unzipped vm-panel folder."
 [[ $DOMAIN =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$ ]] || die "Not a valid domain: $DOMAIN"
-[[ $APP_PORT =~ ^[0-9]+$ ]] && [ "$APP_PORT" != 3000 ] || die "Customer app port must be a number other than 3000"
+if [ $PANEL_ONLY = 0 ] && { ! [[ $APP_PORT =~ ^[0-9]+$ ]] || [ "$APP_PORT" = 3000 ]; }; then
+  die "Second argument: the customer app's port (not 3000), or panel-only"
+fi
+MEM_MB=$(awk '/^MemTotal:/{print int($2/1024)}' /proc/meminfo)
+if [ $PANEL_ONLY = 1 ]; then routes="https://$PANEL_HOST -> panel only ($DOMAIN itself is left alone)"
+else routes="https://$PANEL_HOST -> panel,  https://$DOMAIN and www -> 127.0.0.1:$APP_PORT"; fi
 
 cat <<EOF
 This sets up the VM panel on this machine:
-  1. installs Node.js 22, nginx and certbot (if missing)
+  1. installs Node.js 22, nginx and certbot (if missing); adds a 1 GB swap file if RAM is under 1.5 GB
   2. copies the panel to $APP_DIR and builds it (existing data in $APP_DIR/server/data is kept)
   3. asks for the super admin login and stores it with a new JWT secret in $ENV_FILE (root only)
   4. runs it as service '$SVC' under system user '$SVC_USER' on 127.0.0.1:3000, started on boot
-  5. nginx:  https://$PANEL_HOST -> panel,  https://$DOMAIN and www -> 127.0.0.1:$APP_PORT
+  5. nginx:  $routes
      and HTTPS certificates from Let's Encrypt (you accept their terms of service)
   6. checks open ports and SSH settings (reports only, changes nothing)
   7. smoke test (creates a test customer and deletes it again)
@@ -49,13 +57,21 @@ if [ "$node_major" -lt 22 ]; then   # Node 20 is end-of-life since April 2026
   apt-get install -y -qq nodejs >/dev/null
 fi
 echo "node $(node -v), npm $(npm -v), $(nginx -v 2>&1)"
+# e2-micro has 1 GB: the panel itself needs ~75 MB, but the client build peaks at a few hundred MB.
+if [ "$MEM_MB" -lt 1500 ] && [ -z "$(swapon --noheadings 2>/dev/null)" ]; then
+  [ -f /swapfile ] || fallocate -l 1G /swapfile || dd if=/dev/zero of=/swapfile bs=1M count=1024 status=none
+  chmod 600 /swapfile; mkswap /swapfile >/dev/null; swapon /swapfile
+  grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' >>/etc/fstab
+  echo "Added a 1 GB swap file (this VM has ${MEM_MB} MB RAM)."
+fi
 
 say "2/7 Build"
 id "$SVC_USER" &>/dev/null || useradd --system --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin "$SVC_USER"
 mkdir -p "$APP_DIR"
 # Code is owned by root so the service cannot modify it; only server/data belongs to the service user.
 [ "$SRC" = "$APP_DIR" ] || rsync -a --chown=root:root --exclude node_modules --exclude client/dist --exclude server/data --exclude .git "$SRC"/ "$APP_DIR"/
-(cd "$APP_DIR/client" && npm ci --no-audit --no-fund --loglevel=error && npm run build --silent)
+heap=(); [ "$MEM_MB" -ge 1500 ] || heap=(env NODE_OPTIONS=--max-old-space-size=256)  # tested: builds with 200
+(cd "$APP_DIR/client" && npm ci --no-audit --no-fund --loglevel=error && "${heap[@]}" npm run build --silent)
 (cd "$APP_DIR/server" && npm ci --omit=dev --no-audit --no-fund --loglevel=error)
 install -d -o "$SVC_USER" -g "$SVC_USER" -m 700 "$APP_DIR/server/data"
 
@@ -119,6 +135,8 @@ server {
   location / { proxy_pass http://127.0.0.1:3000; proxy_set_header Host \$host;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for; proxy_set_header X-Forwarded-Proto \$scheme; }
 }
+EOF
+  [ $PANEL_ONLY = 1 ] || cat >>"$SITE" <<EOF
 # Customer's own app on the main domain
 server {
   listen 80; server_name $DOMAIN www.$DOMAIN;
@@ -132,11 +150,12 @@ nginx -t
 systemctl enable --quiet --now nginx
 systemctl reload nginx
 
-ext_ip=$(curl -s --max-time 3 -H 'Metadata-Flavor: Google' \
+ext_ip=$(curl -fs --max-time 3 -H 'Metadata-Flavor: Google' \
   http://169.254.169.254/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip || true)
 echo "This VM's external IP: ${ext_ip:-unknown}"
+names=("$PANEL_HOST"); [ $PANEL_ONLY = 1 ] || names+=("$DOMAIN" "www.$DOMAIN")
 hosts=()
-for h in "$PANEL_HOST" "$DOMAIN" "www.$DOMAIN"; do
+for h in "${names[@]}"; do
   got=$(getent ahostsv4 "$h" | awk '{print $1}' | sort -u | paste -sd' ' || true)
   if [ -z "$got" ]; then warn "$h has no DNS A record yet."
   elif [ -n "$ext_ip" ] && [ "$got" != "$ext_ip" ]; then warn "$h points to $got, not to this VM ($ext_ip). With Cloudflare, set it to 'DNS only'."
@@ -151,7 +170,7 @@ if [[ " ${hosts[*]} " == *" $PANEL_HOST "* ]]; then
   d_args=(); for h in "${hosts[@]}"; do d_args+=(-d "$h"); done
   certbot --nginx --non-interactive --agree-tos --redirect --expand --keep-until-expiring "${email_args[@]}" "${d_args[@]}" \
     || warn "certbot failed. Check DNS and that the GCP firewall allows tcp:80, then re-run this script."
-  [ ${#hosts[@]} = 3 ] || warn "Not every name got a certificate. Fix the DNS warnings above, then re-run this script."
+  [ ${#hosts[@]} = ${#names[@]} ] || warn "Not every name got a certificate. Fix the DNS warnings above, then re-run this script."
 else
   warn "Skipping HTTPS: point the A records above to ${ext_ip:-this VM}, wait a few minutes, then re-run this script."
 fi
@@ -189,7 +208,8 @@ cat <<EOF
 
 Done.
   Panel:    https://$PANEL_HOST   (log in as $SU_NOW)
-  Main app: https://$DOMAIN -> 127.0.0.1:$APP_PORT (shows 502 until the customer's app runs on that port)
+$(if [ $PANEL_ONLY = 1 ]; then echo "  Main app: not on this VM (panel-only); point $DOMAIN's DNS at the app VM"
+  else echo "  Main app: https://$DOMAIN -> 127.0.0.1:$APP_PORT (shows 502 until the customer's app runs on that port)"; fi)
   Logs:     journalctl -u $SVC -f
   Restart:  sudo systemctl restart $SVC
   Backup:   $APP_DIR/server/data

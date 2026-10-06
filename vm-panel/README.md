@@ -10,6 +10,19 @@ Open Cloud Shell in the Google Cloud console, upload the zip (menu > Upload), th
 A records to add at your registrar (`@`, `www`, `panel`) and waits until they work, then uploads this folder
 and runs `deploy/setup.sh` on the VM. It reuses resources that already exist and never deletes anything.
 
+**Panel on its own small VM, customer apps on separate VMs:** add `panel-only`:
+
+    unzip -o vm-panel-deshjure.zip && bash vm-panel/deploy/gcp-create.sh yourdomain.com panel-only
+
+This creates an `e2-micro` with a 30 GB standard disk in `us-central1` (the shape Google's free tier
+covers; check your billing) and only needs the `panel` DNS record. The panel uses ~75 MB RAM; the
+one-time client build peaks at ~300-470 MB, so setup.sh adds a 1 GB swap file on VMs under 1.5 GB RAM.
+Point `@` and `www` at the app VM instead. On a split setup:
+- one panel can serve many customers; put each customer's app VM IP in their "External IP" field
+- the expiry lock blocks uploads in the panel, but cannot stop an app running on another VM, and the
+  OS lock (section 5) only works for Linux users on the panel's own VM
+- files uploaded in the panel stay on the panel VM
+
 If you already have a VM, skip this and use section 2 on the VM instead (DNS A records `@`, `www`, `panel` ->
 the VM's static IP; GCP firewall allowing tcp:80 and tcp:443).
 
@@ -18,7 +31,8 @@ Upload this folder (or its zip) to the VM, then from inside it:
 
     sudo bash deploy/setup.sh yourdomain.com 8080
 
-The second argument is the port of the customer's own app (default 8080). The script:
+The second argument is the port of the customer's own app (default 8080), or `panel-only` when the app runs
+on another VM (then only panel.yourdomain.com is set up). The script:
 - installs Node.js 22 (Node 20 is end-of-life), nginx and certbot
 - copies the panel to /opt/vm-panel (code owned by root) and builds it
 - asks for the super admin username and password on the VM, generates JWT_SECRET, and stores them in

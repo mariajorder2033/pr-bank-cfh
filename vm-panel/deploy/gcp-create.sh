@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
 # Creates everything on Google Cloud and installs the panel, in one go. Run it in Cloud Shell:
-#   unzip -o vm-panel-deshjure.zip && bash vm-panel/deploy/gcp-create.sh deshjure.shop
+#   unzip -o vm-panel-deshjure.zip && bash vm-panel/deploy/gcp-create.sh deshjure.shop [app-port | panel-only]
 # It reserves a static IP, opens tcp:80/443, creates an Ubuntu 24.04 VM, waits for your DNS records,
 # then uploads this folder to the VM and runs deploy/setup.sh there. Safe to re-run: existing
 # resources are reused, never deleted.
-# Optional overrides: REGION=asia-southeast1 ZONE=asia-southeast1-b MACHINE=e2-medium bash ...
+#   panel-only: a small VM with just the panel (panel.<domain>); the customer's app runs on another VM.
+# Optional overrides: REGION=asia-southeast1 ZONE=asia-southeast1-b MACHINE=e2-medium DISK_GB=30 bash ...
 set -euo pipefail
 
 DOMAIN=${1:-deshjure.shop}
-APP_PORT=${2:-8080}
+MODE=${2:-8080}                      # customer app port on this VM, or panel-only
+PANEL_ONLY=0; [ "$MODE" = panel-only ] && PANEL_ONLY=1
 PROJECT=$(gcloud config get-value project 2>/dev/null || true)
-REGION=${REGION:-asia-south1}        # Mumbai
+if [ $PANEL_ONLY = 1 ]; then
+  # The panel needs ~75 MB RAM. e2-micro with a standard disk in us-central1/us-west1/us-east1
+  # is what Google's free tier covers (check your billing account for what applies to you).
+  REGION=${REGION:-us-central1}; MACHINE=${MACHINE:-e2-micro}; DISK_TYPE=${DISK_TYPE:-pd-standard}; DISK_GB=${DISK_GB:-30}
+else
+  REGION=${REGION:-asia-south1}; MACHINE=${MACHINE:-e2-small}; DISK_TYPE=${DISK_TYPE:-pd-balanced}; DISK_GB=${DISK_GB:-20}
+fi
 ZONE=${ZONE:-$REGION-a}
-MACHINE=${MACHINE:-e2-small}         # 2 GB RAM; e2-micro (1 GB) is too small to build the client reliably
-DISK_GB=${DISK_GB:-20}
 VM=${VM:-vm-panel}
 NETWORK=${NETWORK:-default}
 IP_NAME=$VM-ip
@@ -30,15 +36,17 @@ command -v gcloud >/dev/null || die "Run this in Google Cloud Shell (or anywhere
 [ -n "$PROJECT" ] || die "No project selected. Run: gcloud config set project YOUR_PROJECT_ID"
 [ -f "$SRC/deploy/setup.sh" ] || die "deploy/setup.sh not found next to this script."
 [[ $DOMAIN =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$ ]] || die "Not a valid domain: $DOMAIN"
+names=("panel.$DOMAIN"); [ $PANEL_ONLY = 1 ] || names+=("$DOMAIN" "www.$DOMAIN")
 
 cat <<EOF
 This creates on Google Cloud project '$PROJECT':
   - static external IP '$IP_NAME' in $REGION
   - firewall rule '$VM-allow-web' (tcp:80,443 from anywhere, only for this VM)
-  - VM '$VM' in $ZONE: $MACHINE, Ubuntu 24.04 LTS, ${DISK_GB} GB disk  (billed while it exists)
+  - VM '$VM' in $ZONE: $MACHINE, Ubuntu 24.04 LTS, ${DISK_GB} GB $DISK_TYPE disk  (billed while it exists)
 Then it waits for your DNS records and installs the panel for https://panel.$DOMAIN
 Existing resources with these names are reused; nothing is deleted.
 EOF
+[ $PANEL_ONLY = 0 ] || echo "Panel only: $DOMAIN itself is not routed here (point it at your app VM)."
 read -rp "Continue? [y/N] " a; [[ ${a:-} =~ ^[Yy] ]] || exit 1
 
 say "1/5 Compute Engine API"
@@ -69,25 +77,25 @@ if have gcloud compute instances describe "$VM" --zone "$ZONE"; then
 else
   gcloud compute instances create "$VM" --zone "$ZONE" --machine-type "$MACHINE" \
     --image-family ubuntu-2404-lts-amd64 --image-project ubuntu-os-cloud \
-    --boot-disk-size "${DISK_GB}GB" --boot-disk-type pd-balanced \
+    --boot-disk-size "${DISK_GB}GB" --boot-disk-type "$DISK_TYPE" \
     --network "$NETWORK" --network-tier PREMIUM --address "$IP" --tags "$TAG"
 fi
 
-cat <<EOF
-
-Now add these 3 DNS records where you bought $DOMAIN (the registrar's DNS settings):
-    Type A   Name/Host: @       Value: $IP
-    Type A   Name/Host: www     Value: $IP
-    Type A   Name/Host: panel   Value: $IP
-Delete any other A/AAAA records for these three names. With Cloudflare, set them to "DNS only".
-EOF
+echo
+echo "Now add these DNS records where you bought $DOMAIN (the registrar's DNS settings):"
+for h in "${names[@]}"; do
+  host=${h%".$DOMAIN"}; [ "$h" = "$DOMAIN" ] && host=@
+  printf '    Type A   Name/Host: %-7s Value: %s\n' "$host" "$IP"
+done
+echo "Delete any other A/AAAA records for these names. With Cloudflare, set them to \"DNS only\"."
+[ $PANEL_ONLY = 0 ] || echo "($DOMAIN and www are not touched: point them at your app VM's IP.)"
 read -rp "Press Enter once they are saved... " _
 echo "Waiting for DNS (checks every 20 s, up to 15 min; the VM keeps booting meanwhile)..."
 dns_ok=0
 for _ in $(seq 1 45); do
   pending=()
-  for h in "$DOMAIN" "www.$DOMAIN" "panel.$DOMAIN"; do [ "$(dns_of "$h")" = "$IP" ] || pending+=("$h"); done
-  if [ ${#pending[@]} = 0 ]; then dns_ok=1; echo "DNS ok: all three names point to $IP"; break; fi
+  for h in "${names[@]}"; do [ "$(dns_of "$h")" = "$IP" ] || pending+=("$h"); done
+  if [ ${#pending[@]} = 0 ]; then dns_ok=1; echo "DNS ok: ${names[*]} -> $IP"; break; fi
   echo "  not yet: ${pending[*]}"; sleep 20
 done
 [ $dns_ok = 1 ] || warn "DNS is not visible yet. Installing anyway; setup.sh will skip HTTPS and tell you to re-run it."
@@ -107,7 +115,7 @@ tar -C "$(dirname "$SRC")" --exclude=node_modules --exclude="$name/client/dist" 
 gcloud compute scp --zone "$ZONE" --quiet "$TMP/vm-panel.tgz" "$VM:vm-panel.tgz"
 # -t gives setup.sh a terminal, so it can ask for the super admin password on the VM.
 gcloud compute ssh "$VM" --zone "$ZONE" --quiet --ssh-flag=-t \
-  --command "mkdir -p vm-panel-upload && tar -xzf vm-panel.tgz -C vm-panel-upload && sudo bash vm-panel-upload/$name/deploy/setup.sh $DOMAIN $APP_PORT"
+  --command "mkdir -p vm-panel-upload && tar -xzf vm-panel.tgz -C vm-panel-upload && sudo bash vm-panel-upload/$name/deploy/setup.sh $DOMAIN $MODE"
 
 cat <<EOF
 
@@ -115,5 +123,5 @@ All done on Google Cloud.
   Panel:        https://panel.$DOMAIN
   VM:           $VM ($ZONE), IP $IP
   SSH:          gcloud compute ssh $VM --zone $ZONE
-  Re-run setup: gcloud compute ssh $VM --zone $ZONE --ssh-flag=-t --command 'sudo bash vm-panel-upload/$name/deploy/setup.sh $DOMAIN $APP_PORT'
+  Re-run setup: gcloud compute ssh $VM --zone $ZONE --ssh-flag=-t --command 'sudo bash vm-panel-upload/$name/deploy/setup.sh $DOMAIN $MODE'
 EOF
