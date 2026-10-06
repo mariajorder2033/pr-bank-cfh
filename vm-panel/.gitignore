@@ -1,0 +1,4 @@
+node_modules/
+client/dist/
+# runtime data: db.json holds password hashes, sites/ holds customer files
+server/data/

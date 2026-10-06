@@ -4,7 +4,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**', 'apps/*/dist/**'] },
+  { ignores: ['**/dist/**', '**/node_modules/**', 'apps/*/dist/**', 'vm-panel/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
