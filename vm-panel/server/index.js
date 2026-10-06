@@ -10,11 +10,15 @@ const db=fs.existsSync(DBF)?JSON.parse(fs.readFileSync(DBF,'utf8')):{users:[]};
 const save=()=>{fs.writeFileSync(DBF+'.tmp',JSON.stringify(db,null,1));fs.renameSync(DBF+'.tmp',DBF)};
 if(!db.users.some(u=>u.role==='super')){db.users.push({id:'u0',role:'super',username:SUPER_USER,hash:bcrypt.hashSync(SUPER_PASS,12)});save()}
 const today=(n=0)=>new Date(Date.now()+n*864e5).toISOString().slice(0,10);
-const expired=u=>u.role==='customer'&&new Date(u.exp+'T23:59:59')<new Date();
+// fails closed: a missing or unparseable expiry date counts as expired
+const expired=u=>u.role==='customer'&&!(new Date(u.exp+'T23:59:59')>=new Date());
 const pub=u=>{const{hash,...r}=u;return{...r,expired:expired(u)}};
 const sh=(c,a)=>new Promise(res=>execFile('sudo',['-n',c,...a],e=>res(!e)));
+const uid=n=>new Promise(res=>execFile('id',['-u',n],(e,o)=>res(e?-1:+o)));
 async function syncLock(u){ // optional: block real SSH login on the server
   if(ENABLE_OS_LOCK!=='1'||u.role!=='customer'||!/^[a-z_][a-z0-9_-]{0,31}$/.test(u.osUser||''))return;
+  // only normal login users: `pkill -u root` (or a system/panel account) would take the VM down
+  const id=await uid(u.osUser);if(!(id>=1000&&id<=60000)||id===process.getuid())return;
   const want=expired(u);if(want===!!u.osLocked)return;
   if(await sh('chage',['-E',want?'0':'-1',u.osUser])){if(want)await sh('pkill',['-KILL','-u',u.osUser]);u.osLocked=want;save()}}
 setInterval(()=>db.users.forEach(syncLock),36e5);db.users.forEach(syncLock);
@@ -42,10 +46,11 @@ A.delete('/api/files/:dir/:name',...cust,live,dirMw,(q,r)=>{const s=safe(q.param
 
 // ---- super admin only: customers and their (display) allocations ----
 const adm=[auth,need('super')],NUM=['ram','cpu','disk'],STR=['name','pkg','ip','osUser'],DT=['start','exp'];
+const realDate=s=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;const d=new Date(s+'T00:00:00Z');return !isNaN(d)&&d.toISOString().slice(0,10)===s};
 const pick=b=>{const o={};
   for(const k of NUM)if(b[k]!==undefined)o[k]=Math.max(0,+b[k]||0);
   for(const k of STR)if(b[k]!==undefined)o[k]=String(b[k]).slice(0,100);
-  for(const k of DT)if(/^\d{4}-\d{2}-\d{2}$/.test(b[k]||''))o[k]=b[k];return o};
+  for(const k of DT)if(b[k]!==undefined&&b[k]!==''){if(!realDate(String(b[k])))throw new Error('Dates must be real calendar dates (YYYY-MM-DD)');o[k]=b[k]}return o};
 A.get('/api/admin/users',...adm,(q,r)=>r.json(db.users.filter(u=>u.role==='customer').map(pub)));
 A.post('/api/admin/users',...adm,(q,r)=>{const b=q.body;
   if(!/^[a-z0-9_.-]{3,32}$/i.test(b.username||'')||String(b.password||'').length<8)return r.status(400).json({error:'Username 3-32 chars (letters, numbers, . _ -), password at least 8 chars'});
@@ -54,8 +59,9 @@ A.post('/api/admin/users',...adm,(q,r)=>{const b=q.body;
     name:'',pkg:'Starter',ram:2,cpu:1,disk:20,ip:'',osUser:'',start:today(),exp:today(30),...pick(b)};
   db.users.push(u);save();syncLock(u);r.json(pub(u))});
 A.put('/api/admin/users/:id',...adm,(q,r)=>{const u=db.users.find(x=>x.id===q.params.id&&x.role==='customer');if(!u)return r.sendStatus(404);
+  const p=pick(q.body); // validate before changing anything
   if(q.body.password){if(String(q.body.password).length<8)return r.status(400).json({error:'Password at least 8 chars'});u.hash=bcrypt.hashSync(q.body.password,12)}
-  Object.assign(u,pick(q.body));save();syncLock(u);r.json(pub(u))});
+  Object.assign(u,p);save();syncLock(u);r.json(pub(u))});
 A.delete('/api/admin/users/:id',...adm,(q,r)=>{const i=db.users.findIndex(x=>x.id===q.params.id&&x.role==='customer');if(i<0)return r.sendStatus(404);
   db.users.splice(i,1);save();fs.rmSync(path.join(ROOT,q.params.id),{recursive:true,force:true});r.json({ok:1})});
 
