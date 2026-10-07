@@ -3,8 +3,9 @@
 # Run from the unzipped vm-panel folder:   sudo bash deploy/setup.sh [domain] [customer-app-port | panel-only]
 #   panel-only: this VM serves only panel.<domain>; the customer's app runs on another VM, so the
 #   main domain is left alone (its DNS points to the app VM).
-# Safe to re-run (e.g. after uploading a new version): keeps the secrets, the database,
-# customer files, the nginx site and the HTTPS certificates.
+# Safe to re-run: keeps the secrets, the database, customer files, the nginx site and the HTTPS certificates.
+# Update an installed panel to this folder's code (rebuild + restart + smoke test, no questions):
+#   sudo bash deploy/setup.sh update
 set -euo pipefail
 
 DOMAIN=${1:-deshjure.shop}
@@ -22,14 +23,47 @@ say(){ printf '\n\033[1m== %s\033[0m\n' "$*"; }
 warn(){ printf '\033[33mWARN\033[0m  %s\n' "$*"; }
 die(){ printf '\033[31mERROR\033[0m %s\n' "$*" >&2; exit 1; }
 
+build(){ # copy this folder's code to $APP_DIR and build it; server/data is never touched
+  id "$SVC_USER" &>/dev/null || useradd --system --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin "$SVC_USER"
+  mkdir -p "$APP_DIR"
+  # Code is owned by root so the service cannot modify it; only server/data belongs to the service user.
+  [ "$SRC" = "$APP_DIR" ] || rsync -a --chown=root:root --exclude node_modules --exclude client/dist --exclude server/data --exclude .git "$SRC"/ "$APP_DIR"/
+  local heap=(); [ "$MEM_MB" -ge 1500 ] || heap=(env NODE_OPTIONS=--max-old-space-size=256)  # tested: builds with 200
+  (cd "$APP_DIR/client" && npm ci --no-audit --no-fund --loglevel=error && "${heap[@]}" npm run build --silent)
+  (cd "$APP_DIR/server" && npm ci --omit=dev --no-audit --no-fund --loglevel=error)
+  install -d -o "$SVC_USER" -g "$SVC_USER" -m 700 "$APP_DIR/server/data"
+}
+start_service(){
+  systemctl restart "$SVC"
+  for _ in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:3000/api/me && break; sleep 1; done
+  curl -s -o /dev/null http://127.0.0.1:3000/api/me || { journalctl -u "$SVC" -n 30 --no-pager; die "The panel did not start (log above)."; }
+}
+smoke(){
+  # The env file is root-only and holds the super admin login; pass it to the test via env, not argv.
+  # shellcheck source=/dev/null
+  (set -a; . "$ENV_FILE"; set +a; bash "$APP_DIR/smoke-test.sh" http://127.0.0.1:3000) || warn "Smoke test had failures (see above)."
+}
+
 [ "$(id -u)" = 0 ] || die "Run it with sudo:  sudo bash deploy/setup.sh"
 command -v apt-get >/dev/null || die "Only Ubuntu/Debian is supported."
 [ -f "$SRC/server/index.js" ] && [ -f "$SRC/client/package.json" ] || die "Run it from inside the unzipped vm-panel folder."
+MEM_MB=$(awk '/^MemTotal:/{print int($2/1024)}' /proc/meminfo)
+
+if [ "${1:-}" = update ]; then
+  [ -f "$ENV_FILE" ] && [ -f "/etc/systemd/system/$SVC.service" ] || die "The panel is not installed yet. Run the full setup first."
+  say "Updating the panel in $APP_DIR (data, logins, nginx and HTTPS stay as they are)"
+  build
+  start_service
+  echo "Panel restarted with the new version."
+  say "Smoke test"
+  smoke
+  printf '\nUpdate done.\n'
+  exit 0
+fi
 [[ $DOMAIN =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$ ]] || die "Not a valid domain: $DOMAIN"
 if [ $PANEL_ONLY = 0 ] && { ! [[ $APP_PORT =~ ^[0-9]+$ ]] || [ "$APP_PORT" = 3000 ]; }; then
   die "Second argument: the customer app's port (not 3000), or panel-only"
 fi
-MEM_MB=$(awk '/^MemTotal:/{print int($2/1024)}' /proc/meminfo)
 if [ $PANEL_ONLY = 1 ]; then routes="https://$PANEL_HOST -> panel only ($DOMAIN itself is left alone)"
 else routes="https://$PANEL_HOST -> panel,  https://$DOMAIN and www -> 127.0.0.1:$APP_PORT"; fi
 
@@ -66,25 +100,18 @@ if [ "$MEM_MB" -lt 1500 ] && [ -z "$(swapon --noheadings 2>/dev/null)" ]; then
 fi
 
 say "2/7 Build"
-id "$SVC_USER" &>/dev/null || useradd --system --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin "$SVC_USER"
-mkdir -p "$APP_DIR"
-# Code is owned by root so the service cannot modify it; only server/data belongs to the service user.
-[ "$SRC" = "$APP_DIR" ] || rsync -a --chown=root:root --exclude node_modules --exclude client/dist --exclude server/data --exclude .git "$SRC"/ "$APP_DIR"/
-heap=(); [ "$MEM_MB" -ge 1500 ] || heap=(env NODE_OPTIONS=--max-old-space-size=256)  # tested: builds with 200
-(cd "$APP_DIR/client" && npm ci --no-audit --no-fund --loglevel=error && "${heap[@]}" npm run build --silent)
-(cd "$APP_DIR/server" && npm ci --omit=dev --no-audit --no-fund --loglevel=error)
-install -d -o "$SVC_USER" -g "$SVC_USER" -m 700 "$APP_DIR/server/data"
+build
 
 say "3/7 Secrets"
 install -d -o root -g root -m 700 "$(dirname "$ENV_FILE")"
 if [ -f "$ENV_FILE" ]; then
   echo "Keeping $ENV_FILE (same JWT secret and super admin login as before)."
 else
-  read -rp "Super admin username [superadmin]: " SU; SU=${SU:-superadmin}
+  read -rp "Super admin username [superadmin]: " SU || die "No input: run this from a terminal."; SU=${SU:-superadmin}
   [[ $SU =~ ^[A-Za-z0-9_.-]{3,32}$ ]] || die "Username: 3-32 letters, numbers, . _ -"
   while :; do
-    read -rsp "Super admin password (10+ characters): " SP; echo
-    read -rsp "Repeat the password: " SP2; echo
+    read -rsp "Super admin password (10+ characters): " SP || die "No input: run this from a terminal."; echo
+    read -rsp "Repeat the password: " SP2 || die "No input: run this from a terminal."; echo
     if [ "$SP" != "$SP2" ]; then warn "The passwords differ, try again."
     elif [ ${#SP} -lt 10 ]; then warn "Use at least 10 characters."
     elif [[ $SP == *[\'\"\\\$\`]* ]]; then warn "Please avoid these characters: ' \" \\ \$ \`"  # keeps the env file unambiguous for systemd and bash
@@ -118,9 +145,7 @@ WantedBy=multi-user.target
 EOF
 systemctl daemon-reload
 systemctl enable --quiet "$SVC"
-systemctl restart "$SVC"
-for _ in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:3000/api/me && break; sleep 1; done
-curl -s -o /dev/null http://127.0.0.1:3000/api/me || { journalctl -u "$SVC" -n 30 --no-pager; die "The panel did not start (log above)."; }
+start_service
 echo "Panel is running on 127.0.0.1:3000 and starts on boot."
 
 say "5/7 nginx and HTTPS"
@@ -164,7 +189,7 @@ done
 if [[ " ${hosts[*]} " == *" $PANEL_HOST "* ]]; then
   email_args=(--register-unsafely-without-email)
   if [ ! -d /etc/letsencrypt/accounts ]; then
-    read -rp "Email for Let's Encrypt (optional, press Enter to skip): " em
+    read -rp "Email for Let's Encrypt (optional, press Enter to skip): " em || em=""
     [ -z "$em" ] || email_args=(-m "$em")
   fi
   d_args=(); for h in "${hosts[@]}"; do d_args+=(-d "$h"); done
@@ -196,9 +221,7 @@ esac
 echo "GCP firewall (VPC network > Firewall): allow tcp:80,443 from anywhere; limit tcp:22. Nothing else open."
 
 say "7/7 Smoke test"
-# The env file is root-only and holds the super admin login; pass it to the test via env, not argv.
-# shellcheck source=/dev/null
-(set -a; . "$ENV_FILE"; set +a; bash "$APP_DIR/smoke-test.sh" http://127.0.0.1:3000) || warn "Smoke test had failures (see above)."
+smoke
 web=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 --resolve "$PANEL_HOST:443:127.0.0.1" "https://$PANEL_HOST/api/me" || true)
 if [ "$web" = 401 ]; then echo "ok    https://$PANEL_HOST reaches the panel through nginx"
 else warn "https://$PANEL_HOST answered '$web' (expected 401 before login)"; fi
@@ -213,5 +236,5 @@ $(if [ $PANEL_ONLY = 1 ]; then echo "  Main app: not on this VM (panel-only); po
   Logs:     journalctl -u $SVC -f
   Restart:  sudo systemctl restart $SVC
   Backup:   $APP_DIR/server/data
-  Update:   upload and unzip the new version, then run this script again
+  Update:   from Cloud Shell: bash vm-panel/deploy/gcp-update.sh  (or on the VM: sudo bash deploy/setup.sh update)
 EOF

@@ -37,7 +37,7 @@ function Customer({me}){
     <div className="card"><div className="hero"><Ring u={me}/><div><div className="row" style={{justifyContent:'flex-start'}}><h2>{me.pkg} plan</h2>{st}</div>
       <p className="mute" style={{margin:'6px 0 0'}}>Started {fmt(me.start)}<br/>{me.expired?'Ended ':'Expires '}{fmt(me.exp)}</p></div></div>
       <div className="grid3">{[['RAM',me.ram+' GB'],['vCPU',me.cpu+' cores'],['Disk',me.disk+' GB']].map(([k,v])=>
-        <div className="res" key={k}><span className="mute">{k}</span><b>{v}</b><span className="lock">Set by admin · view only</span></div>)}</div></div>
+        <div className="res" key={k}><span className="mute">{k}</span><b>{v}</b></div>)}</div></div>
     <div className="card"><h3>Connect</h3><div className="row" style={{margin:'10px 0'}}><span className="mute">External IP</span><b>{me.ip||'Not assigned yet'}</b></div>
       {me.ip&&<div className="code">ssh {me.osUser||'user'}@{me.ip}</div>}</div>
     <div className="card"><h3>Files</h3>{err&&<p className="err">{err}</p>}
