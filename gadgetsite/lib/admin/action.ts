@@ -67,7 +67,7 @@ export function adminAction<S extends z.ZodType, R>(
   tags: (keyof typeof TAGS)[],
   handler: (input: z.infer<S>, ctx: { actorId: string; ip: string }) => Promise<R>,
 ) {
-  return async (_prev: ActionState<R>, formData: FormData): Promise<ActionState<R>> => {
+  return async (_prev: ActionState, formData: FormData): Promise<ActionState<R>> => {
     let actorId: string
     try {
       actorId = (await requireAdmin(permission)).user.id

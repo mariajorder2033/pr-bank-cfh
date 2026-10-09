@@ -181,7 +181,8 @@
       "taken": "Already taken.",
       "cycle": "A category cannot sit inside itself.",
       "required": "Required.",
-      "invalid_value": "Check this value."
+      "invalid_value": "Check this value.",
+      "sms_not_configured": "Save and enable an SMS gateway first."
     },
     "nav": {
       "dashboard": "Dashboard",
@@ -220,6 +221,42 @@
       "preorders": "New pre-order requests",
       "customers": "Customers",
       "recent": "Recent changes"
+    },
+    "settings": {
+      "title": "Settings",
+      "site": "Shop identity",
+      "nameEn": "Shop name (English)",
+      "nameBn": "Shop name (বাংলা)",
+      "phone": "Hotline",
+      "logoUrl": "Logo URL",
+      "logoHint": "Upload in Products → images, or paste an https URL. Empty shows the name.",
+      "theme": "Theme colours",
+      "motion": "Motion",
+      "heroCycleMs": "Hero cycle (ms)",
+      "heroSlideMs": "Hero slide (ms)",
+      "heroEasing": "Hero easing (CSS)",
+      "tickerPxPerS": "Ribbon speed (px/s)",
+      "wipeMs": "Menu wipe (ms)",
+      "tileFadeMs": "Tile fade (ms)",
+      "delivery": "Delivery",
+      "freeOver": "Free delivery over (৳)"
+    },
+    "services": {
+      "title": "API keys",
+      "intro": "Keys for outside services. They are stored encrypted and never shown again in full — leave a key blank to keep the saved one.",
+      "sms": "SMS gateway",
+      "current": "Saved: key {key}, sender {sender}",
+      "notSet": "No SMS gateway saved yet. SMS login stays hidden until one is enabled.",
+      "provider": "Provider",
+      "apiKey": "API key",
+      "keepBlank": "Leave blank to keep the saved key",
+      "senderId": "Sender ID",
+      "enabled": "Enabled",
+      "test": "Send a test SMS",
+      "testPhone": "To mobile number",
+      "sendTest": "Send test",
+      "later": "Payments and couriers",
+      "laterBody": "bKash, SSLCommerz, aamarPay, Pathao, Steadfast and RedX keys are added here with checkout (next stage)."
     }
   }
 }
