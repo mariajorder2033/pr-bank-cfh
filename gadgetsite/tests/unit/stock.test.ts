@@ -22,3 +22,8 @@ test('pre-order only when nothing is on hand', () => {
   expect(stockStatus(0, preorder)).toBe('preorder')
   expect(stockStatus(5, preorder)).toBe('in_stock')
 })
+
+test('rejects an available count that is not a whole number', () => {
+  expect(() => stockStatus(NaN, normal)).toThrow(RangeError)
+  expect(() => stockStatus(1.5, normal)).toThrow(RangeError)
+})

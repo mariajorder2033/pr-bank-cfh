@@ -99,7 +99,7 @@ The storefront port and the API come in Stage 2.
 - [ ] **Step 4:** Implement both files.
   - `formatBDT` groups by hand: the last 3 digits, then groups of 2, separated by commas. Don't rely on `Intl` `en-IN` output differing across ICU builds.
   - For `bn`, map the digits `0-9` to `০-৯`.
-  - `discountPercent` = `Math.floor(((regular - offer) / regular) * 100)` when `regular > 0 && offer < regular`, else `0`.
+  - `discountPercent` = `Math.floor(((regular - offer) * 100) / regular)` (multiply first; dividing first floors 29 % to 28 on ৳1,00,000 → ৳71,000) when `regular > 0 && offer < regular`, else `0`.
 - [ ] **Step 5:** Run `npm test`. Expected: PASS.
 - [ ] **Step 6:** Commit: `feat(gadgetsite): BDT formatting and computed discount`.
 
