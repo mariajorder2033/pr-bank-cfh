@@ -11,3 +11,9 @@ export function redis(): Redis {
   })
   return globalForRedis.redis
 }
+
+/** The client, connected (commands fail fast while disconnected, so connect first). */
+export async function connectedRedis(client: Redis = redis()): Promise<Redis> {
+  if (client.status === 'wait' || client.status === 'end') await client.connect()
+  return client
+}

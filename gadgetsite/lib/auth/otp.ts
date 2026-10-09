@@ -1,0 +1,75 @@
+import { randomInt } from 'node:crypto'
+import { db } from '@/lib/db'
+import { getSms } from '@/lib/integrations/sms'
+import { RateLimitUnavailable, hit } from '@/lib/server/rate-limit'
+import { getSettings } from '@/lib/server/content'
+import { sha256 } from './token'
+
+const TTL_MS = 5 * 60_000
+const MAX_ATTEMPTS = 5
+
+function secret(): string {
+  const s = process.env.SESSION_SECRET
+  if (!s || s.length < 32) throw new Error('SESSION_SECRET must be at least 32 characters')
+  return s
+}
+
+const codeHash = (phone: string, code: string) => sha256(`${secret()}|${phone}|${code}`)
+
+type Limited = { error: 'rate_limited' | 'unavailable' }
+
+async function limit(checks: [string, number, number][]): Promise<Limited | null> {
+  try {
+    for (const [key, max, windowS] of checks) {
+      if (!(await hit(key, max, windowS)).allowed) return { error: 'rate_limited' }
+    }
+    return null
+  } catch (e) {
+    if (e instanceof RateLimitUnavailable) return { error: 'unavailable' }
+    throw e
+  }
+}
+
+/** Sends a fresh 6-digit code to `phone` (already normalised); older codes stop working. */
+export async function requestOtp(
+  phone: string,
+  ip: string,
+): Promise<{ ok: true } | { error: 'disabled' } | Limited> {
+  const sms = getSms()
+  if (!sms) return { error: 'disabled' }
+  const limited = await limit([
+    [`otp:req:phone:${phone}`, 3, 600],
+    [`otp:req:ip:${ip}`, 10, 3600],
+  ])
+  if (limited) return limited
+
+  const code = String(randomInt(0, 1_000_000)).padStart(6, '0')
+  await db.$transaction([
+    db.otpCode.deleteMany({ where: { phone } }),
+    db.otpCode.create({
+      data: { phone, codeHash: codeHash(phone, code), expiresAt: new Date(Date.now() + TTL_MS) },
+    }),
+  ])
+  const { site } = await getSettings()
+  await sms.send(phone, `${site.nameEn} code: ${code} (5 min). কোড: ${code}`)
+  return { ok: true }
+}
+
+/** Checks a code; a correct code works once, five wrong tries burn it. */
+export async function verifyOtp(
+  phone: string,
+  code: string,
+): Promise<{ ok: true } | { error: 'invalid' | 'expired' } | Limited> {
+  const limited = await limit([[`otp:verify:phone:${phone}`, 10, 600]])
+  if (limited) return limited
+
+  const otp = await db.otpCode.findFirst({ where: { phone }, orderBy: { createdAt: 'desc' } })
+  if (!otp || otp.attempts >= MAX_ATTEMPTS) return { error: 'invalid' }
+  if (otp.expiresAt.getTime() <= Date.now()) return { error: 'expired' }
+  if (!/^\d{6}$/.test(code) || otp.codeHash !== codeHash(phone, code)) {
+    await db.otpCode.update({ where: { id: otp.id }, data: { attempts: { increment: 1 } } })
+    return { error: 'invalid' }
+  }
+  await db.otpCode.deleteMany({ where: { phone } })
+  return { ok: true }
+}
