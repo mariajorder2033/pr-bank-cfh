@@ -1,0 +1,532 @@
+// Sample catalog only (spec §1): admin replaces all of it. Prices are whole taka.
+
+export const categories = [
+  { slug: 'phones', nameEn: 'Phones', nameBn: 'ফোন' },
+  { slug: 'tablets', nameEn: 'Tablets', nameBn: 'ট্যাবলেট' },
+  { slug: 'laptops', nameEn: 'Laptops', nameBn: 'ল্যাপটপ' },
+  { slug: 'wearables', nameEn: 'Wearables', nameBn: 'স্মার্টওয়াচ' },
+  { slug: 'audio', nameEn: 'Audio', nameBn: 'অডিও' },
+  { slug: 'tv', nameEn: 'TV', nameBn: 'টিভি' },
+  { slug: 'home-appliances', nameEn: 'Home Appliances', nameBn: 'হোম অ্যাপ্লায়েন্স' },
+  { slug: 'accessories', nameEn: 'Accessories', nameBn: 'এক্সেসরিজ' },
+]
+
+export const brands = [
+  { slug: 'apple', nameEn: 'Apple', nameBn: 'অ্যাপল' },
+  { slug: 'samsung', nameEn: 'Samsung', nameBn: 'স্যামসাং' },
+  { slug: 'xiaomi', nameEn: 'Xiaomi', nameBn: 'শাওমি' },
+  { slug: 'oneplus', nameEn: 'OnePlus', nameBn: 'ওয়ানপ্লাস' },
+  { slug: 'google', nameEn: 'Google', nameBn: 'গুগল' },
+  { slug: 'lenovo', nameEn: 'Lenovo', nameBn: 'লেনোভো' },
+  { slug: 'asus', nameEn: 'Asus', nameBn: 'আসুস' },
+  { slug: 'sony', nameEn: 'Sony', nameBn: 'সনি' },
+  { slug: 'jbl', nameEn: 'JBL', nameBn: 'জেবিএল' },
+  { slug: 'anker', nameEn: 'Anker', nameBn: 'অ্যাঙ্কার' },
+]
+
+export const badges = [
+  { code: 'hot', labelEn: 'Hot', labelBn: 'হট', color: '#ff6b6b' },
+  { code: 'new', labelEn: 'New', labelBn: 'নতুন', color: '#1a9b3a' },
+  { code: 'official', labelEn: 'Official', labelBn: 'অফিসিয়াল', color: '#d2a679' },
+]
+
+type SampleVariant = {
+  color?: string
+  storage?: string
+  ram?: string
+  region?: string
+  offer: number
+  regular: number
+  stock: number
+}
+
+export type SampleProduct = {
+  slug: string
+  titleEn: string
+  category: string
+  brand: string
+  badges?: string[]
+  preorder?: boolean
+  bookingAmount?: number
+  warrantyEn: string
+  specs: string
+  variants: SampleVariant[]
+}
+
+const official = '1 year official warranty'
+const service = '1 year service warranty'
+
+export const products: SampleProduct[] = [
+  {
+    slug: 'iphone-16-pro',
+    titleEn: 'iPhone 16 Pro',
+    category: 'phones',
+    brand: 'apple',
+    badges: ['hot'],
+    warrantyEn: official,
+    specs: '6.3" Super Retina XDR, A18 Pro, 48MP Fusion camera, USB-C',
+    variants: [
+      {
+        color: 'Desert Titanium',
+        storage: '128GB',
+        ram: '8GB',
+        offer: 159999,
+        regular: 174999,
+        stock: 6,
+      },
+      {
+        color: 'Desert Titanium',
+        storage: '256GB',
+        ram: '8GB',
+        offer: 174999,
+        regular: 189999,
+        stock: 3,
+      },
+      {
+        color: 'Black Titanium',
+        storage: '256GB',
+        ram: '8GB',
+        offer: 174999,
+        regular: 189999,
+        stock: 0,
+      },
+    ],
+  },
+  {
+    slug: 'galaxy-s25-ultra',
+    titleEn: 'Samsung Galaxy S25 Ultra',
+    category: 'phones',
+    brand: 'samsung',
+    badges: ['official', 'new'],
+    warrantyEn: official,
+    specs: '6.9" QHD+ AMOLED 120Hz, Snapdragon 8 Elite, 200MP camera, S Pen',
+    variants: [
+      {
+        color: 'Titanium Silverblue',
+        storage: '256GB',
+        ram: '12GB',
+        offer: 164999,
+        regular: 179999,
+        stock: 8,
+      },
+      {
+        color: 'Titanium Black',
+        storage: '512GB',
+        ram: '12GB',
+        offer: 184999,
+        regular: 199999,
+        stock: 2,
+      },
+    ],
+  },
+  {
+    slug: 'xiaomi-14t',
+    titleEn: 'Xiaomi 14T',
+    category: 'phones',
+    brand: 'xiaomi',
+    warrantyEn: official,
+    specs: '6.67" 144Hz AMOLED, Dimensity 8300-Ultra, Leica 50MP camera',
+    variants: [
+      {
+        color: 'Titan Gray',
+        storage: '256GB',
+        ram: '12GB',
+        offer: 59999,
+        regular: 64999,
+        stock: 12,
+      },
+      {
+        color: 'Lemon Green',
+        storage: '512GB',
+        ram: '12GB',
+        offer: 66999,
+        regular: 71999,
+        stock: 5,
+      },
+    ],
+  },
+  {
+    slug: 'oneplus-13',
+    titleEn: 'OnePlus 13',
+    category: 'phones',
+    brand: 'oneplus',
+    badges: ['new'],
+    warrantyEn: service,
+    specs: '6.82" 2K LTPO AMOLED, Snapdragon 8 Elite, Hasselblad cameras, 6000mAh',
+    variants: [
+      {
+        color: 'Midnight Ocean',
+        storage: '256GB',
+        ram: '12GB',
+        region: 'Global',
+        offer: 94999,
+        regular: 99999,
+        stock: 4,
+      },
+      {
+        color: 'Arctic Dawn',
+        storage: '512GB',
+        ram: '16GB',
+        region: 'Global',
+        offer: 109999,
+        regular: 114999,
+        stock: 2,
+      },
+    ],
+  },
+  {
+    slug: 'pixel-9',
+    titleEn: 'Google Pixel 9',
+    category: 'phones',
+    brand: 'google',
+    warrantyEn: service,
+    specs: '6.3" Actua display, Tensor G4, 50MP + 48MP cameras',
+    variants: [
+      {
+        color: 'Obsidian',
+        storage: '128GB',
+        ram: '12GB',
+        region: 'US',
+        offer: 82999,
+        regular: 89999,
+        stock: 3,
+      },
+      {
+        color: 'Porcelain',
+        storage: '256GB',
+        ram: '12GB',
+        region: 'US',
+        offer: 92999,
+        regular: 99999,
+        stock: 1,
+      },
+    ],
+  },
+  {
+    slug: 'galaxy-a56',
+    titleEn: 'Samsung Galaxy A56 5G',
+    category: 'phones',
+    brand: 'samsung',
+    badges: ['official'],
+    warrantyEn: official,
+    specs: '6.7" Super AMOLED 120Hz, Exynos 1580, 50MP OIS camera',
+    variants: [
+      {
+        color: 'Awesome Graphite',
+        storage: '128GB',
+        ram: '8GB',
+        offer: 47999,
+        regular: 49999,
+        stock: 20,
+      },
+      {
+        color: 'Awesome Lightgray',
+        storage: '256GB',
+        ram: '8GB',
+        offer: 52999,
+        regular: 54999,
+        stock: 15,
+      },
+    ],
+  },
+  {
+    slug: 'redmi-note-14-pro',
+    titleEn: 'Redmi Note 14 Pro',
+    category: 'phones',
+    brand: 'xiaomi',
+    badges: ['hot'],
+    warrantyEn: official,
+    specs: '6.67" 1.5K AMOLED, Helio G100-Ultra, 200MP camera',
+    variants: [
+      {
+        color: 'Midnight Black',
+        storage: '256GB',
+        ram: '8GB',
+        offer: 31999,
+        regular: 33999,
+        stock: 30,
+      },
+    ],
+  },
+  {
+    slug: 'ipad-air-11-m2',
+    titleEn: 'iPad Air 11" (M2)',
+    category: 'tablets',
+    brand: 'apple',
+    warrantyEn: official,
+    specs: '11" Liquid Retina, Apple M2, Touch ID, Apple Pencil Pro support',
+    variants: [
+      {
+        color: 'Space Gray',
+        storage: '128GB',
+        region: 'Wi-Fi',
+        offer: 79999,
+        regular: 84999,
+        stock: 5,
+      },
+      { color: 'Blue', storage: '256GB', region: 'Wi-Fi', offer: 92999, regular: 97999, stock: 3 },
+    ],
+  },
+  {
+    slug: 'galaxy-tab-s10-plus',
+    titleEn: 'Samsung Galaxy Tab S10+',
+    category: 'tablets',
+    brand: 'samsung',
+    badges: ['official'],
+    warrantyEn: official,
+    specs: '12.4" Dynamic AMOLED 2X, Dimensity 9300+, S Pen included',
+    variants: [
+      {
+        color: 'Moonstone Gray',
+        storage: '256GB',
+        ram: '12GB',
+        offer: 124999,
+        regular: 134999,
+        stock: 4,
+      },
+    ],
+  },
+  {
+    slug: 'xiaomi-pad-7',
+    titleEn: 'Xiaomi Pad 7',
+    category: 'tablets',
+    brand: 'xiaomi',
+    warrantyEn: official,
+    specs: '11.2" 3.2K 144Hz, Snapdragon 7+ Gen 3, 8850mAh',
+    variants: [
+      {
+        color: 'Graphite Gray',
+        storage: '128GB',
+        ram: '8GB',
+        offer: 42999,
+        regular: 45999,
+        stock: 10,
+      },
+    ],
+  },
+  {
+    slug: 'macbook-air-13-m3',
+    titleEn: 'MacBook Air 13" (M3)',
+    category: 'laptops',
+    brand: 'apple',
+    badges: ['hot'],
+    warrantyEn: official,
+    specs: '13.6" Liquid Retina, Apple M3 8-core CPU, up to 18 hours battery',
+    variants: [
+      {
+        color: 'Midnight',
+        storage: '256GB',
+        ram: '16GB',
+        offer: 139999,
+        regular: 149999,
+        stock: 4,
+      },
+      {
+        color: 'Starlight',
+        storage: '512GB',
+        ram: '16GB',
+        offer: 164999,
+        regular: 174999,
+        stock: 2,
+      },
+    ],
+  },
+  {
+    slug: 'lenovo-ideapad-slim-5',
+    titleEn: 'Lenovo IdeaPad Slim 5 14"',
+    category: 'laptops',
+    brand: 'lenovo',
+    warrantyEn: '2 years official warranty',
+    specs: '14" WUXGA OLED, Ryzen 7 8845HS, 16GB LPDDR5x, 512GB SSD',
+    variants: [
+      {
+        color: 'Cosmic Blue',
+        storage: '512GB',
+        ram: '16GB',
+        offer: 92999,
+        regular: 98999,
+        stock: 6,
+      },
+    ],
+  },
+  {
+    slug: 'asus-zenbook-14-oled',
+    titleEn: 'Asus Zenbook 14 OLED',
+    category: 'laptops',
+    brand: 'asus',
+    badges: ['new'],
+    warrantyEn: '2 years official warranty',
+    specs: '14" 3K OLED 120Hz, Core Ultra 7 155H, 16GB, 1TB SSD',
+    variants: [
+      {
+        color: 'Ponder Blue',
+        storage: '1TB',
+        ram: '16GB',
+        offer: 134999,
+        regular: 144999,
+        stock: 3,
+      },
+    ],
+  },
+  {
+    slug: 'lenovo-legion-5',
+    titleEn: 'Lenovo Legion 5 Gen 9',
+    category: 'laptops',
+    brand: 'lenovo',
+    warrantyEn: '3 years official warranty',
+    specs: '16" WQXGA 165Hz, Core i7-14650HX, RTX 4060 8GB, 1TB SSD',
+    variants: [
+      { color: 'Luna Grey', storage: '1TB', ram: '16GB', offer: 189999, regular: 199999, stock: 2 },
+    ],
+  },
+  {
+    slug: 'apple-watch-series-10',
+    titleEn: 'Apple Watch Series 10',
+    category: 'wearables',
+    brand: 'apple',
+    warrantyEn: official,
+    specs: 'Wide-angle OLED, S10 SiP, sleep apnoea notifications',
+    variants: [
+      { color: 'Jet Black', storage: '42mm', offer: 49999, regular: 54999, stock: 5 },
+      { color: 'Rose Gold', storage: '46mm', offer: 54999, regular: 59999, stock: 3 },
+    ],
+  },
+  {
+    slug: 'galaxy-watch-7',
+    titleEn: 'Samsung Galaxy Watch7',
+    category: 'wearables',
+    brand: 'samsung',
+    badges: ['official'],
+    warrantyEn: official,
+    specs: 'Super AMOLED, Exynos W1000, BioActive sensor',
+    variants: [{ color: 'Green', storage: '44mm', offer: 32999, regular: 36999, stock: 7 }],
+  },
+  {
+    slug: 'xiaomi-smart-band-9',
+    titleEn: 'Xiaomi Smart Band 9',
+    category: 'wearables',
+    brand: 'xiaomi',
+    badges: ['hot'],
+    warrantyEn: official,
+    specs: '1.62" AMOLED, 21-day battery, 150+ sport modes',
+    variants: [{ color: 'Midnight Black', offer: 4499, regular: 4999, stock: 50 }],
+  },
+  {
+    slug: 'airpods-pro-2',
+    titleEn: 'AirPods Pro (2nd generation)',
+    category: 'audio',
+    brand: 'apple',
+    badges: ['hot'],
+    warrantyEn: official,
+    specs: 'Active noise cancellation, H2 chip, USB-C MagSafe case',
+    variants: [{ color: 'White', offer: 27999, regular: 32999, stock: 14 }],
+  },
+  {
+    slug: 'sony-wh-1000xm5',
+    titleEn: 'Sony WH-1000XM5',
+    category: 'audio',
+    brand: 'sony',
+    warrantyEn: official,
+    specs: 'Industry-leading noise cancelling, 30-hour battery, multipoint',
+    variants: [
+      { color: 'Black', offer: 38999, regular: 44999, stock: 6 },
+      { color: 'Silver', offer: 38999, regular: 44999, stock: 2 },
+    ],
+  },
+  {
+    slug: 'jbl-flip-6',
+    titleEn: 'JBL Flip 6',
+    category: 'audio',
+    brand: 'jbl',
+    warrantyEn: official,
+    specs: 'IP67 portable speaker, 12-hour playtime, PartyBoost',
+    variants: [{ color: 'Blue', offer: 12999, regular: 14999, stock: 18 }],
+  },
+  {
+    slug: 'galaxy-buds3-pro',
+    titleEn: 'Samsung Galaxy Buds3 Pro',
+    category: 'audio',
+    brand: 'samsung',
+    badges: ['official'],
+    preorder: true,
+    bookingAmount: 5000,
+    warrantyEn: official,
+    specs: 'Adaptive ANC, 2-way speakers, 24-bit Hi-Fi',
+    variants: [{ color: 'Silver', offer: 24999, regular: 27999, stock: 0 }],
+  },
+  {
+    slug: 'sony-bravia-55-x80l',
+    titleEn: 'Sony Bravia 55" X80L 4K Google TV',
+    category: 'tv',
+    brand: 'sony',
+    warrantyEn: '2 years official warranty',
+    specs: '55" 4K HDR, X1 processor, Google TV, Dolby Vision',
+    variants: [{ storage: '55"', offer: 104999, regular: 119999, stock: 3 }],
+  },
+  {
+    slug: 'xiaomi-tv-a-pro-55',
+    titleEn: 'Xiaomi TV A Pro 55" 2025',
+    category: 'tv',
+    brand: 'xiaomi',
+    badges: ['new'],
+    warrantyEn: '2 years official warranty',
+    specs: '55" 4K QLED, Google TV, Dolby Audio',
+    variants: [{ storage: '55"', offer: 57999, regular: 64999, stock: 5 }],
+  },
+  {
+    slug: 'samsung-55-crystal-uhd',
+    titleEn: 'Samsung 55" Crystal UHD DU8000',
+    category: 'tv',
+    brand: 'samsung',
+    badges: ['official'],
+    warrantyEn: '2 years official warranty',
+    specs: '55" 4K, Crystal Processor 4K, Tizen OS',
+    variants: [{ storage: '55"', offer: 72999, regular: 79999, stock: 4 }],
+  },
+  {
+    slug: 'xiaomi-robot-vacuum-s20',
+    titleEn: 'Xiaomi Robot Vacuum S20',
+    category: 'home-appliances',
+    brand: 'xiaomi',
+    warrantyEn: official,
+    specs: '5000Pa suction, LDS navigation, sweep and mop',
+    variants: [{ color: 'White', offer: 32999, regular: 37999, stock: 6 }],
+  },
+  {
+    slug: 'xiaomi-air-purifier-4-lite',
+    titleEn: 'Xiaomi Smart Air Purifier 4 Lite',
+    category: 'home-appliances',
+    brand: 'xiaomi',
+    warrantyEn: official,
+    specs: 'CADR 360 m³/h, HEPA filter, app control',
+    variants: [{ color: 'White', offer: 15999, regular: 17999, stock: 9 }],
+  },
+  {
+    slug: 'anker-nano-20w',
+    titleEn: 'Anker Nano 20W USB-C Charger',
+    category: 'accessories',
+    brand: 'anker',
+    warrantyEn: '18 months warranty',
+    specs: '20W PD fast charging, compact design',
+    variants: [{ color: 'White', offer: 1690, regular: 1990, stock: 80 }],
+  },
+  {
+    slug: 'anker-powercore-10000',
+    titleEn: 'Anker PowerCore 10000mAh',
+    category: 'accessories',
+    brand: 'anker',
+    badges: ['hot'],
+    warrantyEn: '18 months warranty',
+    specs: '10000mAh, 22.5W output, USB-C in/out',
+    variants: [{ color: 'Black', offer: 2990, regular: 3490, stock: 40 }],
+  },
+  {
+    slug: 'anker-usb-c-cable-240w',
+    titleEn: 'Anker USB-C to USB-C Cable 240W (1.8m)',
+    category: 'accessories',
+    brand: 'anker',
+    warrantyEn: '18 months warranty',
+    specs: '240W charging, braided nylon',
+    variants: [{ color: 'Black', offer: 990, regular: 1290, stock: 100 }],
+  },
+]
