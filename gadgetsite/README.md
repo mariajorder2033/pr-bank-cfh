@@ -1,3 +1,66 @@
 # gadgetsite
 
-Electronics store for Bangladesh. See `docs/superpowers/specs/2026-10-09-gadgetsite-design.md`.
+Admin-controlled electronics store for Bangladesh: storefront, `/admin` panel and API in one
+Next.js 15 app, on PostgreSQL 16 and Redis. Prices are whole taka (`৳1,85,990`); every
+shopper-facing string has English and Bangla.
+
+- Design spec: [`docs/superpowers/specs/2026-10-09-gadgetsite-design.md`](docs/superpowers/specs/2026-10-09-gadgetsite-design.md)
+- Product and technical requirements: [`docs/reference/PRD.md`](docs/reference/PRD.md), [`docs/reference/TRD.md`](docs/reference/TRD.md)
+- Payment and courier status: [`docs/integrations-status.md`](docs/integrations-status.md)
+
+This is a standalone npm project. It is not part of the bank monorepo's workspaces; run every
+command from this folder.
+
+## Setup
+
+Requires Node.js 22.13+, PostgreSQL 16 and Redis 7.
+
+```sh
+cp .env.example .env
+docker compose up -d      # or use a local PostgreSQL/Redis matching .env
+npm install               # also generates the Prisma client
+npm run db:migrate        # apply migrations
+npm run seed              # sample catalog, staff roles, default settings
+npm run dev               # http://localhost:3000
+```
+
+The seed adds sample products only. It never adds EMI rates, orders, customers or provider
+credentials; staff enter those in admin. It is safe to re-run and never overwrites admin edits.
+
+## Scripts
+
+| Script                     | What it does                                            |
+| -------------------------- | ------------------------------------------------------- |
+| `npm run dev` / `build`    | Next.js dev server / production build                   |
+| `npm run typecheck`        | `tsc --noEmit`                                          |
+| `npm run lint`             | ESLint and Prettier check (`npm run format` to fix)     |
+| `npm test`                 | Unit tests (pure domain logic)                          |
+| `npm run test:integration` | Tests against a real PostgreSQL (`TEST_DATABASE_URL`)   |
+| `npm run db:dev`           | Create a migration after editing `prisma/schema.prisma` |
+| `npm run db:migrate`       | Apply migrations                                        |
+| `npm run seed`             | Seed sample catalog and defaults                        |
+
+The integration suite drops and recreates the database named in `TEST_DATABASE_URL`, and refuses
+to run unless that name ends in `_test`.
+
+## Layout
+
+| Path              | Contents                                                                      |
+| ----------------- | ----------------------------------------------------------------------------- |
+| `app/`            | Next.js routes (storefront, `/admin`, `/api`) — from Stage 2                  |
+| `lib/domain/`     | Pure logic: money, discount, EMI, stock status, order/payment/shipment states |
+| `lib/db.ts`       | Prisma client                                                                 |
+| `prisma/`         | Schema, migrations, seed                                                      |
+| `tests/`          | `unit/` and `integration/`                                                    |
+| `docs/reference/` | Original PRD, TRD and HTML prototypes                                         |
+
+## Roadmap (spec §12)
+
+1. **Foundation** — scaffold, schema, domain logic, seed, CI _(done)_
+2. Catalog read path and storefront port
+3. Admin core: auth, 2FA, roles, audit log, settings, catalog
+4. Admin content: home builder, banners, menus, pages, promotions, EMI tables
+5. Checkout: cart, stock holds, OTP, addresses, orders, COD and bank transfer
+6. Payments: bKash, SSLCommerz, aamarPay, webhooks, reconciliation, refunds
+7. Shipping: Pathao, Steadfast, RedX, courier rules and fallback, COD ledger
+8. Accounts, notifications, Playwright matrix, hardening and deploy
