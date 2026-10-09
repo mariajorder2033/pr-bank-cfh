@@ -35,7 +35,7 @@ export async function requestOtp(
   phone: string,
   ip: string,
 ): Promise<{ ok: true } | { error: 'disabled' | 'send_failed' } | Limited> {
-  const sms = getSms()
+  const sms = await getSms()
   if (!sms) return { error: 'disabled' }
   const limited = await limit([
     [`otp:req:phone:${phone}`, 3, 600],

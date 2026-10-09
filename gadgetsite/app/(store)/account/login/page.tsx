@@ -15,7 +15,7 @@ export default async function LoginPage({ searchParams }: Props) {
   return (
     <section className={`${ui.panel} mx-auto my-8 grid max-w-md gap-4`}>
       <h1 className="text-[22px] font-semibold">{t('login')}</h1>
-      <LoginForm smsEnabled={getSms() !== null} next={next ? safeNext(next) : undefined} />
+      <LoginForm smsEnabled={(await getSms()) !== null} next={next ? safeNext(next) : undefined} />
     </section>
   )
 }

@@ -584,6 +584,19 @@ model PaymentProvider {
   @@map("payment_providers")
 }
 
+/// Keys for third-party services (SMS gateway and others), entered in admin.
+/// The config JSON is AES-256-GCM encrypted (lib/crypto.ts) and never shown in full.
+model ServiceCredential {
+  id              String   @id
+  provider        String
+  enabled         Boolean  @default(false)
+  configEncrypted Bytes
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("service_credentials")
+}
+
 model PaymentAttempt {
   id            String        @id @default(cuid())
   orderId       String
