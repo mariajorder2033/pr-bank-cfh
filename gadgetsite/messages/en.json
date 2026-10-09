@@ -182,7 +182,8 @@
       "cycle": "A category cannot sit inside itself.",
       "required": "Required.",
       "invalid_value": "Check this value.",
-      "sms_not_configured": "Save and enable an SMS gateway first."
+      "sms_not_configured": "Save and enable an SMS gateway first.",
+      "not_found": "Not found."
     },
     "nav": {
       "dashboard": "Dashboard",
@@ -257,6 +258,29 @@
       "sendTest": "Send test",
       "later": "Payments and couriers",
       "laterBody": "bKash, SSLCommerz, aamarPay, Pathao, Steadfast and RedX keys are added here with checkout (next stage)."
+    },
+    "f": {
+      "confirmDelete": "Delete this? It cannot be undone.",
+      "nameEn": "Name (English)",
+      "nameBn": "Name (বাংলা)",
+      "labelEn": "Label (English)",
+      "labelBn": "Label (বাংলা)",
+      "slug": "URL slug",
+      "code": "Code",
+      "parent": "Parent",
+      "noParent": "— none —",
+      "sort": "Sort order",
+      "active": "Active",
+      "color": "Colour",
+      "logo": "Logo URL",
+      "price": "Price (৳)",
+      "months": "Cover (months)",
+      "descEn": "Description (English)",
+      "descBn": "Description (বাংলা)",
+      "newItem": "Add new",
+      "products": "Products",
+      "back": "← Back",
+      "editing": "Edit {name}"
     }
   }
 }

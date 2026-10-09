@@ -182,7 +182,8 @@
       "cycle": "একটি ক্যাটাগরি নিজের ভেতরে থাকতে পারে না।",
       "required": "প্রয়োজনীয়।",
       "invalid_value": "মানটি দেখে নিন।",
-      "sms_not_configured": "আগে এসএমএস গেটওয়ে সেভ করে চালু করুন।"
+      "sms_not_configured": "আগে এসএমএস গেটওয়ে সেভ করে চালু করুন।",
+      "not_found": "পাওয়া যায়নি।"
     },
     "nav": {
       "dashboard": "ড্যাশবোর্ড",
@@ -257,6 +258,29 @@
       "sendTest": "টেস্ট পাঠান",
       "later": "পেমেন্ট ও কুরিয়ার",
       "laterBody": "bKash, SSLCommerz, aamarPay, Pathao, Steadfast ও RedX এর কী চেকআউটের সাথে (পরের ধাপে) এখানে যোগ হবে।"
+    },
+    "f": {
+      "confirmDelete": "এটি মুছবেন? আর ফেরত আনা যাবে না।",
+      "nameEn": "নাম (English)",
+      "nameBn": "নাম (বাংলা)",
+      "labelEn": "লেবেল (English)",
+      "labelBn": "লেবেল (বাংলা)",
+      "slug": "URL স্লাগ",
+      "code": "কোড",
+      "parent": "প্যারেন্ট",
+      "noParent": "— কোনোটি নয় —",
+      "sort": "ক্রম",
+      "active": "সক্রিয়",
+      "color": "রং",
+      "logo": "লোগো URL",
+      "price": "দাম (৳)",
+      "months": "কভার (মাস)",
+      "descEn": "বিবরণ (English)",
+      "descBn": "বিবরণ (বাংলা)",
+      "newItem": "নতুন যোগ করুন",
+      "products": "পণ্য",
+      "back": "← ফিরে যান",
+      "editing": "{name} এডিট"
     }
   }
 }

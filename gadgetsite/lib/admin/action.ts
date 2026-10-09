@@ -94,7 +94,11 @@ export function adminAction<S extends z.ZodType, R>(
       return { ok: true, data }
     } catch (e) {
       if (e instanceof ActionError) return { ok: false, error: e.code, fieldErrors: e.fieldErrors }
-      if (isPrisma(e, 'P2002')) return { ok: false, fieldErrors: { slug: ['taken'] } }
+      if (isPrisma(e, 'P2002')) {
+        const target = (e as { meta?: { target?: unknown } }).meta?.target
+        const field = Array.isArray(target) && typeof target[0] === 'string' ? target[0] : 'slug'
+        return { ok: false, fieldErrors: { [field]: ['taken'] } }
+      }
       if (isPrisma(e, 'P2003')) return { ok: false, error: 'in_use' }
       throw e
     }
