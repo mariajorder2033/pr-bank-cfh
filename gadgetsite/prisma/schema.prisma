@@ -861,17 +861,36 @@ model LoyaltyLedger {
 // ─── Admin ───────────────────────────────────────────────────────────────────
 
 model AdminUser {
-  id                  String     @id @default(cuid())
-  email               String     @unique
+  id                  String         @id @default(cuid())
+  email               String         @unique
   passwordHash        String
   totpSecretEncrypted Bytes?
-  active              Boolean    @default(true)
-  createdAt           DateTime   @default(now())
-  updatedAt           DateTime   @updatedAt
+  totpConfirmedAt     DateTime?
+  passwordChangedAt   DateTime       @default(now())
+  lastLoginAt         DateTime?
+  lastLoginIp         String?
+  active              Boolean        @default(true)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
   roles               UserRole[]
   auditLogs           AuditLog[]
+  sessions            AdminSession[]
 
   @@map("admin_users")
+}
+
+model AdminSession {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  ip        String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@map("admin_sessions")
 }
 
 model Role {
