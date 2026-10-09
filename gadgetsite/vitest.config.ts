@@ -21,7 +21,10 @@ export default defineConfig({
           environment: 'node',
           fileParallelism: false,
           globalSetup: ['tests/integration/global-setup.ts'],
-          env: { DATABASE_URL: process.env.TEST_DATABASE_URL ?? '' },
+          env: {
+            DATABASE_URL: process.env.TEST_DATABASE_URL ?? '',
+            REDIS_URL: process.env.REDIS_URL ?? 'redis://localhost:6379',
+          },
         },
       },
     ],
