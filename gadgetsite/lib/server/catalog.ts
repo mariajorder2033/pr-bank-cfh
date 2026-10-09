@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { ProductQueryInput, type ProductQuery } from '@/lib/content/schemas'
-import { emiOptions, type EmiOption } from '@/lib/domain/emi'
+import { emiOptions, type EmiOption, type EmiRate } from '@/lib/domain/emi'
 import { discountPercent } from '@/lib/domain/pricing'
 import { stockStatus, type StockStatus } from '@/lib/domain/stock'
 import type { Prisma } from '@/lib/generated/prisma/client'
@@ -37,6 +37,16 @@ export type ProductVariant = {
   images: string[]
 }
 
+export type EmiBank = {
+  bank: Bilingual
+  logoUrl: string | null
+  minAmount: number
+  rates: EmiRate[]
+}
+
+/** A bank's EMI for one price; `rates` let the product page recompute per variant. */
+export type EmiBankOffer = EmiBank & { options: EmiOption[] }
+
 export type ProductDetail = ProductCard & {
   descriptionHtml: Bilingual
   warranty: Bilingual
@@ -44,7 +54,7 @@ export type ProductDetail = ProductCard & {
   bookingAmount: number | null
   variants: ProductVariant[]
   carePlans: { id: string; name: Bilingual; price: number; coverageMonths: number }[]
-  emi: { bank: Bilingual; logoUrl: string | null; options: EmiOption[] }[]
+  emi: EmiBankOffer[]
   category: { slug: string; name: Bilingual }
 }
 
@@ -212,17 +222,9 @@ export async function getProduct(slug: string, now = new Date()): Promise<Produc
   const card = toCard(row, variants)
   if (!card) return null
 
-  const banks = await db.emiBank.findMany({
-    include: { rates: { where: { type: 'website' } } },
-    orderBy: { nameEn: 'asc' },
-  })
-  const emi = banks.flatMap((bank) => {
-    const rates = bank.rates.map((r) => ({
-      tenureMonths: r.tenureMonths,
-      percent: Number(r.percent),
-    }))
-    const options = emiOptions(card.offerPrice, rates, bank.minAmount)
-    return options.length ? [{ bank: bilingual(bank, 'name'), logoUrl: bank.logoUrl, options }] : []
+  const emi = (await listEmiBanks()).flatMap((bank) => {
+    const options = emiOptions(card.offerPrice, bank.rates, bank.minAmount)
+    return options.length ? [{ ...bank, options }] : []
   })
 
   return {
@@ -307,5 +309,19 @@ export async function listBrands(): Promise<
     name: bilingual(b, 'name'),
     logoUrl: b.logoUrl,
     productCount: b._count.products,
+  }))
+}
+
+/** EMI banks with their website-payment rates (rates come only from admin, TRD §5). */
+export async function listEmiBanks(): Promise<EmiBank[]> {
+  const banks = await db.emiBank.findMany({
+    include: { rates: { where: { type: 'website' }, orderBy: { tenureMonths: 'asc' } } },
+    orderBy: { nameEn: 'asc' },
+  })
+  return banks.map((bank) => ({
+    bank: bilingual(bank, 'name'),
+    logoUrl: bank.logoUrl,
+    minAmount: bank.minAmount,
+    rates: bank.rates.map((r) => ({ tenureMonths: r.tenureMonths, percent: Number(r.percent) })),
   }))
 }

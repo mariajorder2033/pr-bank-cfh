@@ -37,3 +37,21 @@
     transition: none !important;
   }
 }
+
+/* Hero geometry (TRD §9): slide width and gap per breakpoint, read by HeroSlider. */
+.hero {
+  --sw: 88%;
+  --gap: 12px;
+}
+@media (min-width: 701px) {
+  .hero {
+    --sw: 78%;
+    --gap: 16px;
+  }
+}
+@media (min-width: 1101px) {
+  .hero {
+    --sw: 66.1%;
+    --gap: 24px;
+  }
+}

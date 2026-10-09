@@ -17,7 +17,7 @@ export default {
         ok: 'var(--ok)',
         ink: '#14181b',
       },
-      fontFamily: { sans: ['Outfit', 'system-ui', 'sans-serif'] },
+      fontFamily: { sans: ['Outfit Variable', 'Outfit', 'system-ui', 'sans-serif'] },
       keyframes: {
         fi: { from: { opacity: '0' }, to: { opacity: '1' } },
         mq: { to: { transform: 'translateX(-50%)' } },

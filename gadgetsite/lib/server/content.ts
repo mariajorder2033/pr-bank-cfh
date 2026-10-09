@@ -169,3 +169,17 @@ export async function listBlogPosts(now = new Date()): Promise<CmsPage[]> {
   })
   return rows.map(toPage)
 }
+
+/** Footer menu without links to CMS pages that are not visible yet (getPage rules). */
+export async function getFooterLinks(now = new Date()): Promise<MenuItem[]> {
+  const items = await getMenu('footer')
+  const slugs = items.flatMap((i) => (/^\/[a-z0-9-]+$/.test(i.href) ? [i.href.slice(1)] : []))
+  const pages = await db.page.findMany({ where: { slug: { in: slugs } }, select: { slug: true } })
+  const cms = new Set(pages.map((p) => p.slug))
+  const visible = new Set<string>()
+  for (const slug of cms) if (await getPage(slug, now)) visible.add(slug)
+  return items.filter((i) => {
+    const slug = i.href.slice(1)
+    return !cms.has(slug) || visible.has(slug)
+  })
+}

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { db } from '@/lib/db'
-import { getLayout, getMegaMenus, getPage, getSettings } from '@/lib/server/content'
+import { getFooterLinks, getLayout, getMegaMenus, getPage, getSettings } from '@/lib/server/content'
 import { categories } from '@/prisma/seed-data/catalog'
 import { seed } from '@/prisma/seed'
 
@@ -44,4 +44,12 @@ describe('getPage', () => {
 test('one mega menu per seeded category', async () => {
   const menus = await getMegaMenus()
   for (const c of categories) expect(menus.map((m) => m.categorySlug)).toContain(c.slug)
+})
+
+test('footer links skip CMS pages shoppers cannot see yet', async () => {
+  const hrefs = async () => (await getFooterLinks()).map((l) => l.href)
+  expect(await hrefs()).not.toContain('/terms')
+  await db.page.update({ where: { slug: 'terms' }, data: { bodyHtmlEn: '<p>Terms</p>' } })
+  expect(await hrefs()).toContain('/terms')
+  await db.page.update({ where: { slug: 'terms' }, data: { bodyHtmlEn: '' } })
 })

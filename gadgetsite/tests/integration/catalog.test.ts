@@ -2,7 +2,13 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { db } from '@/lib/db'
 import { discountPercent } from '@/lib/domain/pricing'
 import { emiOptions } from '@/lib/domain/emi'
-import { getProduct, getProductsBySlugs, listProducts, searchProducts } from '@/lib/server/catalog'
+import {
+  getProduct,
+  getProductsBySlugs,
+  listEmiBanks,
+  listProducts,
+  searchProducts,
+} from '@/lib/server/catalog'
 import { seed } from '@/prisma/seed'
 
 const MIN = 60_000
@@ -103,6 +109,11 @@ describe('getProduct', () => {
     expect(p.emi).toHaveLength(1)
     expect(p.emi[0].options).toEqual(
       emiOptions(p.offerPrice, [{ tenureMonths: 12, percent: 9 }], 5000),
+    )
+    expect(p.emi[0]).toMatchObject({ minAmount: 5000, rates: [{ tenureMonths: 12, percent: 9 }] })
+    const banks = await listEmiBanks()
+    expect(banks).toContainEqual(
+      expect.objectContaining({ minAmount: 5000, rates: [{ tenureMonths: 12, percent: 9 }] }),
     )
     await db.emiBank.delete({ where: { id: bank.id } })
   })

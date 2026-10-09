@@ -36,9 +36,11 @@ export const searchProducts = cached('searchProducts', TAGS.catalog, (q: string,
 export const listCategories = cached('listCategories', TAGS.catalog, catalog.listCategories)
 export const getCategory = cached('getCategory', TAGS.catalog, catalog.getCategory)
 export const listBrands = cached('listBrands', TAGS.catalog, catalog.listBrands)
+export const listEmiBanks = cached('listEmiBanks', TAGS.catalog, catalog.listEmiBanks)
 
 export const getSettings = cached('getSettings', TAGS.settings, content.getSettings)
 export const getMenu = cached('getMenu', TAGS.content, content.getMenu)
+export const getFooterLinks = cached('getFooterLinks', TAGS.content, () => content.getFooterLinks())
 export const getMegaMenus = cached('getMegaMenus', TAGS.content, content.getMegaMenus)
 export const getExploreBrands = cached('getExploreBrands', TAGS.content, content.getExploreBrands)
 export const getLayout = cached('getLayout', TAGS.content, (page: string) =>
