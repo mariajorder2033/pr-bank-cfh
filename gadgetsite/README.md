@@ -40,8 +40,20 @@ credentials; staff enter those in admin. It is safe to re-run and never overwrit
 | `npm run db:migrate`       | Apply migrations                                        |
 | `npm run seed`             | Seed sample catalog and defaults                        |
 
-The integration suite drops and recreates the database named in `TEST_DATABASE_URL`, and refuses
-to run unless that name ends in `_test`.
+The integration suite drops and recreates the database named in `TEST_DATABASE_URL`; the e2e suite
+does the same for `E2E_DATABASE_URL`, seeds it, builds the app and serves it on port 3100. Both
+refuse to touch a database whose name does not end in `_test` or `_e2e`. Without a downloaded
+Playwright browser, set `PLAYWRIGHT_CHROMIUM_PATH` to a local Chromium binary.
+
+## Storefront routes
+
+`/` · `/category/[slug]` (filters in the URL: `brands`, `min`, `max`, `inStock=1`, `sort`, `page`) ·
+`/products/[slug]` · `/brands` · `/search?q=` or `?brand=` · `/online-exclusive` · `/pre-order` ·
+`/emi-policy` · `/about` · `/blogs` · `/blogs/[slug]` · `/[slug]` (admin CMS pages) · `/wishlist` ·
+`/compare`. JSON: `GET /api/products?slugs=`, `GET /api/search?q=`, `POST /api/preorder-requests`.
+
+All content (menus, ribbon, banners, home rows, pages, settings, theme, motion) is read from the
+database. Policy pages and the footer links to them appear once admin gives them a body.
 
 ## Layout
 
@@ -57,7 +69,7 @@ to run unless that name ends in `_test`.
 ## Roadmap (spec §12)
 
 1. **Foundation** — scaffold, schema, domain logic, seed, CI _(done)_
-2. Catalog read path and storefront port
+2. **Catalog read path and storefront port** _(done)_
 3. Admin core: auth, 2FA, roles, audit log, settings, catalog
 4. Admin content: home builder, banners, menus, pages, promotions, EMI tables
 5. Checkout: cart, stock holds, OTP, addresses, orders, COD and bank transfer

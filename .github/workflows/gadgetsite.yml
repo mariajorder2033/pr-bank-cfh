@@ -25,6 +25,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://gadgetsite:gadgetsite@localhost:5432/gadgetsite
       TEST_DATABASE_URL: postgresql://gadgetsite:gadgetsite@localhost:5432/gadgetsite_test
+      E2E_DATABASE_URL: postgresql://gadgetsite:gadgetsite@localhost:5432/gadgetsite_e2e
       REDIS_URL: redis://localhost:6379
     services:
       postgres:
@@ -58,3 +59,16 @@ jobs:
         run: npm run test:integration
       - name: Build
         run: npm run build
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Storefront e2e (fresh seeded e2e database)
+        run: npm run test:e2e
+        env:
+          CI: '1'
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: gadgetsite/playwright-report
+          retention-days: 7
