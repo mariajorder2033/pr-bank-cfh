@@ -45,12 +45,28 @@ does the same for `E2E_DATABASE_URL`, seeds it, builds the app and serves it on 
 refuse to touch a database whose name does not end in `_test` or `_e2e`. Without a downloaded
 Playwright browser, set `PLAYWRIGHT_CHROMIUM_PATH` to a local Chromium binary.
 
+## Customer accounts
+
+Customers can browse and fill a cart without an account (the cart lives in their browser).
+`/account/signup` creates an account with name, mobile number and password; `/account/login`
+logs in with mobile number and password, or with a 6-digit SMS code when an SMS gateway is set.
+Signing in by SMS creates the account for a new number. The first SMS sign-in on an account whose
+number was never verified wipes its password and signs out its sessions, so nobody can keep a
+number they registered without owning it. Each login records its time and IP on the customer.
+
+| Variable           | Purpose                                                                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `SESSION_SECRET`   | 32+ random characters; signs SMS codes. Required.                                                                                                                  |
+| `REDIS_URL`        | Rate limits for login, signup and SMS codes. If Redis is down, login is refused.                                                                                   |
+| `SMS_PROVIDER`     | Unset: SMS login hidden. `console`: prints codes to the log (dev/test only, **never production**). A real Bangladeshi gateway adapter is added once one is chosen. |
+| `SMS_CONSOLE_FILE` | With `console`, also appends `{phone, text}` lines here (used by e2e).                                                                                             |
+
 ## Storefront routes
 
 `/` · `/category/[slug]` (filters in the URL: `brands`, `min`, `max`, `inStock=1`, `sort`, `page`) ·
 `/products/[slug]` · `/brands` · `/search?q=` or `?brand=` · `/online-exclusive` · `/pre-order` ·
 `/emi-policy` · `/about` · `/blogs` · `/blogs/[slug]` · `/[slug]` (admin CMS pages) · `/wishlist` ·
-`/compare`. JSON: `GET /api/products?slugs=`, `GET /api/search?q=`, `POST /api/preorder-requests`.
+`/compare` · `/account` · `/account/login` · `/account/signup`. JSON: `GET /api/products?slugs=`, `GET /api/search?q=`, `POST /api/preorder-requests`.
 
 All content (menus, ribbon, banners, home rows, pages, settings, theme, motion) is read from the
 database through Next's data cache (`lib/server/cached.ts`, 5-minute revalidate, tags `catalog`,

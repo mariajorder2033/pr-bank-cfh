@@ -4,6 +4,9 @@ import { defineConfig, devices } from '@playwright/test'
 if (existsSync('.env')) process.loadEnvFile('.env')
 
 const PORT = 3100
+// Its own Redis database, cleared before each run, so rate limits never carry over.
+export const E2E_REDIS_URL =
+  (process.env.REDIS_URL ?? 'redis://localhost:6379').replace(/\/\d*$/, '') + '/2'
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -28,6 +31,12 @@ export default defineConfig({
     port: PORT,
     reuseExistingServer: false, // a stale server would serve an old build
     timeout: 300_000,
-    env: { DATABASE_URL: process.env.E2E_DATABASE_URL ?? '', APP_URL: `http://localhost:${PORT}` },
+    env: {
+      DATABASE_URL: process.env.E2E_DATABASE_URL ?? '',
+      APP_URL: `http://localhost:${PORT}`,
+      REDIS_URL: E2E_REDIS_URL,
+      SMS_PROVIDER: 'console',
+      SMS_CONSOLE_FILE: 'node_modules/.cache/gadgetsite-e2e/sms.jsonl',
+    },
   },
 })

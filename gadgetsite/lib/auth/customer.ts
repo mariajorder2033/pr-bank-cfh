@@ -29,8 +29,13 @@ async function limit(checks: [string, number, number][]): Promise<Limited | null
   }
 }
 
+/** Starts a session and records the login (time and IP) on the customer, for support and fraud checks. */
 async function createSession(customerId: string, meta: Meta): Promise<string> {
   const token = newToken()
+  await db.customer.update({
+    where: { id: customerId },
+    data: { lastLoginAt: new Date(), lastLoginIp: meta.ip },
+  })
   await db.customerSession.create({
     data: {
       tokenHash: sha256(token),

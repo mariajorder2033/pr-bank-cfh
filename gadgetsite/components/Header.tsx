@@ -33,9 +33,11 @@ type Props = {
   /** Dropdown panels, matched to chips by their `/category/<slug>` link. */
   megaMenus: MegaMenu[]
   exploreBrands: Record<string, ExploreBrand[]>
+  /** The signed-in customer, or null. */
+  customer: { firstName: string | null } | null
 }
 
-export default function Header({ site, menu, megaMenus, exploreBrands }: Props) {
+export default function Header({ site, menu, megaMenus, exploreBrands, customer }: Props) {
   const t = useTranslations('nav')
   const locale = useLocale() as Locale
   const router = useRouter()
@@ -112,6 +114,14 @@ export default function Header({ site, menu, megaMenus, exploreBrands }: Props) 
           </Link>
           <Link href="/compare" className={ui.iconBox} aria-label={t('compare')}>
             ⇄
+          </Link>
+          <Link
+            href={customer ? '/account' : '/account/login'}
+            data-testid="account-link"
+            className={`${ui.iconBox} max-w-[9rem] truncate text-xs`}
+            aria-label={t('account')}
+          >
+            👤{customer?.firstName ? ` ${customer.firstName}` : ''}
           </Link>
           <button
             type="button"

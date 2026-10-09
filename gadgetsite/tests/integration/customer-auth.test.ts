@@ -44,8 +44,11 @@ describe('password accounts', () => {
     const p = phone()
     const signed = await signUp({ name: 'Rafi Ahmed', phone: p, password: 'secret-pass' }, IP)
     expect((await readCustomer(ok(signed)))!.name).toBe('Rafi Ahmed')
-    const logged = await loginPassword(p, 'secret-pass', IP)
-    expect((await readCustomer(ok(logged)))!.phone).toBe(p)
+    const logged = await loginPassword(p, 'secret-pass', IP, 'Test Browser')
+    const c = (await readCustomer(ok(logged)))!
+    expect(c.phone).toBe(p)
+    expect(c.lastLoginIp).toBe(IP)
+    expect(c.lastLoginAt).toBeInstanceOf(Date)
   })
 
   test('accepts the phone in +880 form', async () => {
