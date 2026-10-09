@@ -5,6 +5,7 @@
 **Goal:** Customers can sign up and log in with phone + password today, and with phone + SMS code once an SMS gateway is configured. They can see their account page, change their password and log out.
 
 **Architecture:**
+
 - **Shared auth primitives:** `lib/auth/` holds the password hash, session tokens and OTP. They are reused by the Stage 3 admin.
 - **Rate limits:** a Redis rate limiter in `lib/server/rate-limit.ts`, failing closed.
 - **SMS:** behind `SmsProvider` in `lib/integrations/sms/`.
@@ -68,6 +69,7 @@
     - `verifyOtp(phone, code)` → `{ok:true} | {error:'invalid'|'expired'|'rate_limited'|'unavailable'}`
 
   The SMS text is bilingual: `gadgetsite code: 123456 (5 min)`, with the site name from settings.
+
 - **Tests (integration):**
   - Request then verify with the code from the console file → ok.
   - Verifying again with the same code → `invalid` (single use).
