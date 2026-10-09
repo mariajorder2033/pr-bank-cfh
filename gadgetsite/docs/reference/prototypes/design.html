@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>gadgetsite — all pages</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#2e2a26;--pn:#3a332c;--dk:#14181b;--sand:#d2a679;--br:#6b3f12;--sale:#ff7b7b;--ok:#0a9a2a;--tx:#f4ede5;--mut:#a89d90;font-family:Outfit,system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-size:14px}a{color:inherit;text-decoration:none}
+.w{max-width:1200px;margin:auto;padding:0 20px}
+.hd{background:linear-gradient(#0c0a09,#1d1915);border-radius:0 0 22px 22px;padding:6px 0 14px}
+.tb{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);padding:2px 0 8px}
+.mn{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.lg{font:800 28px Georgia,serif;color:#fff}.lg img{height:34px;display:block}
+.mn .s{flex:1;min-width:180px;background:#2a2521;border-radius:10px;padding:10px 14px;color:var(--mut)}
+.pill{background:var(--pn);border-radius:10px;padding:8px 12px;font-size:13px}.pill.on{background:#5b4630;border:1px solid var(--sand);color:var(--sand)}
+.nv{display:flex;gap:10px;margin-top:12px;align-items:center;overflow-x:auto}.ex{background:var(--sand);color:#14181b;font-weight:600;border-radius:10px;padding:11px 18px;white-space:nowrap}
+.nv .l{display:flex;gap:6px;background:#2a2521;border-radius:10px;padding:6px}.nv .l span{padding:6px 10px;border-radius:8px;background:#3a332c;white-space:nowrap;font-size:12px}
+.rb{background:#3a332c;color:var(--mut);font-size:12px;padding:8px 0;display:flex;gap:40px;justify-content:center;overflow:hidden;white-space:nowrap}
+.msg{position:fixed;right:0;top:35%;background:#8a4b0e;writing-mode:vertical-rl;padding:16px 8px;border-radius:10px 0 0 10px;font-size:12px;z-index:9}
+h2{font-size:22px;font-weight:600;margin:0 0 14px}.hr{display:flex;justify-content:space-between;align-items:center}.see{background:#fbf3ea;color:#14181b;border-radius:8px;padding:6px 14px;font-size:12px}
+.band{background:var(--br);padding:30px 0;margin:26px 0}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}.g5{grid-template-columns:repeat(5,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:800px){.g5,.g4{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr!important}}
+.c{background:#f4f4f4;color:#14181b;border-radius:16px;padding:12px;position:relative}
+.c .im{height:140px;border-radius:10px;background:linear-gradient(135deg,#d9d9d9,#fff);margin-bottom:8px}
+.dc{position:absolute;top:10px;left:10px;background:var(--sale);color:#fff;font-size:11px;padding:2px 8px;border-radius:99px}
+.bd{position:absolute;top:10px;right:10px;background:#4a2c0e;color:#fff;font-size:11px;padding:3px 9px;border-radius:99px}
+.c .n{font-size:13px}.ok{color:var(--ok)}.out{color:#e02020}.c b{font-size:16px}.c s{color:#999;font-size:12px}
+.ab{display:flex;gap:6px;margin-top:8px}.ab span{flex:1;border:1px solid #f0d9bd;border-radius:10px;padding:8px;text-align:center;color:#6b3f12;font-weight:500}.ab i{width:36px;border:1px solid #ddd;border-radius:50%;text-align:center;padding:6px;font-style:normal}
+.tab{display:inline-block;background:#f4ede5;color:#14181b;border-radius:8px;padding:6px 14px;font-size:12px;margin-right:6px}.tab.on{background:#8d7762;color:#fff}
+.bn{border-radius:16px;min-height:170px;background:linear-gradient(120deg,#171313,#4a1e22);padding:30px;display:flex;flex-direction:column;justify-content:center;font-size:30px;font-weight:300}.bn b{font-weight:700}
+.cd{background:#a7753f;border-radius:50%;padding:6px 8px;font-size:12px;margin-left:4px}
+.pg{display:none}.pg.on{display:block}
+.pn{background:var(--pn);border-radius:14px;padding:16px;margin-bottom:14px}.two{display:grid;grid-template-columns:260px 1fr;gap:20px}
+.ch{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.ch span{background:#1a1613;border-radius:99px;padding:7px 14px;font-size:12px}.ch .on{background:#8a4b0e}
+.op{display:inline-block;border:1px solid #6d6154;background:#f4f4f4;color:#14181b;border-radius:8px;padding:6px 12px;margin:3px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;text-align:center}.tbl td,.tbl th{border:1px solid #4a4036;padding:9px}
+.bg{background:#fff;color:#14181b;border-radius:12px;padding:26px 10px;text-align:center;font-weight:600}
+input,textarea{width:100%;background:#14181b;border:1px solid #3d352d;color:var(--tx);padding:11px;border-radius:8px;margin:5px 0;font:inherit}
+.btn{background:var(--sand);color:#14181b;border:0;border-radius:10px;padding:11px 20px;font:600 14px Outfit;cursor:pointer}
+.st{display:flex;flex-wrap:wrap;gap:10px}.st div{background:#fff;color:#c97a3a;border-radius:8px;padding:14px;text-align:center;flex:1;min-width:200px;font-size:22px}.st small{display:block;color:#14181b;font-size:13px}
+.nl{background:var(--bg);width:min(720px,90%);margin:60px auto -50px;position:relative;z-index:1;border-radius:20px;padding:26px;text-align:center}
+.ft{background:#12171a;border-radius:24px 24px 0 0;padding:80px 0 20px;color:#cfd8dc;font-size:12px}.ft .w{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1.3fr;gap:20px;line-height:2}.ft h4{font-size:14px;margin:0;color:#fff}
+@media(max-width:800px){.ft .w{grid-template-columns:1fr 1fr}}
+.cp{text-align:center;margin-top:24px;color:var(--sand)}.sb{position:sticky;bottom:0;background:#4a3d31;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+
+.hd{background:radial-gradient(120% 100% at 50% 0,#2a241f,#0b0908 70%);border-radius:0 0 26px 26px;width:min(1240px,calc(100% - 60px));margin:0 auto;padding:6px 0 14px}
+.hi{padding:0 34px}.tb{font-size:10px;color:#cfc6bb;padding:4px 0 10px}.sd{color:var(--sand)}
+.mn{gap:22px;flex-wrap:nowrap}.lg{font:800 30px Georgia,serif;letter-spacing:-1px}.tl{display:flex;gap:22px;font-size:12px}.tl a{padding:6px 0}.tl .of{background:#5b4630;border:1px solid var(--sand);color:#fff;border-radius:8px;padding:6px 14px}
+.mn .s{background:#2a2521;border-radius:10px;padding:11px 14px;font-size:12px;min-width:0}.ic{background:#2a2521;border-radius:10px;padding:9px 12px}.ic.av{background:#5a4d40}
+.nv .l{background:#1c1814;border-radius:10px;padding:6px;flex:1;overflow:hidden}.nv .l span{background:#2c2621;color:#e8e0d6;border-radius:6px;padding:7px 12px;font-size:11px}.ex{font-size:11px;letter-spacing:.3px}
+.rb{width:min(1240px,calc(100% - 60px));margin:10px auto 0;background:#3a332c;border-radius:8px;gap:60px;padding:9px 20px;font-size:11px}
+.msg{writing-mode:vertical-rl;transform:rotate(180deg);background:#8a4b0e;border-radius:0 10px 10px 0;right:0;left:auto;padding:18px 9px;font-size:11px}
+.nl{background:#322c27;width:min(720px,80%);margin:70px auto -62px;position:relative;z-index:2;border-radius:24px;padding:24px 62px 70px;text-align:center;box-shadow:0 -6px 0 #2e2a26}.nl h3{margin:0 0 4px;font-size:16px;font-weight:500;letter-spacing:.5px}.nl small{font-size:10px;color:#58617a}
+.nf{display:flex;align-items:center;border:1px solid #b8ab9b;border-radius:14px;margin-top:14px;padding:3px;text-align:left}.nf span{padding:0 10px;color:#8a8076}.nf input{border:0;background:none;margin:0;font-size:11px}.nf button{background:#3d2d1f;color:#fff;border:0;border-radius:0 10px 10px 0;padding:11px 24px;font:11px Outfit}
+.ft{background:#12181b;border-radius:28px 28px 0 0;width:min(1240px,calc(100% - 60px));margin:0 auto;padding:80px 0 0;color:#d6dde0;position:relative;z-index:1}
+.fw{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr 1.15fr;gap:26px;padding:0 36px;font-size:10.5px}.fw a{display:block;line-height:2.1;color:#e9e1d7}.fw h4{font-size:12px;color:#fff;font-weight:500;padding-bottom:10px;margin:0 0 10px;border-bottom:1px solid #2a3236}
+.ad{line-height:2;color:#a9c3e8;margin:10px 0}.ad b{color:#fff;font-weight:600}.so{display:flex;gap:10px;margin:12px 0}.so i{width:30px;height:30px;border-radius:50%;background:#1d2428;display:grid;place-items:center;font-style:normal;color:var(--sand);font-size:12px}
+.gp{display:inline-block;background:#000;border:1px solid #777;border-radius:6px;padding:6px 12px;font-size:12px;color:#fff}.gp small{font-size:7px;display:block;margin-left:16px}.sm{display:inline-block;margin-top:6px;color:#fff}
+.cpw{margin-top:36px;border-top:1px solid #3a3430;position:relative;text-align:center;height:60px}.cp{position:absolute;left:50%;top:-1px;transform:translateX(-50%);background:#161b1e;border:1px solid #3a3430;border-top:0;border-radius:0 0 22px 22px;padding:16px 34px;font-size:11px;color:#d8c5ad;white-space:nowrap;background-image:radial-gradient(#4a4036,#161b1e 70%)}
+@media(max-width:800px){.mn{flex-wrap:wrap}.tl{display:none}.fw{grid-template-columns:1fr 1fr}.cp{white-space:normal;width:90%}}
+</style><style>
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}@keyframes fi{from{opacity:0}to{opacity:1}}@keyframes pu{50%{transform:scale(1.12)}}
+.rb{display:block;overflow:hidden}.rb .tr{display:inline-flex;gap:60px;white-space:nowrap;animation:mq 30s linear infinite}.rb:hover .tr{animation-play-state:paused}
+.pg.on{animation:fi .35s ease}.c{transition:transform .25s,box-shadow .25s}.c:hover{transform:translateY(-4px);box-shadow:0 10px 24px #0006}
+.ab span{transition:background .2s}.ab span:hover{background:#fdf1e3}.ab i{cursor:pointer}
+.ic2{position:absolute;right:10px;top:104px;display:flex;gap:6px}.ic2 i{width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0003;display:grid;place-items:center;font-style:normal;cursor:pointer;font-size:13px;color:#555}.ic2 i.on{color:#e0245e;animation:pu .35s}
+.wr{position:absolute;left:10px;top:108px;background:#a7753f;color:#fff;font-size:8px;border-radius:5px;padding:2px 5px}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:14px}.dots i{width:7px;height:7px;border-radius:50%;background:#ffffff55;cursor:pointer}.dots i.on{width:22px;border-radius:9px;background:#f0b928}
+.tab,.op,.pill,.ex,.nv .l span,.tl a,.ch span{cursor:pointer;transition:background .2s,color .2s}.op.on{border:2px solid #d2893a;background:#fff3e2}.tab:hover{background:#fff}
+.mega{position:absolute;top:100%;left:0;background:#1c1814;border:1px solid #3a332c;border-radius:12px;padding:14px 18px;z-index:20;display:none;min-width:220px;line-height:2;font-size:12px}.mega.on{display:block;animation:fi .2s}.nv .l span{position:relative}
+.hs{transition:opacity .5s}.top{position:fixed;right:18px;bottom:18px;background:var(--sand);color:#14181b;border-radius:50%;width:40px;height:40px;display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .3s;z-index:9}.top.on{opacity:1}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><style>
+.xp{position:absolute;top:100%;left:0;margin-top:6px;display:none;z-index:30;background:#1c1814;border:1px solid #3a332c;border-radius:12px;padding:8px;gap:8px;box-shadow:0 14px 30px #000a}.xp.on{display:flex;animation:fi .2s}
+.xp .cl{width:170px;border-right:1px solid #3a332c;padding-right:8px;max-height:320px;overflow:auto}.xp .cl div{padding:9px 10px;border-radius:8px;font-size:11px;cursor:pointer;color:#e8e0d6}.xp .cl div.on{background:#5b4a38;color:#fff}
+.xp .bgd{display:grid;grid-template-columns:repeat(3,92px);gap:8px;max-height:320px;overflow:auto}.xp .bgd b{background:#fff;color:#14181b;border-radius:8px;padding:18px 4px;text-align:center;font-size:11px}
+.mega{display:none;grid-template-columns:1fr 1fr;gap:6px 36px;padding:14px 20px}.mega.on{display:grid}.mega a{font-size:11px;color:#e8e0d6}.mega a:hover{color:var(--sand)}
+.fs{display:flex;justify-content:space-between;cursor:pointer}.fs+div{overflow:hidden;transition:max-height .3s}
+.rg{height:22px;margin:8px 0;background:repeating-linear-gradient(90deg,#e8e0d6 0 1px,transparent 1px 3px);position:relative;border-left:9px solid #fff;border-right:9px solid #fff;border-radius:9px}
+.fx{position:fixed!important;left:0;right:0;bottom:0;z-index:15;background:#4a3d31;display:flex;gap:24px;justify-content:space-between}
+.pg#product{padding-bottom:70px}
+</style><style>
+.mega.w3{grid-template-columns:repeat(3,110px)}.mega.w6{grid-template-columns:repeat(6,130px);left:0!important}
+.nv.stk{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(1240px,calc(100% - 60px));background:#14110f;padding:8px 34px;border-radius:0 0 14px 14px;z-index:25;margin:0;animation:fi .25s}
+.ct{cursor:pointer;transition:background .25s,color .25s}.ct:hover .pn,.ct.on .pn{background:#f4ede5;border-color:#f4ede5}
+.sk{position:sticky;top:70px;align-self:start}.zm{position:absolute;right:14px;bottom:14px;background:#fff;color:#14181b;border-radius:50%;width:26px;height:26px;display:grid;place-items:center;font-size:12px}
+.more{display:none}.more.on{display:block;animation:fi .3s}
+</style><style>
+@keyframes sl{from{transform:translateX(60px);opacity:.2}to{transform:none;opacity:1}}
+#category aside{position:sticky;top:70px;align-self:start}
+.seo{background:#f8f8f8;color:#cfd5de;border-radius:6px;padding:16px;margin-top:24px;font-family:Georgia,serif;font-size:13px;line-height:1.7}.seo h3{color:#d3d8e0;margin:0 0 6px}
+.seo table{width:100%;border-collapse:collapse;background:#1b1714;color:#e8e0d6;font-family:Outfit;margin:10px 0}.seo td,.seo th{border:1px solid #4a4036;padding:7px;text-align:left}
+</style><style>
+@keyframes gr{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+.mega.on,.xp.on{animation:gr .25s ease-out}
+.hv{overflow:hidden;border-radius:16px}.hk{display:flex;gap:14px;transition:transform .8s cubic-bezier(.65,0,.35,1)}
+.hk>div{flex:0 0 63%;min-height:260px;border-radius:16px;padding:34px;display:flex;flex-direction:column;justify-content:center;font-size:40px;font-weight:300}.hk b{font-weight:700}
+.rb .tr span+span::before{content:'●';color:#e0242e;margin-right:10px;font-size:9px}
+</style><style>
+img.im2{width:100%;height:140px;object-fit:cover;border-radius:10px;display:block;margin-bottom:8px;transition:transform .35s}.c:hover img.im2{transform:scale(1.05)}
+.c{overflow:hidden}.c .wr,.c .ic2,.c .dc,.c .bd{z-index:2}
+.pi{position:absolute;right:3%;bottom:0;height:88%;max-width:42%;object-fit:contain;pointer-events:none}.hk>div,.bn{position:relative;overflow:hidden}.hk>div>*:not(.pi),.bn>*:not(.pi){position:relative;z-index:1;max-width:58%}
+.tm{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid #6d6154;cursor:pointer}.tm.on{border:2px solid #d2893a}
+.ci{width:100%;height:100%;object-fit:cover}.play{position:absolute;inset:0;margin:auto;width:46px;height:46px;border-radius:50%;background:#0008;display:grid;place-items:center;color:#fff;z-index:2}
+</style><style>.c>.ci{height:200px;border-radius:10px;margin-bottom:8px}#product .two .c>.ci{height:380px;object-fit:contain}#product .zm{z-index:3}</style><style>
+.bxd{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:#272320;z-index:60;transform:translateX(105%);transition:transform .35s cubic-bezier(.22,.8,.2,1);padding:18px;display:flex;flex-direction:column;box-shadow:-20px 0 40px #000a}.bxd.o{transform:none}
+.bxo{position:fixed;inset:0;background:#0009;z-index:59;opacity:0;pointer-events:none;transition:opacity .3s}.bxo.o{opacity:1;pointer-events:auto}
+.bxl{flex:1;overflow:auto}.bxi{display:flex;gap:10px;align-items:center;background:#1c1814;border-radius:12px;padding:10px;margin-bottom:8px;animation:fi .3s}.bxi img{width:54px;height:54px;border-radius:8px;object-fit:cover}.bxi .q{display:flex;gap:6px;align-items:center}.bxi .q b{background:#3a332c;border-radius:6px;width:24px;text-align:center;cursor:pointer}
+.bxp{height:6px;background:#3a332c;border-radius:9px;overflow:hidden;margin:6px 0}.bxp i{display:block;height:100%;background:var(--sand);transition:width .5s}
+.stp{display:flex;gap:6px;margin:10px 0 18px}.stp div{flex:1;text-align:center;font-size:12px;color:var(--mut);padding-bottom:8px;border-bottom:3px solid #3a332c;transition:.3s}.stp div.on{color:var(--sand);border-color:var(--sand)}.stp div.dn{color:#fff;border-color:var(--ok)}
+.co{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}@media(max-width:800px){.co{grid-template-columns:1fr}}
+.stepc{display:none;animation:fi .35s}.stepc.on{display:block}
+.opt2{display:flex;gap:12px;align-items:center;border:1px solid #4a4036;border-radius:12px;padding:12px;margin:8px 0;cursor:pointer;transition:.2s}.opt2:hover{border-color:var(--sand)}.opt2.on{border-color:var(--sand);background:#3b3025}.opt2 .rd{width:16px;height:16px;border-radius:50%;border:2px solid #8a7d6d;flex:none}.opt2.on .rd{border-color:var(--sand);background:radial-gradient(var(--sand) 45%,transparent 50%)}.opt2 span:last-child{margin-left:auto;color:var(--sand)}
+.tl{position:relative;margin:18px 0 0 8px;padding-left:26px}.tl::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:#4a4036}.tl div{position:relative;padding:8px 0;color:var(--mut);transition:color .4s}.tl div::before{content:'';position:absolute;left:-26px;top:11px;width:16px;height:16px;border-radius:50%;background:#2e2a26;border:2px solid #6d6154;transition:.4s}.tl div.dn{color:var(--tx)}.tl div.dn::before{background:var(--ok);border-color:var(--ok)}.tl div.cu::before{background:var(--sand);border-color:var(--sand);animation:pu 1.2s infinite}
+@keyframes spn{to{transform:rotate(360deg)}}.spn{width:44px;height:44px;border:4px solid #4a4036;border-top-color:var(--sand);border-radius:50%;animation:spn .8s linear infinite;margin:20px auto}
+.okc{width:70px;height:70px;border-radius:50%;background:var(--ok);display:grid;place-items:center;font-size:36px;margin:0 auto 12px;animation:pu .6s}
+.pn select{width:100%;background:#14181b;border:1px solid #3d352d;color:var(--tx);padding:11px;border-radius:8px;margin:5px 0}
+.bxb{display:flex;justify-content:space-between;padding:5px 0}.bxb.t{border-top:1px solid #4a4036;margin-top:6px;padding-top:10px;font-size:17px;font-weight:600}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ok);color:#fff;padding:10px 18px;border-radius:10px;z-index:70;animation:fi .25s}
+</style></head><body>
+<header class="hd"><div class="hi">
+<div class="tb"><span><a href="#blogs">New Blogs</a>&nbsp;&nbsp;&nbsp;<a href="#emi" class="sd">EMI Policy</a></span><span>📞 09638001122 &nbsp;&nbsp; ◎ Store locations</span></div>
+<div class="mn"><a class="lg" href="#home" data-logo></a><nav class="tl"><a href="#brands">Brand</a><a href="#exclusive">Online Exclusive</a><a class="of">Offer</a><a href="#preorder">Pre-Order</a></nav><div class="s">⌕ &nbsp;Search for the item</div><span class="ic">👤</span><span class="ic">🛍</span><span class="ic av">☾</span></div>
+<div class="nv"><a class="ex" href="#category">EXPLORE ALL &nbsp;⌄</a><div class="l" id="cats"></div></div></div></header>
+<div class="rb"><span>◉ Welcome to <span data-name></span> Commerce</span><span>🔥 Mega Sale – Up to 70% OFF on Selected Products</span><span>🚚 Free Delivery on Orders Above ৳999</span><span>📱 Download the <span data-name></span> Mobile App Today</span></div>
+<div class="msg">Send message</div>
+<main class="w" style="padding-top:18px">
+
+<section class="pg on" id="home">
+<div class="g two" style="grid-template-columns:1.5fr 1fr"><div class="bn" style="min-height:260px;font-size:44px"><span style="color:#ccc">Most <i>Wanted</i></span><span style="font-size:18px">iPhone 18 Pro | Pro Max</span><b style="background:#e01010;font-size:24px;padding:4px 24px;width:max-content;margin-top:10px">Ready Stock</b></div><div class="bn" style="background:#0d0d0d;color:#e6c07a">Best Deal on <b>Official Product</b></div></div>
+<h2 style="margin-top:26px" class="hr">Categories <a class="see">See all</a></h2><div class="g g5" id="cat8" style="grid-template-columns:repeat(8,1fr)"></div>
+<div class="band"><div class="w"><h2 class="hr"><span>Flash Sale <span class="cd">08</span><span class="cd">03</span><span class="cd">56</span><span class="cd">25</span></span><a class="see">See All</a></h2><p><span class="tab on">Newest</span><span class="tab">Popular</span></p><div class="g g5" data-p="5"></div></div></div>
+<div class="g two" style="grid-template-columns:1fr 1fr"><div class="bn" style="background:#000;text-align:center;font-size:26px">iPhone Duo<b>The largest iPhone display ever.</b></div><div class="bn" style="background:#000;text-align:center;font-size:26px">iPhone 18 Pro Series<b>Pro further.</b></div></div>
+<h2 style="margin-top:26px" class="hr">Trending Now <a class="see">See All</a></h2><p><span class="tab on">Newest</span><span class="tab">Best Seller</span><span class="tab">Best Value</span></p><div class="g g5" data-p="5"></div>
+<div class="band"><div class="w"><h2 class="hr">Clip to Cart <a class="see">See All</a></h2><div class="g g5" data-clip="5"></div></div></div>
+<div class="g" style="grid-template-columns:1fr 1fr"><div class="bn" style="background:#06142a">Big screen TV<b>Brand new replacement guarantee</b></div><div class="bn" style="background:#04101f">iPad Air<b>Flight speed</b></div></div>
+<h2 style="margin-top:26px" class="hr">Shop by Brand <a class="see">See all</a></h2><div class="pn"><div class="ch" data-br="8"></div><div class="g g5" data-p="5"></div></div>
+<div class="band"><div class="w"><h2 class="hr">New Arrivals <a class="see">See all</a></h2><p><span class="tab on">Newest</span><span class="tab">Popular</span></p><div class="g g5" data-p="5"></div></div></div>
+<h2 class="hr">Most Popular <a class="see">See all</a></h2><div class="g g5" data-p="5"></div>
+<h2 style="margin-top:26px" class="hr">Hot Deal of the Day <a class="see">See all</a></h2><div class="g g5" data-p="5"></div>
+<h2 style="margin-top:26px" class="hr">Feature Products <a class="see">See all</a></h2><div class="g g5" data-p="5"></div>
+<h2 style="margin-top:26px" class="hr" id="blogs">Latest Blog <a class="see">See all</a></h2><div class="g" style="grid-template-columns:repeat(3,1fr)"><div class="c"><div class="im" style="height:200px"></div><span class="tab">Technology</span> 07 October 2026<p>Phone price in Bangladesh: specs and buying guide</p></div><div class="c"><div class="im" style="height:200px"></div><span class="tab">Technology</span> 07 October 2026<p>Phone price in Bangladesh</p></div><div class="c"><div class="im" style="height:200px"></div><span class="tab">Technology</span> 06 October 2026<p>Phone price in Bangladesh</p></div></div>
+<div class="g g5" style="margin:18px 0"><div class="bg">100% Genuine Products</div><div class="bg">Super fast Delivery</div><div class="bg">36 Months Installments</div><div class="bg">2 Years Replacement</div><div class="bg">Best Price in Bangladesh</div></div>
+<div class="g" style="grid-template-columns:1fr 1fr"><div class="pn"><b>The Best Smartphone Shop in Bangladesh</b><p>SEO text block, editable in admin.</p></div><div class="pn"><b>Best Tablet and iPad Shop</b><p>SEO text block, editable in admin.</p></div><div class="pn"><b>Best Laptop Selling Shop</b><p>SEO text block.</p></div><div class="pn"><b>Best MacBook and iMac Shop</b><p>SEO text block.</p></div></div>
+</section>
+
+<section class="pg" id="category"><p style="color:var(--mut)">Home › Categories › Phones</p><div class="ch" data-br="18"></div>
+<div class="two"><aside><div class="pn"><b>Budgets</b><br><input type="range"> ৳9,790 – ৳4,94,990</div><div class="pn"><b>Stock Status</b><br>☐ In Stock<br>☐ Out of Stock</div><div class="pn"><b>Color</b><br>Black · Blue · Gold · Green · Purple</div></aside>
+<div><div class="bn" style="min-height:130px">iPhone Duo <b>A new iPhone enters the fold.</b></div><div class="pn" style="margin-top:14px"><h2>Top Selling</h2><div class="g g4" data-p="4"></div></div><div class="pn"><h2>Trending</h2><div class="g g4" data-p="4"></div></div><h2>Products of Phones <small style="color:var(--mut)">1,220 products found</small></h2><div class="g g4" data-p="8"></div></div></div></section>
+
+<section class="pg" id="product"><p style="color:var(--mut)">Home › Categories › iPhone 18 Pro Max</p>
+<div class="two" style="grid-template-columns:1fr 1.1fr"><div class="pn"><div class="c"><div class="im" style="height:380px"></div></div><div class="ch"><span class="on">▮</span><span>▮</span><span>▮</span><span>▮</span></div><b>Also Order From</b><div class="g" style="grid-template-columns:repeat(3,1fr);margin-top:8px"><div class="pn" style="text-align:center">WhatsApp Us</div><div class="pn" style="text-align:center">Messenger</div><div class="pn" style="text-align:center">Call Us</div></div></div>
+<div><h2>iPhone 18 Pro Max</h2><p>By: <span style="color:var(--sand)">Apple</span></p><div class="pn">Quantity: − 1 +<br><br>Display: 6.9" LTPO Super Retina XDR OLED, 120Hz · Performance: A20 Pro (2nm) · Camera: 48MP triple · Battery: 5567 mAh, 50W wired</div>
+<div class="pn"><div class="out" style="background:#4a1e1e;padding:10px;border-radius:8px;margin-bottom:10px">Sorry! This variant is not available</div>Color<br><span class="op">⬛</span><span class="op">🟥</span><span class="op">🟦</span><span class="op">⬜</span><br>RAM &amp; Storage<br><span class="op">256GB</span><span class="op">512GB</span><span class="op">1TB</span><span class="op">2TB</span><br>Region/Variant<br><span class="op">JP/MEA (Dual e-Sim)</span><span class="op">SG/AUS/TH/ZA</span><span class="op">USA</span></div>
+<div class="pn" style="background:#14181b"><b>Care (Recommended)</b><div class="c" style="margin-top:8px">☐ Care+ 1 year — ৳16,721<br>☐ Care+ 365 days — ৳9,281<br>☐ Ultimate Care+ — ৳27,880</div></div>
+<div class="g" style="grid-template-columns:1fr 1fr;margin-bottom:12px"><div class="pn" style="background:#1f9a6a;margin:0">Exchange</div><div class="pn" style="background:#6a47e0;margin:0">EMI</div></div>
+<div class="g" style="grid-template-columns:1fr 1fr"><div class="c" style="border:1px solid var(--sand)">◉ Offer Price <span style="color:#e08a00">185,990 ৳</span><br><small>Cash/Card/MFS</small></div><div class="c">○ Regular Price 299,990 ৳<br><small>EMI begin at 24,999 per month</small></div></div>
+<div class="pn" style="background:#14181b;margin-top:12px"><b>Buy More Save More!</b><div class="c" style="margin-top:8px">☐ 20W USB C Power Adapter — ৳2,977</div></div>
+<div class="g" style="grid-template-columns:repeat(3,1fr)"><div class="c" style="background:#fff8d5;text-align:center">Estimated Delivery<br><b>0-3 Days</b></div><div class="c" style="background:#fdeedd;text-align:center">Purchase Point<br><b>200</b></div><div class="c" style="background:#eaf0ff;text-align:center">Minimum Booking<br><b>৳10,000</b></div></div></div></div>
+<div class="pn" style="background:#1a1613;margin-top:20px"><b>Description</b><p>Rich text, FAQs and specs from the admin editor.</p></div><h2>Related Products</h2><div class="g g5" data-p="5"></div>
+<div class="sb"><span>Store Pickup · Home Delivery (express 4 hrs – Dhaka)</span><b style="color:var(--mut)">Not in stock</b><button class="btn">Buy Now</button></div></section>
+
+<section class="pg" id="brands"><p style="color:var(--mut)">Home › Brands</p><div class="pn" style="display:flex;gap:10px;flex-wrap:wrap"><input style="flex:1" placeholder="Search brand..."><span class="pill on">All</span><span class="pill">A</span><span class="pill">B</span><span class="pill">C</span><span class="pill">D</span></div><div class="g" style="grid-template-columns:repeat(6,1fr)" data-bg="30"></div></section>
+
+<section class="pg" id="exclusive"><div class="bn" style="min-height:300px;font-size:56px;background:linear-gradient(#2a1b10,#0c0a09)"><i>Online Exclusive</i><b style="font-size:40px">UP TO 50% OFF</b></div><p style="text-align:center"><span class="pill">Delivery: 1-3 days | 3-7 days</span></p><div class="g g4"><div class="bn" style="min-height:100px;font-size:16px">iPhone 17 Series</div><div class="bn" style="min-height:100px;font-size:16px">Laptops</div><div class="bn" style="min-height:100px;font-size:16px">Audio</div><div class="bn" style="min-height:100px;font-size:16px">Speakers</div></div><h2 style="margin-top:24px">Online Exclusive Products</h2><div class="g g5" data-p="5"></div><h2 style="margin-top:24px" class="hr">Best Selling Items <a>See all</a></h2><div class="g g5" data-p="5"></div><h2 style="margin-top:24px" class="hr">Deals of the Day <a>See all</a></h2><div class="g g5" data-p="5"></div></section>
+
+<section class="pg" id="preorder"><div class="pn" style="max-width:440px;margin:30px auto;background:#14181b"><h2 style="text-align:center">Looking For Something Different?</h2><input placeholder="Enter product name/URL.."><div style="border:1px dashed var(--sand);border-radius:10px;padding:30px;text-align:center">Add Image<br><small style="color:var(--mut)">Click or drag &amp; drop</small></div><input placeholder="Name"><input placeholder="Phone number"><input placeholder="Email"><input placeholder="Subject"><textarea rows="3" placeholder="Address..."></textarea><label>☐ I accept <u style="color:var(--sand)">Terms &amp; Conditions</u></label><button class="btn" style="width:100%;margin-top:10px">SUBMIT</button></div></section>
+
+<section class="pg" id="emi"><h2>EMI Policy</h2><div class="pn"><p>EMI সংক্রান্ত যেকোনো বিভ্রান্তি/অভিযোগ/পরামর্শ কিংবা তথ্যের জন্য যোগাযোগ করুন : 09638001122</p><table class="tbl"><tr><th colspan="9">Normal Transaction 0.99%</th></tr><tr><th>Bank</th><th>Min</th><th>3m</th><th>6m</th><th>9m</th><th>12m</th><th>18m</th><th>24m</th><th>36m</th></tr><tr><td>AB Bank</td><td>5000</td><td>4.499%</td><td>5.999%</td><td>8.499%</td><td>9.99%</td><td>14.99%</td><td>18.999%</td><td>22.999%</td></tr><tr><td>Prime Bank</td><td>5000</td><td>4.499%</td><td>5.999%</td><td>8.499%</td><td>9.99%</td><td>N/A</td><td>N/A</td><td>N/A</td></tr></table><br><table class="tbl"><tr><th colspan="9">No POS charge will be applied on EMI payment</th></tr><tr><td>Bank Asia</td><td>5.13%</td><td>6.75%</td><td>8.99%</td><td>11.33%</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td></tr></table><p><b>Payment charges for QR / Link payment</b><br>VISA/MasterCard 2.04% · City Bank (AMEX) 3.63%</p></div></section>
+
+<section class="pg" id="refund"><h2>Refund Policy</h2><div class="pn"><b>ফেরত নীতি</b><br><b>ফেরতের পদ্ধতি:</b><p>ফেরতকৃত আইটেমটি গ্রহণ ও পর্যালোচনা করার পর আমরা আপনাকে রিফান্ডের অনুমোদন বা অস্বীকৃতির বিষয়ে অবহিত করব।</p><b>রিফান্ড সময়সীমা:</b><br>ব্যাংক ট্রান্সফার: ৩ কার্যদিবস · MFS: ৭ থেকে ১৫ · EMI: ৭ থেকে ১৫ · ক্যাশ অন ডেলিভারি: ৩</div></section>
+
+<section class="pg" id="about"><div style="text-align:center"><small>Welcome to <span data-name></span></small><h2 style="font-size:28px">Our Perfect Store</h2><p style="max-width:560px;margin:auto;color:var(--mut)">Over the past 9 years, a legacy rooted in customer satisfaction and unmatched quality.</p></div><div class="bn" style="min-height:360px;margin:20px 0">Store photo (admin upload)</div><div class="st"><div>1,624,848 +<small>Unique customers served</small></div><div>4.7M +<small>Products Delivered</small></div><div>2.2M +<small>Followers</small></div><div>16,000 +<small>5-Star Google Reviews</small></div><div>16,589 +<small>Replacement guarantees</small></div><div>15+<small>Outlets</small></div><div>271 +<small>Team members</small></div><div>17,000 +<small>SKUs in stock</small></div><div>113 +<small>Global brands</small></div></div><h2 style="text-align:center;margin-top:30px">OVER 9 YEARS OF EXPERIENCE</h2><div class="g" style="grid-template-columns:repeat(3,1fr)"><div class="bg">Smartphones</div><div class="bg">Laptops &amp; Tablets</div><div class="bg">Wearables</div><div class="bg">Audio</div><div class="bg">Smart TVs</div><div class="bg">Accessories</div></div><p class="ch" style="justify-content:center"><span>● Dhaka</span><span>● Chattogram</span><span>● Rajshahi — opening soon</span><span>● Khulna — opening soon</span></p></section>
+
+<section class="pg" id="admin"><div class="two"><div class="pn"><b>Admin</b><br>Dashboard<br><b style="color:var(--sand)">Site identity</b><br>Products<br>Home builder<br>Pages &amp; policies<br>EMI manager<br>Orders<br>Settings</div><div><h2>Site identity</h2><div class="pn"><label>Site name</label><input id="an" value="gadgetsite"><label>Logo (PNG/SVG)</label><input id="al" type="file" accept="image/*"><button class="btn" id="as">Save &amp; publish</button><p style="color:var(--mut)">Changes update header, footer, ribbon and About instantly. Stored as settings.site_name / settings.logo_url.</p></div></div></div></section>
+<section class="pg" id="checkout"><h2>Checkout</h2><div class="stp" id="stp"><div class="on">1 Contact</div><div>2 Address</div><div>3 Delivery</div><div>4 Payment</div></div>
+<div class="co"><div class="pn">
+<div class="stepc on"><b>Contact</b><input id="cph" placeholder="Mobile number (01XXXXXXXXX)"><button class="btn" id="otpb" style="margin:6px 0">Send OTP</button><input id="cot" placeholder="OTP code" style="display:none"><input placeholder="Full name"><input placeholder="Email (optional)"></div>
+<div class="stepc"><b>Delivery address</b><select id="cdv"><option>Dhaka</option><option>Chattogram</option><option>Rajshahi</option><option>Khulna</option></select><select><option>District / Upazila</option><option>Dhanmondi</option><option>Gulshan</option></select><select><option>Area (from courier list)</option><option>Area 1</option></select><textarea rows="3" placeholder="House, road, landmark"></textarea><label>☐ Save this address</label></div>
+<div class="stepc"><b>Delivery method</b><div class="opt2 on" data-d="0"><i class="rd"></i><div>Store pickup<br><small style="color:var(--mut)">Jamuna Future Park · ready in 2 hrs</small></div><span>Free</span></div><div class="opt2" data-d="60"><i class="rd"></i><div>Home delivery<br><small style="color:var(--mut)">1–3 days · courier quote (Pathao / Steadfast / RedX)</small></div><span>৳60</span></div><div class="opt2" data-d="150"><i class="rd"></i><div>Express · Dhaka<br><small style="color:var(--mut)">within 4 hours</small></div><span>৳150</span></div></div>
+<div class="stepc"><b>Payment</b>
+<div class="opt2 on" data-p="cod"><i class="rd"></i><div>Cash on delivery<br><small style="color:var(--mut)">Phone OTP required</small></div><span></span></div>
+<div class="opt2" data-p="bkash"><i class="rd"></i><div>bKash<br><small style="color:var(--mut)">Approve in your bKash app</small></div><span></span></div>
+<div class="opt2" data-p="nagad"><i class="rd"></i><div>Nagad / Rocket / Upay</div><span></span></div>
+<div class="opt2" data-p="card"><i class="rd"></i><div>Card / net banking<br><small style="color:var(--mut)">Secure gateway page · +2.56%</small></div><span>+2.56%</span></div>
+<div class="opt2" data-p="emi"><i class="rd"></i><div>EMI<br><small style="color:var(--mut)">Credit card, 3–36 months, min ৳5,000</small></div><span></span></div>
+<div id="emib" style="display:none"><select id="emk"><option>AB Bank</option><option>Brac Bank</option><option>City Bank</option></select><select id="emt"><option value="4.499|3">3 months · 4.499%</option><option value="5.999|6">6 months · 5.999%</option><option value="8.499|9">9 months · 8.499%</option><option value="9.99|12">12 months · 9.99%</option></select><p id="emm" style="color:var(--sand)"></p></div>
+<div class="opt2" data-p="bank"><i class="rd"></i><div>Bank transfer<br><small style="color:var(--mut)">Upload slip, we verify</small></div><span></span></div>
+<label>☐ I accept Terms &amp; Refund Policy</label></div>
+<div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="bxb" style="background:#3a332c;color:#fff;display:none">Back</button><button class="btn" id="bxn">Continue</button></div></div>
+<div class="pn" style="align-self:start;position:sticky;top:20px"><b>Order summary</b><div id="cos"></div></div></div></section>
+<section class="pg" id="success"><div class="pn" style="max-width:560px;margin:30px auto;text-align:center"><div id="sp"><div class="spn"></div><p id="spt">Placing your order…</p></div><div id="sd" style="display:none"><div class="okc">✓</div><h2>Order placed!</h2><p>Order <b id="oid"></b> · confirmation sent by SMS &amp; email</p><p id="osm" style="color:var(--mut)"></p><button class="btn" onclick="location.hash='#track'">Track order</button> <button class="btn" style="background:#3a332c;color:#fff" onclick="location.hash='#home'">Continue shopping</button></div></div></section>
+<section class="pg" id="track"><h2>Order tracking</h2><div class="co"><div class="pn"><b id="tid"></b><div class="tl" id="tlx"></div><button class="btn" id="tsim" style="margin-top:14px">Simulate next status</button></div><div class="pn" style="align-self:start"><b>Courier</b><p>Pathao Courier<br>Consignment <span style="color:var(--sand)">PC-84720193</span><br>Rider: +880 1XXX-XXXXXX</p><b>Payment</b><p id="tpm">Cash on delivery</p><div class="ch"><span>Invoice PDF</span><span>Return / exchange</span></div></div></div></section>
+</main>
+
+<div class="nl"><h3>SUBSCRIBE TO OUR NEWSLETTER</h3><small>Get all the latest information on Events, Sales and Offers.</small><div class="nf"><span>✉</span><input placeholder="Enter your email" aria-label="Email"><button>Subscribe</button></div></div>
+<footer class="ft"><div class="fw"><div><div class="lg" data-logo></div><p class="ad"><b>Branch 1:</b> Shop No. 021C &amp; 021D, North Court. Block - B, 4th floor. Jamuna Future Park. Dhaka. <b>Branch 2:</b> Shop No 4A-022B, West Court. Level</p><div class="so"><i>f</i><i>◎</i><i>in</i><i>▷</i></div><p class="ad">Download Our App:</p><div class="gp">▶ <small>GET IT ON</small> Google Play</div></div>
+<div><h4>Company</h4><a href="#about">About Us</a><a>Career</a><a>Our Brand</a><a>Blogs</a><a>Press Coverage</a><a>Order Tracking</a><a>Trade In</a><a>Product Disclaimer Policy</a><a>Membership Policy</a><a>Pre-Order Policy</a></div>
+<div><h4>Help Center</h4><a>FAQ</a><a>Support System</a><a>Announcement</a><a>Corporate</a><a>Feedback</a><a>Sitemap</a><a>Affiliate Policy</a><a>Cookies Policy</a><a>Data Protection Policy</a><a>Loyalty Program Policy</a></div>
+<div><h4>Terms &amp; Conditions</h4><a>Terms &amp; Conditions</a><a href="#refund">Refund Policy</a><a>Privacy Policy</a><a>Warranty Policy</a><a>Exchange Policy</a><a>Delivery Policy</a><a href="#emi">EMI Policy</a><a>Cancellation Policy</a><a>Newsletter</a><a href="#admin" style="opacity:.5">Admin panel</a></div>
+<div><h4>Branch location</h4><p class="ad"><b>Branch 1:</b> Shop No. 021C &amp; 021D. North Court. Block - B. 4th floor. Jamuna Future Park. Dhaka.</p><p class="ad"><b>Branch 2:</b> Shop No 4A-022B. West Court. Level 4. Block A. Jamuna Future Park. Dhaka.</p><p class="ad"><b>Branch 3:</b> Shop No - 414 &amp; 429. 4th floor. finlay Square. east nasirabad. chittagong.</p><u class="sm">See more</u></div></div>
+<div class="cpw"><span class="cp">© 2026 Thanks From <span data-name></span>TM Ltd. | All rights reserved</span></div></footer>
+<script>
+const SITE={name:'gadgetsite',logo:''};
+function brand(){document.querySelectorAll('[data-logo]').forEach(e=>e.innerHTML=SITE.logo?`<img src="${SITE.logo}" alt="${SITE.name}">`:SITE.name+'<sup style="font-size:10px">™</sup>');document.querySelectorAll('[data-name]').forEach(e=>e.textContent=SITE.name);document.title=SITE.name+' — all pages'}
+const cats=['Phones','Tablet','Laptop','Smart Watch','Gadget','Accessories','Sounds','Smart TV','Home Appliance','Monitor'];
+const P=[['iPhone 18 Pro Max','1,85,990','2,99,990','38%','New Arrival',1],['iPhone 18 Pro','1,67,990','2,35,990','29%','Top Selling',1],['Galaxy S26 Ultra 5G','1,13,990','1,69,990','33%','Hot Product',1],['OnePlus 15 5G','89,888','1,20,990','26%','Few Left Only!',1],['ZTE nubia RedMagic 11 Pro','1,18,990','1,29,990','8%','',0]];
+const card=i=>{const p=P[i%5];return `<div class="c"><span class="dc">${p[3]}</span>${p[4]?`<span class="bd">${p[4]}</span>`:''}<div class="im"></div><div class="n">${p[0]} <span class="${p[5]?'ok':'out'}">${p[5]?'In Stock':'Out of Stock'}</span></div><b>৳ ${p[1]}</b> <s>৳ ${p[2]}</s><div class="ab"><span>🛍 Add to Cart</span><i>👁</i></div></div>`};
+document.querySelectorAll('[data-p]').forEach(g=>g.innerHTML=Array.from({length:+g.dataset.p},(_,i)=>card(i)).join(''));
+document.querySelectorAll('[data-clip]').forEach(g=>g.innerHTML=Array.from({length:5},(_,i)=>`<div class="c" style="background:#2a1b10;color:#fff"><div class="im" style="height:230px;background:#a7753f"></div><span style="color:var(--sand)">${P[i%5][0]}</span><br><b style="color:#fff">৳${P[i%5][1]}</b></div>`).join(''));
+const B=['Apple','Samsung','Xiaomi','Honor','iQOO','Amazfit','OPPO','DJI','Anker','Belkin','ASUS','Google','Huawei','Infinix','vivo','Realme','Tecno','ZTE','JBL','Sony','Nothing','Meizu','Motorola','OnePlus','Dell','HP','Lenovo','Marshall','Sonos','Garmin'];
+document.querySelectorAll('[data-br]').forEach(g=>g.innerHTML=B.slice(0,+g.dataset.br).map((b,i)=>`<span class="${i?'':'on'}">${b}</span>`).join(''));
+document.querySelectorAll('[data-bg]').forEach(g=>g.innerHTML=B.map(b=>`<div class="bg">${b}</div>`).join(''));
+cats_el=document.getElementById('cats');cats_el.innerHTML=cats.map(c=>`<span>${c} ⌄</span>`).join('');
+document.getElementById('cat8').innerHTML=cats.slice(0,8).map(c=>`<div style="text-align:center"><div class="pn" style="height:90px;border:1px solid #7a5a2e;border-radius:22px"></div>${c}</div>`).join('');
+function route(){const h=(location.hash||'#home').slice(1);const id=document.getElementById(h)?h:'home';document.querySelectorAll('.pg').forEach(s=>s.classList.toggle('on',s.id===id));scrollTo(0,0)}
+addEventListener('hashchange',route);
+document.querySelectorAll('.c .n,.ab').forEach(e=>e.onclick=()=>location.hash='#product');
+document.querySelector('#cats').children[0].onclick=()=>location.hash='#category';
+document.getElementById('as').onclick=()=>{SITE.name=document.getElementById('an').value||'gadgetsite';const f=document.getElementById('al').files[0];if(f){const r=new FileReader();r.onload=()=>{SITE.logo=r.result;brand()};r.readAsDataURL(f)}else brand()};
+brand();route();
+</script>
+<script>
+// ribbon marquee
+const rb=document.querySelector('.rb');rb.innerHTML='<div class="tr">'+rb.innerHTML+rb.innerHTML+'</div>';
+// richer cards
+const card2=i=>{const p=P[i%5];return `<div class="c"><span class="dc">${p[3]}</span>${p[4]?`<span class="bd">${p[4]}</span>`:''}<div class="im"></div><span class="wr">1 YEAR ✚</span><div class="ic2"><i class="hrt">♡</i><i>⇄</i></div><div class="n">${p[0]} <span class="${p[5]?'ok':'out'}">${p[5]?'In Stock':'Out of Stock'}</span></div><b>৳ ${p[1]}</b> <s>৳ ${p[2]}</s><div class="ab"><span>🛍 Add to Cart</span><i>👁</i></div></div>`};
+document.querySelectorAll('[data-p]').forEach(g=>{g.innerHTML=Array.from({length:+g.dataset.p},(_,i)=>card2(i)).join('');if(g.classList.contains('g5')&&!g.closest('#category')){g.insertAdjacentHTML('afterend','<div class="dots"><i class="on"></i><i></i><i></i><i></i></div>')}});
+document.addEventListener('click',e=>{const t=e.target;
+ if(t.matches('.hrt')){t.classList.toggle('on');t.textContent=t.classList.contains('on')?'♥':'♡'}
+ if(t.matches('.dots i')){t.parentNode.querySelectorAll('i').forEach(x=>x.classList.toggle('on',x===t))}
+ if(t.matches('.tab')){t.parentNode.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t))}
+ if(t.matches('.op')){const sib=[...t.parentNode.children];let a=t.previousElementSibling;while(a&&a.matches('.op')){a=a.previousElementSibling}[...t.parentNode.querySelectorAll('.op')].filter(o=>{let x=o.previousElementSibling;while(x&&x.matches('.op'))x=x.previousElementSibling;return x===a}).forEach(o=>o.classList.toggle('on',o===t))}
+ if(t.matches('.ch span')){t.parentNode.querySelectorAll('span').forEach(x=>x.classList.toggle('on',x===t))}
+ if(t.closest('.pg')&&t.textContent.trim()=='+'||t.textContent.trim()=='−'){}
+ if(t.matches('.top')){scrollTo({top:0,behavior:'smooth'})}});
+// countdown
+let sec=8*3600+3*60+56;const cds=document.querySelectorAll('.cd');setInterval(()=>{sec=sec>0?sec-1:0;const v=[sec/3600|0,sec%3600/60|0,sec%60];cds.forEach((c,i)=>{if(i<3)c.textContent=String(v[i]).padStart(2,'0')})},1000);
+// hero slider
+const hero=document.querySelector('#home .bn');const sl=['<span style="color:#ccc">Most <i>Wanted</i></span><span style="font-size:18px">iPhone 18 Pro | Pro Max</span><b style="background:#e01010;font-size:24px;padding:4px 24px;width:max-content;margin-top:10px">Ready Stock</b>','<span style="font-size:18px">Official Product</span><b>0% EMI · Free Care+ · 5% instant discount</b>','<span style="font-size:18px">Pre-Book Now</span><b>iPhone Duo</b>','<span style="font-size:18px">Online Exclusive</span><b>Up to 50% off</b>'];
+let hi=0;const hd=document.createElement('div');hd.className='dots';hd.innerHTML=sl.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('');hero.parentNode.insertAdjacentElement('afterend',hd);
+const go=n=>{hi=n;hero.style.opacity=0;setTimeout(()=>{hero.innerHTML=sl[hi];hero.style.opacity=1;hd.querySelectorAll('i').forEach((x,j)=>x.classList.toggle('on',j==hi))},250)};hero.classList.add('hs');
+hd.onclick=e=>{const k=[...hd.children].indexOf(e.target);if(k>=0)go(k)};setInterval(()=>go((hi+1)%sl.length),4500);
+// mega menu
+const mg=document.createElement('div');mg.className='mega';document.querySelector('.nv').style.position='relative';document.querySelector('.nv').appendChild(mg);
+document.querySelectorAll('#cats span').forEach(sp=>{sp.onmouseenter=()=>{mg.innerHTML=['New arrivals','Best sellers','Official','Brands'].map(x=>`<a href="#category" style="display:block">${sp.textContent.replace('⌄','').trim()} · ${x}</a>`).join('');mg.style.left=sp.offsetLeft+'px';mg.classList.add('on')}});
+document.querySelector('.nv').onmouseleave=()=>mg.classList.remove('on');
+// back to top
+const tp=document.createElement('div');tp.className='top';tp.textContent='↑';document.body.appendChild(tp);addEventListener('scroll',()=>tp.classList.toggle('on',scrollY>500));
+</script><script>
+// hero slides from video
+const sl2=['<span style="font-size:14px;background:#e01010;width:max-content;padding:3px 12px;border-radius:6px">📢 STOCK</span><b>CLEARANCE OFFER</b><button class="btn" style="width:max-content;font-size:11px">BUY NOW</button>','<span style="font-size:20px"><span data-name></span> থেকে ফোন কিনুন</span><b style="font-size:34px">২ বছরের রিপ্লেসমেন্ট গ্যারান্টিতে</b>',sl[0],sl[1]];
+sl.splice(0,sl.length,...sl2);hero.innerHTML=sl[0];brand();
+// explore-all + category dropdowns
+const nv=document.querySelector('.nv'),xp=document.createElement('div');xp.className='xp';
+const cc=['Phones','Tablet','Laptop','Smart Watch','Gadget','Accessories','Sounds','Smart TV','Home Appliance','Monitor'];
+xp.innerHTML='<div class="cl">'+cc.map((c,i)=>`<div class="${i?'':'on'}">${c}</div>`).join('')+'</div><div class="bgd">'+B.slice(0,15).map(b=>`<b>${b}</b>`).join('')+'</div>';nv.appendChild(xp);
+xp.querySelectorAll('.cl div').forEach(d=>d.onmouseenter=()=>{xp.querySelectorAll('.cl div').forEach(x=>x.classList.toggle('on',x===d));xp.querySelector('.bgd').innerHTML=[...B].sort(()=>Math.random()-.5).slice(0,15).map(b=>`<b>${b}</b>`).join('')});
+document.querySelector('.ex').onmouseenter=()=>{mg.classList.remove('on');xp.classList.add('on')};
+const sub={Laptop:['Mac Mini','Apple Macbook','iMac','Gaming Laptop','Ultrabook, 2-in-1 Laptop','Mac Studio','Lenovo','Samsung Laptop','Asus Laptop','Acer','Dell','MSI','HP'],Phones:['Apple iPhone','Samsung','Xiaomi','vivo','OPPO','Honor','OnePlus','Realme'],Tablet:['Apple iPad','Samsung Tablets','Xiaomi Tablets','Honor Tablets'],'Smart Watch':['Apple Watch','Samsung Watch','Amazfit','Garmin']};
+document.querySelectorAll('#cats span').forEach(sp=>sp.onmouseenter=()=>{xp.classList.remove('on');const k=sp.textContent.replace('⌄','').trim();mg.innerHTML=(sub[k]||['New arrivals','Best sellers','Official','Brands']).map(x=>`<a href="#category">${x}</a>`).join('');mg.style.left=sp.offsetLeft+'px';mg.classList.add('on')});
+nv.onmouseleave=()=>{mg.classList.remove('on');xp.classList.remove('on')};
+// brands A-Z filter
+const BB=[...B,'Aukey','Baseus','Beats','Beko','A4Tech','Bellroy','BenQ','Fastrack','Fitbit','Fujifilm','Noise','Nokia','Nothing'];
+const bp=document.querySelector('#brands');bp.querySelector('.pn').innerHTML='<input id="bs" style="flex:1;max-width:260px" placeholder="Search brand..."><div class="ch" id="az" style="margin:0"><span class="on">All</span>'+[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(l=>`<span>${l}</span>`).join('')+'</div>';
+let L='All',Q='';const rbd=()=>{bp.querySelector('[data-bg]').innerHTML=BB.filter(b=>(L=='All'||b[0].toUpperCase()==L)&&b.toLowerCase().includes(Q)).map(b=>`<div class="bg" style="animation:fi .3s">${b}</div>`).join('')||'<p style="color:var(--mut)">No brands found.</p>'};
+document.getElementById('az').onclick=e=>{if(e.target.matches('span')){L=e.target.textContent;rbd()}};document.getElementById('bs').oninput=e=>{Q=e.target.value.toLowerCase();rbd()};rbd();
+// collapsible filters + barcode slider
+document.querySelectorAll('aside .pn').forEach(p=>{const b=p.querySelector('b');if(!b)return;const h=document.createElement('div');h.className='fs';h.innerHTML=`<b>${b.textContent}</b><span>⌄</span>`;const w=document.createElement('div');[...p.childNodes].forEach(n=>{if(n!==b)w.appendChild(n)});b.remove();p.append(h,w);h.onclick=()=>{const o=w.style.maxHeight=='0px';w.style.maxHeight=o?'300px':'0px';h.lastChild.textContent=o?'⌄':'⌃'};const r=w.querySelector('input[type=range]');if(r){const d=document.createElement('div');d.className='rg';r.replaceWith(d)}});
+// fixed buy bar + qty
+const sb=document.querySelector('#product .sb');sb.classList.add('fx');sb.innerHTML='<span>▤ Store Pickup<br><small style="color:var(--sand)">View store availability</small></span><span>🚚 Home Delivery<br><small style="color:#ff8a3d">Express Delivery in 4 hrs – Dhaka</small><br><small>Standard Delivery: Get in 1–3 days</small></span><b style="color:var(--mut);font-size:18px">Not in stock</b><span style="background:#fff;color:#14181b;border-radius:10px;padding:6px 8px">− &nbsp;<span id="q">1</span>&nbsp; <b style="background:#14181b;color:#fff;border-radius:6px;padding:2px 8px;cursor:pointer" id="qp">+</b></span><button class="btn" disabled style="opacity:.4">Not Available</button><button class="btn" disabled style="opacity:.4">Buy Now</button>';
+document.getElementById('qp').onclick=()=>q.textContent=+q.textContent+1;
+</script><script>
+// dropdown layouts
+const BR=['Vivo','Realme','Xiaomi','Meizu','Asus','OnePlus','ZTE','Infinix','Honor','iPhone','Tecno','Huawei','oppo','Poco','Nothing','Google','Ipro','Motorola','Samsung'];
+Object.assign(sub,{Phones:BR,'Home Appliance':['Coffee Maker','Air Purifier','Humidifier','Air Fryer','Massager','Washing Machine','Security & Surveillance','Vacuum Cleaner','Hair Dryer','Kitchen Stuff','Home Appliances','Refrigerator & Freezer','Air Conditioner'],Accessories:['Headphone','Keyboards','VR Accessories','Mac Accessories','Laptop Sleeves','Tripod','Case','Wireless Chargers','Chargers','Camera Accessories','Stylus Pens','Stands','AirPods Case','HDMI Cables','Phone Cases','Phone Accessories','USB Hubs','Wired Earphone','Candle Holder','Webcams','Mouse','Party Light','Car Chargers','iPad Case','MacBook Case','Selfie Stick','External Hard Drives','iPad Accessories','Camera Lens Protector','TWS','Cables','GPS','Bluetooth Trackers','Adapters','Gimbal','Mount','Screen Protectors','Speaker Accessories','Smartwatch Bands','Power Banks','Watch Accessories','Multi Plug']});
+document.querySelectorAll('#cats span').forEach(sp=>{const o=sp.onmouseenter;sp.onmouseenter=()=>{o();const k=sp.textContent.replace('⌄','').trim();mg.className='mega on'+(k=='Phones'?' w3':k=='Accessories'?' w6':'');if(k=='Accessories')mg.style.left='0'}});
+// categories 2-page carousel
+const c8=document.getElementById('cat8');let cp=0;const cn=cc.map(c=>`<div class="ct" style="text-align:center"><div class="pn" style="height:90px;border:1px solid #7a5a2e;border-radius:22px"></div>${c}</div>`);
+const cd=document.createElement('div');cd.className='dots';cd.innerHTML='<i class="on"></i><i></i><i></i>';c8.insertAdjacentElement('afterend',cd);
+const rc=()=>{c8.style.animation='none';c8.offsetHeight;c8.style.animation='fi .3s';c8.innerHTML=cn.slice(cp?2:0,cp?10:8).join('')};rc();
+cd.onclick=e=>{const k=[...cd.children].indexOf(e.target);if(k>=0){cp=k?1:0;rc()}};setInterval(()=>{cp=1-cp;rc();cd.querySelectorAll('i').forEach((x,j)=>x.classList.toggle('on',j==(cp?1:0)))},6000);
+// explore panel per category
+const BM={Phones:B.slice(0,15),Tablet:['Apple','Samsung','Xiaomi','Honor','Huawei','Google','OnePlus','Amazon'],Laptop:['Apple','ASUS','Acer','Dell','HP','Lenovo','MSI','Samsung'],'Home Appliance':['Samsung','Xiaomi','BOMIDI','Dyson','Gree','Haier','Hisense','Hitachi']};
+xp.querySelectorAll('.cl div').forEach(d=>d.onmouseenter=()=>{xp.querySelectorAll('.cl div').forEach(x=>x.classList.toggle('on',x===d));xp.querySelector('.bgd').innerHTML=(BM[d.textContent]||B.slice(10,25)).map(b=>`<b>${b}</b>`).join('')});
+// sticky nav row
+const nvb=document.querySelector('.nv'),nvph=document.createElement('div');addEventListener('scroll',()=>{const on=scrollY>160;nvb.classList.toggle('stk',on)});
+// footer see more
+document.querySelectorAll('.sm').forEach(m=>{const d=document.createElement('div');d.className='more ad';d.innerHTML='<b>Branch 4:</b> Shop No 31 to 33, Block C, Level 1 (Gold Floor), Bashundhara City Shopping Mall.<br><b>Branch 5:</b> Shop 8B, Level 6, Block D, Bashundhara City Shopping Mall.<br><b>Branch 6:</b> Shop 4/9 &amp; 420, 4th Floor, Centre Point Shopping Mall, Dhaka Airport.';m.before(d);m.onclick=()=>{d.classList.toggle('on');m.textContent=d.classList.contains('on')?'See less':'See more'}});
+// product: sticky gallery, 6 thumbs, zoom
+const gl=document.querySelector('#product .two>.pn');gl.classList.add('sk');gl.querySelector('.c').style.position='relative';gl.querySelector('.c').insertAdjacentHTML('beforeend','<span class="zm">⌕</span>');gl.querySelector('.ch').innerHTML=[0,1,2,3,4,5].map(i=>`<span class="${i?'':'on'}" style="padding:14px 18px">▮</span>`).join('');
+</script><script>
+// ribbon: add secure-payment message
+document.querySelectorAll('.rb .tr').forEach(t=>{const sp=document.createElement('span');sp.textContent='🔒 Secure Payment with bKash, Nagad & Cards';t.appendChild(sp)});
+// carousels slide sideways on dot click
+document.addEventListener('click',e=>{const t=e.target;if(t.matches('.dots i')){const g=t.parentNode.previousElementSibling;if(g){g.style.animation='none';g.offsetHeight;g.style.animation='sl .45s ease'}}});
+// category SEO block + price table
+const cat=document.querySelector('#category .two>div:last-child');
+cat.insertAdjacentHTML('beforeend','<div class="seo"><h3>Mobile Price in Bangladesh - Find the Latest Prices</h3><p>Looking for the most updated mobile price in Bangladesh? Authentic, competitively priced smartphones. This text is editable in admin.</p><h3>Checkout Latest iPhone price in Bangladesh</h3><table><tr><th>Model name</th><th>Latest price in BDT</th></tr><tr><td>Apple iPhone 16 Pro</td><td>1,16,666 BDT</td></tr><tr><td>Apple iPhone 16 Plus</td><td>1,02,990 BDT</td></tr><tr><td>Apple iPhone 16</td><td>90,990 BDT</td></tr></table><h3>Why Choose for the Latest Phones?</h3><p>Competitive prices · Full range of models · Genuine products with warranty · Flexible payment options.</p></div>');
+</script><script>
+// peeking horizontal hero slider (from 0.5s frames)
+const old=hero.parentNode;const hv=document.createElement('div');hv.className='hv';
+const HS=[['linear-gradient(120deg,#1a0d08,#6b2a12)','<span style="font-size:14px;background:#e01010;width:max-content;padding:3px 12px;border-radius:6px">STOCK</span><b>CLEARANCE OFFER</b><button class="btn" style="width:max-content;font-size:11px">BUY NOW</button>'],['#000','<span style="font-size:20px"><span data-name></span> থেকে ফোন কিনুন</span><b style="font-size:34px">২ বছরের রিপ্লেসমেন্ট গ্যারান্টিতে</b>'],['linear-gradient(120deg,#1a1114,#4a1e22)','<span style="color:#ccc;font-size:46px">Most <i>Wanted</i></span><span style="font-size:18px">iPhone 18 Pro | iPhone 18 Pro Max</span><b style="background:#e01010;font-size:24px;padding:4px 24px;width:max-content;margin-top:10px">Ready Stock</b>'],['#0d0d0d','<span style="color:#e6c07a;font-style:italic">Best Deal on</span><b style="color:#e6c07a">Official Product</b>']];
+hv.innerHTML='<div class="hk">'+HS.map(h=>`<div style="background:${h[0]}">${h[1]}</div>`).join('')+'</div>';
+old.replaceWith(hv);if(hd)hd.remove();
+const hk=hv.firstChild,hdt=document.createElement('div');hdt.className='dots';hdt.innerHTML=HS.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('');hv.insertAdjacentElement('afterend',hdt);
+let hj=0;const mv=n=>{hj=n;hk.style.transform=`translateX(calc(${-n} * (63% + 14px)))`;hdt.querySelectorAll('i').forEach((x,j)=>x.classList.toggle('on',j==n))};
+hdt.addEventListener('click',e=>{const k=[...hdt.children].indexOf(e.target);if(k>=0)mv(k)});setInterval(()=>mv((hj+1)%HS.length),6000);brand();
+sub.Monitor=['BenQ','MSI','Xiaomi','PC Power','Dell','HP'];
+</script><script>
+// hero: real timing/direction from 4fps frames (hold ~5s, 0.5s slide, new banner enters from the left)
+const hv2=document.querySelector('.hv');const ok=hv2.querySelector('.hk');const nk=document.createElement('div');nk.className='hk';nk.innerHTML=ok.innerHTML;hv2.replaceChild(nk,ok);nk.style.transition='none';
+const nd=document.createElement('div');nd.className='dots';nd.innerHTML=HS.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('');hdt.replaceWith(nd);
+let cur=0;const W='calc(-1 * (63% + 14px))';
+const step=()=>{cur=(cur+HS.length-1)%HS.length;nk.style.transition='none';nk.prepend(nk.lastElementChild);nk.style.transform=`translateX(${W})`;nk.offsetHeight;nk.style.transition='transform .55s cubic-bezier(.4,0,.2,1)';nk.style.transform='none';nd.querySelectorAll('i').forEach((x,j)=>x.classList.toggle('on',j==cur))};
+let tm=setInterval(step,5500);nd.onclick=e=>{const k=[...nd.children].indexOf(e.target);if(k<0)return;clearInterval(tm);let n=(cur-k+HS.length)%HS.length;(function r(){if(n-->0){step();setTimeout(r,600)}})();tm=setInterval(step,5500)};
+document.querySelectorAll('.mega,.xp').forEach(e=>e.style.animationDuration='.22s');
+</script><script>
+// ===== placeholder images (all replaceable from admin: each <img> has data-slot) =====
+const IC={phone:'<rect x="72" y="14" width="56" height="128" rx="12" fill="#1d1d22"/><rect x="76" y="18" width="48" height="120" rx="9" fill="#2c2f3a"/><circle cx="92" cy="40" r="7" fill="#555"/><circle cx="92" cy="58" r="7" fill="#555"/><circle cx="110" cy="48" r="6" fill="#444"/>',watch:'<rect x="82" y="8" width="36" height="144" rx="8" fill="#333"/><circle cx="100" cy="80" r="34" fill="#1c1c1c" stroke="#d2a679" stroke-width="4"/><path d="M100 80V58M100 80l14 8" stroke="#fff" stroke-width="3"/>',laptop:'<rect x="40" y="30" width="120" height="80" rx="6" fill="#2a2d36"/><rect x="46" y="36" width="108" height="68" fill="#4b6fa8"/><path d="M26 116h148l-10 14H36z" fill="#9aa0aa"/>',buds:'<ellipse cx="100" cy="95" rx="42" ry="34" fill="#fff" stroke="#ccc" stroke-width="3"/><path d="M100 61v68" stroke="#ddd" stroke-width="3"/><circle cx="82" cy="40" r="10" fill="#fff" stroke="#ccc" stroke-width="3"/><circle cx="118" cy="40" r="10" fill="#fff" stroke="#ccc" stroke-width="3"/>',tv:'<rect x="30" y="28" width="140" height="84" rx="4" fill="#111"/><rect x="35" y="33" width="130" height="74" fill="#2f7fc4"/><rect x="88" y="112" width="24" height="16" fill="#777"/>',speaker:'<rect x="40" y="52" width="120" height="62" rx="14" fill="#2b3a47"/><circle cx="76" cy="83" r="20" fill="#14181b"/><circle cx="124" cy="83" r="20" fill="#14181b"/>',gen:'<rect x="60" y="40" width="80" height="80" rx="14" fill="#c9b79f"/><circle cx="100" cy="80" r="16" fill="#fff"/>'};
+const PL=[['#eef1f7','#cdd6e6'],['#f6e9ec','#dfc3ca'],['#e9f1ea','#c8dacb'],['#f6efe1','#e0d2b6'],['#ece8f6','#cfc5e6']];
+const ph=(t,i=0,w=200,h=160)=>{const c=PL[i%5];return 'data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c[0]}"/><stop offset="1" stop-color="${c[1]}"/></linearGradient></defs><rect width="${w}" height="${h}" fill="url(#g)"/><g transform="translate(${(w-200)/2},${(h-160)/2})">${IC[t]||IC.gen}</g></svg>`)};
+const im=(t,i,cls,slot)=>`<img class="${cls}" src="${ph(t,i)}" alt="${t} placeholder" data-slot="${slot}">`;
+// product cards
+document.querySelectorAll('.c .im').forEach((el,i)=>{const c=el.closest('.c');if(el.style.height=='380px'){el.outerHTML=im('phone',0,'ci','product-main');el=null;return}if(el.style.height=='200px'){el.outerHTML=im(['phone','laptop','watch'][i%3],i,'ci','blog-'+i);return}
+ const n=(c.querySelector('.n')||{}).textContent||'';const t=/AirPods|Buds/i.test(n)?'buds':/Watch/i.test(n)?'watch':/MacBook|Laptop/i.test(n)?'laptop':'phone';el.outerHTML=im(t,i,'im2','product-'+i)});
+document.querySelectorAll('.c .ci').forEach(i=>{i.style.height=i.closest('.c').querySelector('.im,.ci')?'':'';});
+// product gallery thumbnails
+document.querySelectorAll('#product .ch').forEach(ch=>{ch.innerHTML=[0,1,2,3,4,5].map(i=>`<img class="tm ${i?'':'on'}" src="${ph('phone',i,60,60)}" data-slot="thumb-${i}" alt="color ${i+1}">`).join('');ch.onclick=e=>{if(e.target.matches('.tm')){ch.querySelectorAll('.tm').forEach(x=>x.classList.toggle('on',x===e.target));document.querySelector('#product .ci').src=e.target.src}}});
+// category tiles
+const CT=['phone','laptop','laptop','watch','speaker','speaker','speaker','tv','gen','tv'];
+const ctr=()=>document.querySelectorAll('#cat8 .ct .pn').forEach((p,i)=>{if(!p.querySelector('img')){const n=p.parentNode.textContent.trim();const k=cc.indexOf(n);p.innerHTML=`<img src="${ph(CT[k<0?0:k],k,90,90)}" style="width:100%;height:100%;object-fit:cover;border-radius:20px" data-slot="cat-${k}" alt="${n}">`}});
+ctr();new MutationObserver(ctr).observe(document.getElementById('cat8'),{childList:true});
+// clip-to-cart reels
+document.querySelectorAll('[data-clip] .im').forEach((el,i)=>{el.outerHTML=`<div style="position:relative;height:230px"><img class="ci" src="${ph('phone',i,160,230)}" data-slot="reel-${i}" alt="reel"><span class="play">▶</span></div>`});
+// hero + banner side images
+document.querySelectorAll('.hk>div,.bn').forEach((b,i)=>{if(!b.querySelector('.pi')){b.insertAdjacentHTML('beforeend',`<img class="pi" src="${ph(['phone','laptop','watch','speaker'][i%4],i,200,200)}" data-slot="banner-${i}" alt="banner art">`)}});
+// brand tiles: logo-style wordmarks (admin uploads real logos)
+document.querySelectorAll('.bg').forEach(b=>{if(b.children.length==0&&b.textContent.length<16)b.style.cssText+=';font-family:Outfit;letter-spacing:.5px;font-size:15px;min-height:74px;display:grid;place-items:center'});
+document.querySelectorAll('#about .bn').forEach(b=>{b.innerHTML='<img class="ci" src="'+ph('gen',3,600,260)+'" data-slot="store-photo" alt="store" style="position:absolute;inset:0;z-index:0;max-width:none">';b.style.minHeight='360px'});
+</script><style>
+/* ===== motion pass 2 (10-20s @20fps): panels flush under nav, instant close, row hover ===== */
+.xp{margin-top:0;padding:8px 8px 8px 0;gap:0}.xp .cl{padding:0 6px 0 0}
+.xp .cl div{border-radius:0;transition:background .12s}.xp .cl div:hover{background:#4a3d31}
+.mega{margin-top:0}
+.xp .bgd b{border-radius:6px;transition:transform .15s}.xp .bgd b:hover{transform:scale(1.04)}
+/* ===== motion pass 1 (video 0-10s @10fps / 30fps measurements) ===== */
+.nv .l span{transition:color .15s,background .15s}
+.nv .l span:hover{color:var(--sand)}
+.cv{display:inline-block;margin-left:2px;transition:transform .2s ease}
+.nv .l span:hover .cv{transform:rotate(180deg)}
+.mega,.xp{border-radius:0;border:0;background:#2b2724;box-shadow:none}
+.mega.on,.xp.on{animation:gr .2s ease-out}
+.hk{will-change:transform}
+</style>
+<script>
+(function(){
+/* hero: slide 0.30s ease-out (fast start, soft stop), full cycle 4.8s (video: 0.37s->5.17s) */
+var hk=document.querySelector('.hv .hk');
+if(hk){
+  var W='calc(-1 * (var(--sw) + var(--gap)))',n=document.querySelectorAll('.dots i').length||1;
+  // replace the 5.5s timer + .55s slide with measured values
+  try{clearInterval(tm)}catch(e){}
+  var cur=0,dots=document.querySelector('.dots');
+  var step=function(){cur=(cur+n-1)%n;hk.style.transition='none';hk.prepend(hk.lastElementChild);
+    hk.style.transform='translateX('+W+')';hk.offsetHeight;
+    hk.style.transition='transform .28s cubic-bezier(.22,.8,.2,1)';hk.style.transform='none';
+    if(dots)[].forEach.call(dots.children,function(x,j){x.classList.toggle('on',j==cur)})};
+  var t=setInterval(step,4850);
+  if(dots)dots.onclick=function(e){var k=[].indexOf.call(dots.children,e.target);if(k<0)return;
+    clearInterval(t);var m=(cur-k+n)%n;(function r(){if(m-->0){step();setTimeout(r,320)}})();t=setInterval(step,4850)};
+}
+/* ticker: constant 78 px/s (measured), duration derived from real width */
+document.querySelectorAll('.rb .tr').forEach(function(tr){tr.style.animationDuration=(tr.scrollWidth/2/78).toFixed(1)+'s'});
+/* Explore All: wipe replays on every hover-in */
+var ex=document.querySelector('.ex');if(ex)ex.addEventListener('mouseenter',function(){var x=document.querySelector('.xp');if(x){x.classList.remove('on');x.offsetHeight;x.classList.add('on')}});
+/* nav chevrons rotate on hover */
+document.querySelectorAll('#cats span').forEach(function(sp){
+  if(!sp.querySelector('.cv')&&sp.textContent.indexOf('\u2304')>-1){sp.innerHTML=sp.innerHTML.replace('\u2304','<em class="cv" style="font-style:normal">\u2304</em>')}
+  /* dropdown swaps instantly between chips and the top-down wipe replays each time */
+  sp.addEventListener('mouseenter',function(){document.querySelectorAll('.mega.on,.xp.on').forEach(function(e){e.classList.remove('on');e.offsetHeight;e.classList.add('on')})});
+});
+})();
+</script>
+<script>
+(function(){const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],M=n=>'৳'+Math.round(n).toLocaleString('en-IN');
+let cart=[],step=0,dl=0,pm='cod',last=null;
+const dr=document.createElement('div');dr.className='bxd';dr.innerHTML='<div class="hr"><h2>Your cart</h2><span class="see" id="bxc">Close</span></div><div class="bxp"><i id="bxbar"></i></div><small id="bxfd" style="color:var(--mut)"></small><div class="bxl" id="bxl"></div><div id="bxt"></div><input placeholder="Coupon code"><button class="btn" id="bxgo" style="width:100%;margin-top:8px">Checkout</button>';
+const ov=document.createElement('div');ov.className='bxo';document.body.append(ov,dr);
+const open=o=>{dr.classList.toggle('o',o);ov.classList.toggle('o',o)};ov.onclick=$('#bxc').onclick=()=>open(0);
+const sub=()=>cart.reduce((a,i)=>a+i.p*i.q,0);
+function draw(){const s=sub(),n=cart.reduce((a,i)=>a+i.q,0);$$('.mn .ic')[1].textContent='🛍 '+(n||'');
+$('#bxl').innerHTML=cart.length?cart.map((i,k)=>`<div class="bxi"><img src="${i.im}" alt=""><div style="flex:1">${i.n}<br><b>${M(i.p)}</b></div><div class="q"><b data-m="${k}">−</b>${i.q}<b data-a="${k}">+</b></div></div>`).join(''):'<p style="color:var(--mut);text-align:center;margin-top:40px">Your cart is empty.</p>';
+$('#bxbar').style.width=Math.min(100,s/999*100)+'%';$('#bxfd').textContent=s>=999?'You get free delivery 🎉':'Add '+M(999-s)+' more for free delivery';$('#bxt').innerHTML=`<div class="bxb t"><span>Subtotal</span><span>${M(s)}</span></div>`;sum()}
+function sum(){const s=sub(),d=dl==60&&s>=999?0:dl,ch=pm=='card'?s*.0256:0;let em=0,t=s+d+ch;if(pm=='emi'){const[r,m]=$('#emt').value.split('|');em=s*r/100;t+=em;$('#emm').textContent=M(t/m)+' / month for '+m+' months · total '+M(t)}
+$('#cos').innerHTML=cart.map(i=>`<div class="bxb"><span>${i.n} × ${i.q}</span><span>${M(i.p*i.q)}</span></div>`).join('')+`<div class="bxb"><span>Delivery</span><span>${d?M(d):'Free'}</span></div>${ch?`<div class="bxb"><span>Gateway charge</span><span>${M(ch)}</span></div>`:''}${em?`<div class="bxb"><span>EMI interest</span><span>${M(em)}</span></div>`:''}<div class="bxb t"><span>Total</span><span>${M(t)}</span></div>`;return t}
+const add=(n,p,im)=>{const f=cart.find(i=>i.n==n);f?f.q++:cart.push({n,p,q:1,im});draw();open(1)};
+document.addEventListener('click',e=>{const t=e.target,ab=t.closest('.ab');
+if(ab&&t.closest('span')&&!t.closest('i')){e.stopPropagation();e.preventDefault();const c=ab.closest('.c');add(c.querySelector('.n').firstChild.textContent.trim(),+c.querySelector('b').textContent.replace(/\D/g,''),c.querySelector('img')?c.querySelector('img').src:'');return}
+if(t.dataset.a)cart[t.dataset.a].q++,draw();if(t.dataset.m){const i=cart[t.dataset.m];if(--i.q<=0)cart.splice(t.dataset.m,1);draw()}
+if(t.closest('.mn .ic')&&t.closest('.mn .ic')==$$('.mn .ic')[1])open(1)},true);
+$('#bxgo').onclick=()=>{if(!cart.length)return;open(0);step=0;nav();location.hash='#checkout'};
+const pa=document.querySelector('#product .two>div:last-child');pa.insertAdjacentHTML('beforeend','<div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="pa1">🛍 Add to cart</button><button class="btn" id="pa2" style="background:#fff">Buy now</button></div>');
+const im=()=>document.querySelector('#product .ci')?document.querySelector('#product .ci').src:'';
+$('#pa1').onclick=()=>add('iPhone 18 Pro Max',185990,im());$('#pa2').onclick=()=>{if(!cart.length)add('iPhone 18 Pro Max',185990,im());open(0);step=0;nav();location.hash='#checkout'};
+function nav(){$$('.stepc').forEach((x,i)=>x.classList.toggle('on',i==step));$$('#stp div').forEach((x,i)=>{x.className=i==step?'on':i<step?'dn':''});$('#bxb').style.display=step?'':'none';$('#bxn').textContent=step==3?'Place order':'Continue';sum()}
+const tw=m=>{const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.append(d);setTimeout(()=>d.remove(),2200)};
+$('#otpb').onclick=()=>{if(!/^01\d{9}$/.test($('#cph').value))return tw('Enter a valid mobile number');$('#cot').style.display='block';tw('OTP sent (demo: any 4 digits)')};
+$('#bxb').onclick=()=>{step--;nav()};
+$('#bxn').onclick=()=>{if(step==0&&!($('#cot').value.length>=4))return tw('Verify your phone with OTP');if(step<3){step++;nav();return}
+const t=sum(),id='#GS'+(10500+Math.floor(Math.random()*400));last={id,t,pm};location.hash='#success';$('#sp').style.display='block';$('#sd').style.display='none';$('#spt').textContent=pm=='cod'||pm=='bank'?'Placing your order…':'Redirecting to '+({bkash:'bKash',nagad:'Nagad',card:'secure gateway',emi:'bank gateway'}[pm])+'…';
+setTimeout(()=>{$('#spt').textContent=pm=='cod'||pm=='bank'?'Confirming…':'Verifying payment…'},1100);
+setTimeout(()=>{$('#sp').style.display='none';$('#sd').style.display='block';$('#oid').textContent=id;$('#osm').textContent=M(t)+' · '+({cod:'Cash on delivery',bkash:'Paid with bKash',nagad:'Paid with Nagad',card:'Paid by card',emi:'EMI',bank:'Bank transfer (awaiting slip)'}[pm]);cart=[];draw();trk()},2300)};
+$$('[data-d]').forEach(o=>o.onclick=()=>{$$('[data-d]').forEach(x=>x.classList.toggle('on',x==o));dl=+o.dataset.d;sum()});
+$$('[data-p]').forEach(o=>o.onclick=()=>{$$('[data-p]').forEach(x=>x.classList.toggle('on',x==o));pm=o.dataset.p;$('#emib').style.display=pm=='emi'?'block':'none';sum()});$('#emt').onchange=sum;
+const ST=['Placed','Confirmed','Packed','Handed to courier','In transit','Out for delivery','Delivered'];let si=1;
+function trk(){si=1;$('#tid').textContent='Order '+(last?last.id:'#GS10482');$('#tpm').textContent=last?$('#osm').textContent:'Cash on delivery';rt()}
+function rt(){$('#tlx').innerHTML=ST.map((s,i)=>`<div class="${i<si?'dn':i==si?'cu':''}">${s}</div>`).join('')}
+$('#tsim').onclick=()=>{si=Math.min(si+1,ST.length);rt()};trk();draw();nav();
+})();
+</script></body></html><style>
+/* ===== match pass: geometry measured from video (1536 css px viewport @125%) ===== */
+.w,.hd .hi{max-width:1328px;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0}
+@media(max-width:1380px){.w,.hd .hi{padding-left:16px;padding-right:16px}}
+.hd{border-radius:0 0 28px 28px;padding:0 0 8px;background:linear-gradient(#0c0a09 0,#15120f 60%,#1d1915)}
+.tb{font-size:12.5px;padding:9px 0 0;height:32px;color:#d8cfc3}.tb a:first-child{color:#d8cfc3}.tb .sd{color:var(--sand)}
+.mn{gap:22px;margin-top:4px;flex-wrap:nowrap}
+.lg{font:800 34px Georgia,serif;letter-spacing:-.5px;margin-right:6px}
+.mn .pill{background:transparent;border:1px solid transparent;font-size:14.5px;padding:7px 12px;border-radius:9px;color:#eee}
+.mn .pill.on{background:#5b4630;border-color:var(--sand);color:var(--sand)}
+.mn .s{height:50px;display:flex;align-items:center;background:#2a2622;border-radius:11px;font-size:15px;padding:0 22px}
+.mn .ic,.mn .av{width:54px;height:50px;border-radius:13px;background:#37302a;display:grid;place-items:center;font-size:18px}
+.mn .av{width:56px;height:56px;background:#6b5d50}
+.nv{margin-top:10px;gap:14px;overflow:visible}
+.ex{height:47px;display:flex;align-items:center;border-radius:11px;font-size:13px;letter-spacing:.4px;padding:0 17px}
+.nv .l{height:47px;align-items:center;gap:6px;border-radius:11px;padding:0 20px;background:#2a2623;flex:1}
+.nv .l span{height:31px;display:flex;align-items:center;padding:0 12px;border-radius:8px;font-size:14px;font-weight:500;background:#37312b}
+.rb{background:transparent;color:#f0e8dc;font-size:15px;padding:12px 0 10px;gap:60px;max-width:1328px;margin:0 auto}
+.msg{font-size:14px;padding:22px 11px;top:36%;background:#8a4b0e}
+.hv{margin-top:2px}
+.hk{--sw:66.1%;--gap:24px;gap:var(--gap)}
+.hk>div{flex:0 0 var(--sw);min-height:0;aspect-ratio:875/441}
+</style>
+<style>
+.hd{width:100%!important;margin:0!important}
+.hi{padding:0!important}
+.tb{margin:0 -48px;padding:9px 48px 0;background:#161310;border-radius:0 0 16px 16px;height:34px}
+.rb{width:1328px!important;max-width:100%}
+.nv .l{padding:0 14px;overflow:hidden}
+.nv .l span{padding:0 10px;font-size:13.5px}
+.mn .s{max-width:545px}
+</style>
+<style>
+.tb{padding-top:4px;height:30px}
+.mn{margin-top:14px;gap:20px}
+.nv{margin-top:20px}
+.hd{padding-bottom:12px}
+.ex{width:140px;justify-content:center;font-size:12.5px;padding:0}
+.nv .l span{font-size:14.5px;padding:0 11px}
+.cv{font-size:0!important;width:6px;height:6px;border:solid currentColor;border-width:0 1.6px 1.6px 0;transform:rotate(45deg) translate(-1px,-2px);margin-left:7px;transition:transform .2s!important}
+.nv .l span:hover .cv{transform:rotate(225deg) translate(-1px,-2px)}
+.mn .ic,.mn .av{width:52px}
+</style>
+<style>
+.mn{margin-top:17px}.nv{margin-top:24px}
+/* mega menu: column-flow lists, dividers, 14.5px rows (video) */
+.mega{background:#2b2724;padding:12px 0;min-width:0;line-height:36px;grid-auto-flow:row;grid-auto-rows:36px;gap:0;box-shadow:none}
+.mega a{font-size:14.5px;line-height:36px;height:36px;padding:0 30px 0 17px;color:#f0e8dc;white-space:nowrap}
+.mega.w6 a:not(:nth-child(6n+1)){box-shadow:-1px 0 0 #3d3631}
+.mega.w6{grid-template-columns:repeat(6,auto);left:var(--lx,171px)!important}
+/* explore all panel (video) */
+.xp{width:581px;height:300px;padding:10px 8px 10px 10px;gap:10px;background:#2b2724;align-items:stretch;box-shadow:none}
+.xp .cl,.xp .bgd{scrollbar-width:thin;scrollbar-color:#8a7a6a transparent;max-height:none;overflow-y:auto}
+.xp .cl{width:150px;border:0;padding:0 8px 0 0}
+.xp .cl div{border-radius:8px;padding:0 12px;height:41px;display:flex;align-items:center;font-size:14.5px;color:#f0e8dc}
+.xp .cl div.on{background:#5e5243}
+.xp .bgd{flex:1;grid-template-columns:repeat(3,95px);grid-auto-rows:87px;gap:11px 13px}
+.xp .bgd b{border-radius:10px;padding:0 0 12px;display:flex;align-items:flex-end;justify-content:center;font-weight:500;font-size:13px}
+</style>
+<script>
+(function(){var l=document.getElementById('cats'),nv=document.querySelector('.nv');
+function lx(){if(l&&nv)nv.style.setProperty('--lx',l.offsetLeft+'px')}lx();addEventListener('resize',lx);})();
+</script>
+<style>
+/* ===== responsive pass (mobile-first overrides; desktop match above stays for >=1101px) ===== */
+html,body{overflow-x:clip}
+.tb{margin:0 calc(-1*min(48px,(100vw - 100%)/2))}
+.hd .hi{padding-left:16px!important;padding-right:16px!important}
+@media(min-width:1380px){.hd .hi{padding-left:0!important;padding-right:0!important}}
+img,svg{max-width:100%}
+@media(max-width:1100px){
+ .tb{margin:0 -16px;padding:6px 16px 0;height:auto;min-height:28px;font-size:11.5px;display:flex;gap:12px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+ .tb::-webkit-scrollbar{display:none}
+ .mn{flex-wrap:wrap;gap:10px 10px;margin-top:10px}
+ .lg{font-size:28px;order:1;flex:1 1 auto}
+ .mn .ic,.mn .av{order:2;width:44px;height:44px;border-radius:12px}
+ .mn .s{order:3;flex:1 1 100%;max-width:none;height:44px;padding:0 16px;font-size:14px}
+ .mn .pill{order:4;font-size:13.5px;padding:6px 10px;flex:0 0 auto}
+ .nv{margin-top:12px;gap:8px;position:relative}
+ .ex{width:auto;height:42px;padding:0 12px;font-size:12px;flex:0 0 auto}
+ .nv .l{height:42px;padding:0 8px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;min-width:0}
+ .nv .l::-webkit-scrollbar{display:none}
+ .nv .l span{flex:0 0 auto;white-space:nowrap;font-size:13.5px;height:28px}
+ .rb{width:100%!important;font-size:13px;padding:10px 0 8px}
+ .hd{padding-bottom:10px}
+ /* dropdowns become full-width sheets under the nav */
+ .mega,.xp{position:absolute;left:0!important;right:0;width:auto!important;max-width:100%;border-radius:0 0 14px 14px;max-height:62vh;overflow:auto}
+ .mega.w6,.mega.w3,.mega{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:8px 0}
+ .mega a,.mega.w6 a{white-space:normal;padding:0 14px;box-shadow:none!important;height:auto;min-height:40px;display:flex;align-items:center;line-height:1.3;font-size:14px}
+ .xp{height:auto;max-height:62vh;padding:8px}
+ .xp .cl{width:118px;flex:0 0 118px}
+ .xp .cl div{height:38px;font-size:13px;padding:0 8px}
+ .xp .bgd{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));grid-auto-rows:74px;gap:8px}
+}
+@media(max-width:700px){
+ .hk{--sw:88%;--gap:12px}
+ .hk>div{padding:18px;aspect-ratio:auto;min-height:190px}
+ .hk>div b{font-size:clamp(18px,6.4vw,30px)!important;line-height:1.15}
+ .hk>div span{font-size:clamp(12px,3.8vw,16px)!important}
+ .msg{font-size:11px;padding:12px 5px;top:48%}
+ #cat8{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+ .ct{min-width:0}
+ .g5,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .w{padding-left:14px;padding-right:14px}
+}
+@media(min-width:701px) and (max-width:1100px){.hk{--sw:78%;--gap:16px}}
+</style>
+<script>
+/* touch: tapping outside the nav closes any open dropdown */
+document.addEventListener('click',function(e){if(!e.target.closest('.nv'))document.querySelectorAll('.mega.on,.xp.on').forEach(function(x){x.classList.remove('on')})});
+/* Explore All: each category shows its own brand list; grid swaps instantly and scrolls back to top (video 20-30s). Lists are placeholders - admin-managed. */
+(function(){
+var CB={Tablet:['Apple','Samsung','Xiaomi','Honor','Lenovo','Huawei'],Laptop:['Apple','Samsung','Xiaomi','Dell','Lenovo','Asus','HP','MSI','Acer','Huawei'],'Smart Watch':['Apple','Samsung','Xiaomi','Amazfit','Garmin','Huawei','Haylou','Realme','Mibro','Noise'],Gadget:['DJI','Anker','Baseus','Xiaomi','Insta360','GoPro','Ugreen','Remax'],Accessories:['Anker','Baseus','Belkin','A4Tech','Ugreen','Remax','Joyroom','Aukey','Hoco'],Sounds:['JBL','Sony','Anker','Marshall','Edifier','Bose','Baseus','Soundcore'],'Smart TV':['Samsung','Xiaomi','Sony','TCL','Hisense','LG'],'Home Appliance':['Xiaomi','Philips','Dyson','Panasonic','Walton','Roborock','Dreame'],Monitor:['Samsung','LG','Dell','Asus','MSI','BenQ','AOC','Acer']};
+var xp=document.querySelector('.xp');if(!xp)return;var first=xp.querySelector('.bgd').innerHTML;
+xp.querySelectorAll('.cl div').forEach(function(d){d.addEventListener('mouseenter',function(){var k=d.textContent.trim(),g=xp.querySelector('.bgd');
+ g.innerHTML=CB[k]?CB[k].map(function(b){return '<b>'+b+'</b>'}).join(''):first;g.scrollTop=0})});
+})();
+</script>
+<style>
+@media(max-width:1100px){
+ .tl{display:flex!important;order:4;flex:1 1 100%;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0}
+ .tl::-webkit-scrollbar{display:none}
+ .tl a{flex:0 0 auto;font-size:13.5px;padding:7px 12px;white-space:nowrap}
+ .mega.w6,.mega.w3,.mega,.xp{left:0!important}
+}
+</style>
+<style>
+/* ===== pass 30-40s: pinned ticker, dots, category tile fade, See all ===== */
+.nv.stk{position:static!important;transform:none!important;width:auto!important;background:none!important;padding:0!important;border-radius:0!important;animation:none!important}
+.rb{position:sticky;top:0;z-index:40;border-radius:0 0 14px 14px;transition:background .25s,box-shadow .25s}
+.rb.stuck{background:rgba(66,62,57,.96);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 6px 18px #0005}
+.dots{gap:8px;margin:20px 0 34px}.dots i{width:9px;height:9px;background:#f1f1f1;transition:width .3s,background .3s}.dots i.on{width:28px;background:#eab51a}
+.see{padding:9px 18px;font-size:14.5px;border-radius:10px;transition:background .2s,transform .2s;cursor:pointer}.see:hover{background:#e4dcd1}
+.hr h2{font-size:28px}
+.ct .pn{height:auto!important;aspect-ratio:4/5;border-radius:26px!important;border:1px solid #7a5d1f;background:#34291f;transition:background .28s ease,border-color .28s ease;display:grid;place-items:center}
+.ct .pn img{object-fit:contain!important;padding:16%;box-sizing:border-box;border-radius:0!important}
+.ct:hover .pn,.ct.on .pn{background:#f4ede5;border-color:#f4ede5}
+@media(prefers-reduced-motion:reduce){.rb{transition:none}}
+@media(min-width:1101px){.hv{margin-top:-12px}}
+</style>
+<script>
+(function(){var rb=document.querySelector('.rb');if(!rb)return;
+function f(){rb.classList.toggle('stuck',rb.getBoundingClientRect().top<=0.5&&scrollY>0)}
+addEventListener('scroll',f,{passive:true});f();})();
+</script>
+

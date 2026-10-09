@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>gadgetsite — Tailwind demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+// Same design tokens as design.html, now in tailwind.config (admin theme settings map to these)
+tailwind.config={theme:{extend:{colors:{page:'#2e2a26',panel:'#3a332c',ink:'#14181b',sand:'#d2a679',band:'#6b3f12',sale:'#ff7b7b',ok:'#0a9a2a',mut:'#a89d90'},fontFamily:{sans:['Outfit','system-ui','sans-serif']}}}}
+</script>
+<style>
+/* the plain-CSS version of the SAME card, for the comparison panel */
+.card-css{background:#f4f4f4;color:#14181b;border-radius:16px;padding:12px;position:relative;transition:transform .25s,box-shadow .25s}
+.card-css:hover{transform:translateY(-4px);box-shadow:0 10px 24px #0006}
+</style></head>
+<body class="bg-page text-[#f4ede5] font-sans text-sm">
+
+<!-- HEADER -->
+<header class="mx-auto w-[min(1240px,calc(100%-60px))] rounded-b-3xl bg-gradient-to-b from-[#0c0a09] to-[#1d1915] pb-3.5 pt-1.5">
+  <div class="px-8">
+    <div class="flex justify-between py-1 pb-2 text-[10px] text-[#cfc6bb]"><span>New Blogs &nbsp; <b class="font-normal text-sand">EMI Policy</b></span><span>09638001122 &nbsp; Store locations</span></div>
+    <div class="flex flex-wrap items-center gap-5 md:flex-nowrap">
+      <a class="font-serif text-3xl font-extrabold tracking-tight text-white">gadgetsite<sup class="text-[10px]">™</sup></a>
+      <nav class="hidden gap-5 text-xs md:flex"><a>Brand</a><a>Online Exclusive</a><a class="rounded-lg border border-sand bg-[#5b4630] px-3.5 py-1.5 text-white">Offer</a><a>Pre-Order</a></nav>
+      <div class="min-w-0 flex-1 rounded-[10px] bg-[#2a2521] px-3.5 py-2.5 text-xs text-mut">⌕ &nbsp;Search for the item</div>
+      <span class="rounded-[10px] bg-[#2a2521] px-3 py-2">👤</span><span class="rounded-[10px] bg-[#2a2521] px-3 py-2">🛍</span><span class="rounded-[10px] bg-[#5a4d40] px-3 py-2">☾</span>
+    </div>
+    <div class="mt-3 flex items-center gap-2.5 overflow-x-auto">
+      <a class="whitespace-nowrap rounded-[10px] bg-sand px-[18px] py-[11px] text-[11px] font-semibold tracking-wide text-ink">EXPLORE ALL &nbsp;⌄</a>
+      <div class="flex flex-1 gap-1.5 rounded-[10px] bg-[#1c1814] p-1.5">
+        <span class="whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition hover:text-sand">Phones ⌄</span>
+        <span class="whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition hover:text-sand">Tablet ⌄</span>
+        <span class="whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition hover:text-sand">Laptop ⌄</span>
+        <span class="whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition hover:text-sand">Smart Watch ⌄</span>
+        <span class="whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition hover:text-sand">Accessories ⌄</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1200px] px-5 py-8">
+  <p class="mb-6 rounded-xl bg-panel p-4 text-mut">Ei pura page-ta <b class="text-sand">Tailwind</b> class diye banano. Design hubohu same, shudhu CSS file er jaygay class HTML e likha hoy. Card er upor mouse niye dekho — hover animation ache.</p>
+
+  <!-- BAND WITH CARDS -->
+  <section class="my-6 bg-band py-7">
+    <div class="mx-auto max-w-[1200px] px-5">
+      <h2 class="mb-3.5 flex items-center justify-between text-[22px] font-semibold">Flash Sale
+        <span class="flex gap-1 text-xs"><i class="rounded-full bg-[#a7753f] px-2 py-1.5 not-italic">08</i><i class="rounded-full bg-[#a7753f] px-2 py-1.5 not-italic">03</i><i class="rounded-full bg-[#a7753f] px-2 py-1.5 not-italic">56</i></span>
+        <a class="rounded-lg bg-[#fbf3ea] px-3.5 py-1.5 text-xs font-normal text-ink">See all</a></h2>
+      <div class="grid grid-cols-2 gap-3.5 md:grid-cols-4">
+        <!-- one Tailwind card, repeated by JS below -->
+        <template id="tpl">
+          <div class="group relative rounded-2xl bg-[#f4f4f4] p-3 text-ink transition duration-300 hover:-translate-y-1 hover:shadow-[0_10px_24px_#0006]">
+            <span class="absolute left-2.5 top-2.5 z-10 rounded-full bg-sale px-2 py-0.5 text-[11px] text-white" data-off></span>
+            <span class="absolute right-2.5 top-2.5 z-10 rounded-full bg-[#4a2c0e] px-2.5 py-[3px] text-[11px] text-white" data-badge></span>
+            <div class="mb-2 grid h-[140px] place-items-center overflow-hidden rounded-[10px] bg-gradient-to-br from-[#d9d9d9] to-white text-5xl transition duration-300 group-hover:scale-105">📱</div>
+            <div class="text-[13px]"><span data-name></span> <span class="text-ok">In Stock</span></div>
+            <b class="text-base" data-price></b> <s class="text-xs text-[#999]" data-reg></s>
+            <div class="mt-2 flex gap-1.5">
+              <span class="flex-1 cursor-pointer rounded-[10px] border border-[#f0d9bd] p-2 text-center font-medium text-band transition hover:bg-[#fdf1e3]">🛍 Add to Cart</span>
+              <i class="w-9 cursor-pointer rounded-full border border-[#ddd] p-1.5 text-center not-italic">👁</i>
+            </div>
+          </div>
+        </template>
+        <div id="cards" class="contents"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKOUT SUMMARY -->
+  <section class="grid gap-5 md:grid-cols-[1.5fr_1fr]">
+    <div class="rounded-2xl bg-panel p-4">
+      <b>Payment</b>
+      <div class="mt-2 flex cursor-pointer items-center gap-3 rounded-xl border border-sand bg-[#3b3025] p-3 transition"><i class="h-4 w-4 rounded-full border-2 border-sand bg-sand/80"></i>Cash on delivery <span class="ml-auto text-sand">Free</span></div>
+      <div class="mt-2 flex cursor-pointer items-center gap-3 rounded-xl border border-[#4a4036] p-3 transition hover:border-sand"><i class="h-4 w-4 rounded-full border-2 border-[#8a7d6d]"></i>bKash <span class="ml-auto text-sand"></span></div>
+      <div class="mt-2 flex cursor-pointer items-center gap-3 rounded-xl border border-[#4a4036] p-3 transition hover:border-sand"><i class="h-4 w-4 rounded-full border-2 border-[#8a7d6d]"></i>Card / EMI <span class="ml-auto text-sand">+2.56%</span></div>
+      <button class="mt-4 rounded-[10px] bg-sand px-5 py-3 font-semibold text-ink transition hover:-translate-y-px active:scale-95">Place order</button>
+    </div>
+    <div class="self-start rounded-2xl bg-panel p-4"><b>Order summary</b>
+      <div class="flex justify-between py-1.5"><span>iPhone 18 Pro Max × 1</span><span>৳1,85,990</span></div>
+      <div class="flex justify-between py-1.5"><span>Delivery</span><span>Free</span></div>
+      <div class="mt-1.5 flex justify-between border-t border-[#4a4036] pt-2.5 text-[17px] font-semibold"><span>Total</span><span>৳1,85,990</span></div></div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section class="mt-10">
+    <h2 class="mb-3 text-[22px] font-semibold">Plain CSS vs Tailwind — same card, same look</h2>
+    <div class="grid gap-5 md:grid-cols-2">
+      <div class="rounded-2xl bg-panel p-4"><b class="text-sand">Plain CSS (design.html / current project)</b>
+        <div class="card-css my-3 w-48"><div class="mb-2 grid h-24 place-items-center rounded-[10px] bg-[#e6e6e6] text-4xl">📱</div>iPhone 18 Pro Max<br><b>৳1,85,990</b></div>
+        <pre class="overflow-auto rounded-lg bg-[#1b1815] p-3 text-[11px] leading-5 text-[#e8e0d6]">.card{background:#f4f4f4;color:#14181b;
+  border-radius:16px;padding:12px;
+  transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-4px);
+  box-shadow:0 10px 24px #0006}
+
+&lt;div class="card"&gt;…&lt;/div&gt;</pre></div>
+      <div class="rounded-2xl bg-panel p-4"><b class="text-sand">Tailwind</b>
+        <div class="my-3 w-48 rounded-2xl bg-[#f4f4f4] p-3 text-ink transition duration-300 hover:-translate-y-1 hover:shadow-[0_10px_24px_#0006]"><div class="mb-2 grid h-24 place-items-center rounded-[10px] bg-[#e6e6e6] text-4xl">📱</div>iPhone 18 Pro Max<br><b>৳1,85,990</b></div>
+        <pre class="overflow-auto rounded-lg bg-[#1b1815] p-3 text-[11px] leading-5 text-[#e8e0d6]">&lt;div class="rounded-2xl bg-[#f4f4f4] p-3
+  text-ink transition duration-300
+  hover:-translate-y-1
+  hover:shadow-[0_10px_24px_#0006]"&gt;…&lt;/div&gt;
+
+/* no separate CSS file needed */</pre></div>
+    </div>
+    <div class="mt-5 overflow-x-auto rounded-2xl bg-panel p-4">
+      <table class="w-full text-left text-[13px]"><tr class="text-mut"><th class="p-2"></th><th class="p-2">Plain CSS</th><th class="p-2">Tailwind</th></tr>
+        <tr class="border-t border-[#4a4036]"><td class="p-2 text-mut">Final look</td><td class="p-2">Same</td><td class="p-2">Same</td></tr>
+        <tr class="border-t border-[#4a4036]"><td class="p-2 text-mut">Theme colours from admin</td><td class="p-2">CSS variables</td><td class="p-2">Config tokens + CSS variables</td></tr>
+        <tr class="border-t border-[#4a4036]"><td class="p-2 text-mut">Speed of building new pages</td><td class="p-2">Slower, write CSS</td><td class="p-2">Faster, classes in markup</td></tr>
+        <tr class="border-t border-[#4a4036]"><td class="p-2 text-mut">Markup readability</td><td class="p-2">Cleaner HTML</td><td class="p-2">Long class lists</td></tr>
+        <tr class="border-t border-[#4a4036]"><td class="p-2 text-mut">CSS size in production</td><td class="p-2">Whole file</td><td class="p-2">Only used classes (small)</td></tr>
+        <tr class="border-t border-[#4a4036]"><td class="p-2 text-mut">Matching the reference exactly</td><td class="p-2">Direct, already done</td><td class="p-2">Needs many arbitrary values like <code>[#f4f4f4]</code></td></tr></table>
+    </div>
+  </section>
+</main>
+
+<script>
+const P=[['iPhone 18 Pro Max','1,85,990','2,99,990','38%','New Arrival'],['iPhone 18 Pro','1,67,990','2,35,990','29%','Top Selling'],['Galaxy S26 Ultra','1,13,990','1,69,990','33%','Hot Product'],['OnePlus 15 5G','89,888','1,20,990','26%','Few Left Only!']];
+const t=document.getElementById('tpl'),c=document.getElementById('cards');
+P.forEach(p=>{const n=t.content.cloneNode(true);n.querySelector('[data-name]').textContent=p[0];n.querySelector('[data-price]').textContent='৳ '+p[1];n.querySelector('[data-reg]').textContent='৳ '+p[2];n.querySelector('[data-off]').textContent=p[3];n.querySelector('[data-badge]').textContent=p[4];c.appendChild(n)});
+</script>
+</body></html>
