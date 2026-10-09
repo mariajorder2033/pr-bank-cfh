@@ -62,6 +62,30 @@ describe('one-time SMS codes', () => {
     expect(await requestOtp(p, '2.2.2.2')).toEqual({ error: 'rate_limited' })
   })
 
+  test('BulkSMSBD without credentials counts as no gateway', async () => {
+    process.env.SMS_PROVIDER = 'bulksmsbd'
+    delete process.env.BULKSMSBD_API_KEY
+    expect(await requestOtp(phone(), '1.1.1.1')).toEqual({ error: 'disabled' })
+  })
+
+  test('a gateway failure is reported and leaves no usable code behind', async () => {
+    process.env.SMS_PROVIDER = 'bulksmsbd'
+    process.env.BULKSMSBD_API_KEY = 'k'
+    process.env.BULKSMSBD_SENDER_ID = 's'
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ response_code: 1007 })))
+    vi.stubGlobal('fetch', fetchMock)
+    const p = phone()
+    try {
+      expect(await requestOtp(p, '1.1.1.1')).toEqual({ error: 'send_failed' })
+      expect(fetchMock).toHaveBeenCalledOnce()
+      expect(await db.otpCode.count({ where: { phone: p } })).toBe(0)
+    } finally {
+      vi.unstubAllGlobals()
+      delete process.env.BULKSMSBD_API_KEY
+      delete process.env.BULKSMSBD_SENDER_ID
+    }
+  })
+
   test('with no SMS gateway configured the SMS login is disabled', async () => {
     delete process.env.SMS_PROVIDER
     expect(await requestOtp(phone(), '1.1.1.1')).toEqual({ error: 'disabled' })

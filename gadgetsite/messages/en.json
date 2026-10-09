@@ -152,7 +152,8 @@
       "password": "Use at least 8 characters.",
       "name": "Enter your name.",
       "email": "Enter a valid email address.",
-      "wrongCurrent": "Your current password is not right."
+      "wrongCurrent": "Your current password is not right.",
+      "send_failed": "We could not send the SMS. Please try again or log in with your password."
     }
   }
 }

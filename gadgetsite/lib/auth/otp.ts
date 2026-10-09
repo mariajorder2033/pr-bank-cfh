@@ -34,7 +34,7 @@ async function limit(checks: [string, number, number][]): Promise<Limited | null
 export async function requestOtp(
   phone: string,
   ip: string,
-): Promise<{ ok: true } | { error: 'disabled' } | Limited> {
+): Promise<{ ok: true } | { error: 'disabled' | 'send_failed' } | Limited> {
   const sms = getSms()
   if (!sms) return { error: 'disabled' }
   const limited = await limit([
@@ -51,7 +51,14 @@ export async function requestOtp(
     }),
   ])
   const { site } = await getSettings()
-  await sms.send(phone, `${site.nameEn} code: ${code} (5 min). কোড: ${code}`)
+  try {
+    await sms.send(phone, `${site.nameEn} code: ${code} (5 min). কোড: ${code}`)
+  } catch (e) {
+    // The shopper never got this code, so it must not stay valid.
+    await db.otpCode.deleteMany({ where: { phone } })
+    console.error('[sms] send failed:', e instanceof Error ? e.message : e)
+    return { error: 'send_failed' }
+  }
   return { ok: true }
 }
 
