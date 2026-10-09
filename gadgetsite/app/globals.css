@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme tokens (dark default). Admin theme settings override these at runtime. */
+:root {
+  --bg: #2e2a26;
+  --pn: #3a332c;
+  --tx: #f4ede5;
+  --mut: #a89d90;
+  --sand: #d2a679;
+  --br: #6b3f12;
+  --sale: #ff7b7b;
+  --ok: #0a9a2a;
+}
+.light {
+  --bg: #f6f1ea;
+  --pn: #e9e1d6;
+  --tx: #2a2420;
+  --mut: #6b6055;
+  --br: #b9722a;
+}
+@layer base {
+  body {
+    @apply bg-bg font-sans text-sm text-tx;
+  }
+  a {
+    @apply no-underline;
+  }
+  img {
+    @apply inline-block;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
