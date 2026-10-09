@@ -1,6 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { db } from '@/lib/db'
+import { parseSections } from '@/lib/content/schemas'
 import { seed } from '@/prisma/seed'
+import { categories } from '@/prisma/seed-data/catalog'
 
 afterAll(() => db.$disconnect())
 
@@ -44,5 +46,16 @@ describe('seed', () => {
   test('stores the measured motion defaults', async () => {
     const motion = await db.setting.findUniqueOrThrow({ where: { key: 'motion' } })
     expect((motion.value as { heroCycleMs: number }).heroCycleMs).toBe(4850)
+  })
+
+  test('creates the storefront content the pages read', async () => {
+    const home = await db.layout.findUniqueOrThrow({ where: { page: 'home' } })
+    expect(
+      parseSections(home.sections).filter((s) => s.type === 'productRow').length,
+    ).toBeGreaterThan(0)
+    expect(await db.menu.findUnique({ where: { location: 'footer' } })).not.toBeNull()
+    expect(await db.megaMenu.count()).toBe(categories.length)
+    const phones = await db.category.findUniqueOrThrow({ where: { slug: 'phones' } })
+    expect(await db.exploreBrand.count({ where: { categoryId: phones.id } })).toBeGreaterThan(0)
   })
 })

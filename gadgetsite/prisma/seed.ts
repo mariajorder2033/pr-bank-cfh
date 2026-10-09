@@ -4,6 +4,7 @@ import type { PrismaClient } from '../lib/generated/prisma/client'
 import { badges, brands, categories, products } from './seed-data/catalog'
 import {
   couriers,
+  layouts,
   pages,
   paymentProviders,
   permissions,
@@ -113,6 +114,47 @@ export async function seed(db: PrismaClient): Promise<void> {
       })
     }
   }
+
+  for (const [page, sections] of Object.entries(layouts)) {
+    await db.layout.upsert({
+      where: { page },
+      update: {},
+      create: { page, sections: sections as object[] },
+    })
+  }
+
+  // Mega menus and EXPLORE ALL: per category, the brands that have products in it.
+  for (const c of categories) {
+    const categoryId = categoryIds.get(c.slug)!
+    const brandSlugs = [
+      ...new Set(products.filter((p) => p.category === c.slug).map((p) => p.brand)),
+    ]
+    const items = brandSlugs.map((slug) => {
+      const b = brands.find((x) => x.slug === slug)!
+      return { label: { en: b.nameEn, bn: b.nameBn }, href: `/category/${c.slug}?brands=${slug}` }
+    })
+    const existing = await db.megaMenu.findFirst({ where: { categoryId } })
+    if (!existing) {
+      await db.megaMenu.create({ data: { categoryId, layout: 'cols2', rowsPerCol: 7, items } })
+    }
+    for (const [sort, slug] of brandSlugs.entries()) {
+      const brandId = brandIds.get(slug)!
+      await db.exploreBrand.upsert({
+        where: { categoryId_brandId: { categoryId, brandId } },
+        update: {},
+        create: { categoryId, brandId, sort },
+      })
+    }
+  }
+
+  await db.menu.upsert({
+    where: { location: 'footer' },
+    update: {},
+    create: {
+      location: 'footer',
+      items: pages.map((p) => ({ label: { en: p.titleEn, bn: p.titleBn }, href: `/${p.slug}` })),
+    },
+  })
 
   await db.menu.upsert({
     where: { location: 'header' },

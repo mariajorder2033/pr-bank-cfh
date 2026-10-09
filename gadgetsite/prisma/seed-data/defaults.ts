@@ -30,7 +30,7 @@ export const roles: Record<string, readonly PermissionCode[]> = {
 
 // TRD §9 motion constants and reference CLAUDE.md design tokens; all admin-editable.
 export const settings: Record<string, unknown> = {
-  site: { nameEn: 'gadgetsite', nameBn: 'gadgetsite', logoUrl: null },
+  site: { nameEn: 'gadgetsite', nameBn: 'gadgetsite', logoUrl: null, phone: null },
   motion: {
     heroCycleMs: 4850,
     heroSlideMs: 280,
@@ -81,3 +81,41 @@ export const pages = [
   { slug: 'emi-policy', titleEn: 'EMI policy', titleBn: 'ইএমআই নীতি', kind: 'policy' },
   { slug: 'delivery-policy', titleEn: 'Delivery policy', titleBn: 'ডেলিভারি নীতি', kind: 'policy' },
 ] as const
+
+/** Storefront layouts (Home builder JSON, see lib/content/schemas.ts). Admin edits these. */
+export const layouts: Record<string, unknown[]> = {
+  home: [
+    { type: 'hero', placement: 'home' },
+    {
+      type: 'productRow',
+      title: { en: 'Hot deals', bn: 'হট ডিল' },
+      band: true,
+      query: { badge: 'hot', pageSize: 10 },
+    },
+    {
+      type: 'productRow',
+      title: { en: 'New arrivals', bn: 'নতুন এসেছে' },
+      query: { badge: 'new', pageSize: 10 },
+    },
+    {
+      type: 'productRow',
+      title: { en: 'Phones', bn: 'ফোন' },
+      band: true,
+      seeAllHref: '/category/phones',
+      query: { category: 'phones', pageSize: 10 },
+    },
+    {
+      type: 'productRow',
+      title: { en: 'Laptops', bn: 'ল্যাপটপ' },
+      seeAllHref: '/category/laptops',
+      query: { category: 'laptops', pageSize: 10 },
+    },
+  ],
+  'online-exclusive': [
+    {
+      type: 'productRow',
+      title: { en: 'Online exclusive deals', bn: 'অনলাইন এক্সক্লুসিভ অফার' },
+      query: { sort: 'discount', pageSize: 20 },
+    },
+  ],
+}
