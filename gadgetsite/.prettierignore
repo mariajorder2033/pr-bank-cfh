@@ -1,0 +1,5 @@
+node_modules
+.next
+lib/generated
+package-lock.json
+docs/reference

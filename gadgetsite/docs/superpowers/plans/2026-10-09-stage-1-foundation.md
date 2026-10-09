@@ -5,6 +5,7 @@
 **Goal:** A standalone `gadgetsite/` Next.js project with the full Prisma schema migrated on real PostgreSQL, the pure domain library (money, discount, EMI, stock, state machines) under test, a sample-catalog seed, and CI.
 
 **Architecture:** One Next.js 15 app (spec §3). This stage builds the layers every later stage depends on:
+
 - `lib/domain`: pure functions, no I/O.
 - `prisma/`: schema, migrations and seed.
 - `lib/db.ts`: Prisma client on `@prisma/adapter-pg`.
@@ -39,10 +40,12 @@ The storefront port and the API come in Stage 2.
 ### Task 1: Project scaffold
 
 **Files:**
+
 - Create: `package.json`, `tsconfig.json`, `next.config.mjs`, `.prettierrc`, `.prettierignore`, `.gitignore`, `.editorconfig`, `eslint.config.mjs`, `vitest.config.ts`, `.env.example`, `docker-compose.yml`, `app/layout.tsx`, `app/page.tsx`, `README.md`
 - Test: `tests/unit/smoke.test.ts`
 
 **Interfaces:**
+
 - Produces scripts:
   - `dev`, `build`, `start`, `typecheck` (`tsc --noEmit`), `lint` (`eslint . && prettier --check .`), `format`
   - `test` (`vitest run --project unit`), `test:integration` (`vitest run --project integration`)
@@ -59,6 +62,7 @@ The storefront port and the API come in Stage 2.
   - `integration`: `tests/integration/**/*.test.ts`, `fileParallelism: false`, `globalSetup: tests/integration/global-setup.ts` (created in Task 6)
 
   Both resolve `@` to the project root.
+
 - [ ] **Step 4:** Write a minimal `app/layout.tsx` (html/body) and an `app/page.tsx` returning `null`. This page is replaced in Stage 2. Write `docker-compose.yml` with `postgres:16` (db `gadgetsite`, user/pass `gadgetsite`, port 5432) and `redis:7` (6379). In `.env.example` set:
   - `DATABASE_URL=postgresql://gadgetsite:gadgetsite@localhost:5432/gadgetsite`
   - `TEST_DATABASE_URL=postgresql://gadgetsite:gadgetsite@localhost:5432/gadgetsite_test`
@@ -69,6 +73,7 @@ The storefront port and the API come in Stage 2.
 ### Task 2: Money and discount (`lib/domain/money.ts`, `lib/domain/pricing.ts`)
 
 **Interfaces:**
+
 - Produces:
   - `type Locale = 'en' | 'bn'`
   - `assertTaka(n: number): void`: throws `RangeError` unless `Number.isSafeInteger(n)`
@@ -101,6 +106,7 @@ The storefront port and the API come in Stage 2.
 ### Task 3: EMI quote (`lib/domain/emi.ts`)
 
 **Interfaces:**
+
 - Produces:
   - `type EmiRate = { tenureMonths: number; percent: number }`
   - `type EmiOption = { tenureMonths: number; percent: number; monthly: number; total: number; interest: number }`
@@ -125,6 +131,7 @@ The storefront port and the API come in Stage 2.
 ### Task 4: Stock status (`lib/domain/stock.ts`)
 
 **Interfaces:**
+
 - Produces:
   - `type StockStatus = 'in_stock' | 'few_left' | 'out_of_stock' | 'preorder'`
   - `stockStatus(available: number, opts: { lowThreshold: number; preorder: boolean }): StockStatus`
@@ -143,6 +150,7 @@ The storefront port and the API come in Stage 2.
 ### Task 5: State machines (`lib/domain/state/{machine,order,payment,shipment}.ts`)
 
 **Interfaces:**
+
 - Produces:
   - `class IllegalTransition extends Error { from: string; to: string }`
   - `defineMachine<S extends string>(edges: Record<S, readonly S[]>): { canTransition(from: S, to: S): boolean; assertTransition(from: S, to: S): void; next(from: S): readonly S[] }`
@@ -205,15 +213,18 @@ The storefront port and the API come in Stage 2.
 ### Task 6: Prisma schema, migration and test database
 
 **Files:**
+
 - Create: `prisma.config.ts`, `prisma/schema.prisma`, `prisma/migrations/*` (generated), `lib/db.ts`
 - Create: `tests/integration/global-setup.ts`, `tests/integration/schema.test.ts`, `tests/unit/enums.test.ts`
 
 **Interfaces:**
+
 - Produces: `lib/db.ts` exports `db` (a singleton `PrismaClient` from `@/lib/generated/prisma/client`, built with `new PrismaPg({ connectionString: process.env.DATABASE_URL })`; cached on `globalThis` in dev).
 - Produces: `prisma.config.ts` with `schema: 'prisma/schema.prisma'`, `migrations.seed: 'tsx prisma/seed.ts'`, and the datasource URL from `DATABASE_URL`.
 - Generator: `provider = "prisma-client"`, `output = "../lib/generated/prisma"`.
 
 **Models.** Use camelCase fields and `@@map` to snake_case tables. Every model has `id String @id @default(cuid())`, `createdAt` and `updatedAt`. Bilingual fields are `xEn` and `xBn String @default("")`.
+
 - **Catalog:**
   - `Category(slug @unique, parentId?, nameEn, nameBn, iconUrl?, sort, active)`
   - `Brand(slug @unique, nameEn, nameBn, logoUrl?, sort, active)`
@@ -282,6 +293,7 @@ The Prisma enum values must equal the `*_STATUSES` arrays from Task 5.
 ### Task 7: Seed (`prisma/seed.ts`, `prisma/seed-data/*.ts`)
 
 **Interfaces:**
+
 - Produces: `seed(db: PrismaClient): Promise<void>`, exported for tests. The CLI entry calls it with `db`.
 - Seeds:
   - **Roles:** `owner, manager, catalog, content, orders, support, finance`.
@@ -297,6 +309,7 @@ The Prisma enum values must equal the `*_STATUSES` arrays from Task 5.
     - `settings.write`
 
     `owner` gets all of them.
+
   - **Settings (TRD §9 defaults):**
     - `motion` = `{heroCycleMs:4850, heroSlideMs:280, heroEasing:'cubic-bezier(.22,.8,.2,1)', tickerPxPerS:78, wipeMs:200, tileFadeMs:280}`
     - `delivery` = `{freeOver:999}`
@@ -327,6 +340,7 @@ The Prisma enum values must equal the `*_STATUSES` arrays from Task 5.
 ### Task 8: CI and docs
 
 **Files:**
+
 - Create: `../.github/workflows/gadgetsite.yml`
 - Modify: `README.md`
 - Create: `docs/integrations-status.md`

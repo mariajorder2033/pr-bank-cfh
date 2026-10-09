@@ -10,6 +10,7 @@ Sources: `docs/reference/PRD.md` (v1.1), `docs/reference/TRD.md` (v1.1), `docs/r
 **Outcome:** a working electronics store for Bangladesh. The storefront, admin panel, API, database and background worker all run against PostgreSQL and Redis. Staff run every piece of content, price and setting from the admin panel. Payments and couriers go through real provider adapters.
 
 **Success criteria**
+
 1. `docker compose up` (or `npm run dev` plus local Postgres and Redis) gives a working store seeded with sample products.
 2. Every PRD §18 acceptance criterion passes against provider sandboxes once those hosts are reachable. Until then, the adapters are covered by contract tests built from the providers' documented request/response shapes, and they are clearly labelled "sandbox-unverified".
 3. The TRD §11 Playwright matrix passes at 375, 768, 1024, 1440 and 1536 px, with zero console errors.
@@ -17,6 +18,7 @@ Sources: `docs/reference/PRD.md` (v1.1), `docs/reference/TRD.md` (v1.1), `docs/r
 5. Switching a provider from sandbox to live is an admin toggle plus credentials.
 
 **Assumptions**
+
 - Sample data is limited to products, categories, brands, banners and pages created by `npm run seed`. Admin can replace all of it.
 - Real orders, customers, payments and shipments are never seeded.
 
@@ -159,13 +161,13 @@ Retries use exponential backoff with jitter, a 10 s timeout and a per-provider c
 
 ## 7. Integrations
 
-| Kind     | Adapters in v1                                                                                                      | Notes                                                                                                                            |
-| -------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Payments | bKash (tokenized checkout), SSLCommerz (cards, net banking, EMI, MFS), aamarPay (Nagad, Rocket, Upay), COD, bank transfer (slip upload), pay at store | Interface from TRD §12; ShurjoPay and direct Nagad come later                                                                    |
-| Couriers | Pathao, Steadfast, RedX, own riders (manual), store pickup                                                          | Paperfly and eCourier come later                                                                                                  |
-| SMS      | `SmsProvider` interface; first concrete adapter picked when the owner chooses a BD gateway                          | In `NODE_ENV=development` a console adapter prints OTPs. Production refuses to start without a configured SMS provider.        |
-| Email    | SMTP via nodemailer (works with SES)                                                                                | Optional; skipped if unset                                                                                                        |
-| Storage  | `StorageDriver`: local disk (dev) and S3-compatible (prod)                                                          | Admin uploads; images served through Next/Image                                                                                   |
+| Kind     | Adapters in v1                                                                                                                                        | Notes                                                                                                                   |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Payments | bKash (tokenized checkout), SSLCommerz (cards, net banking, EMI, MFS), aamarPay (Nagad, Rocket, Upay), COD, bank transfer (slip upload), pay at store | Interface from TRD §12; ShurjoPay and direct Nagad come later                                                           |
+| Couriers | Pathao, Steadfast, RedX, own riders (manual), store pickup                                                                                            | Paperfly and eCourier come later                                                                                        |
+| SMS      | `SmsProvider` interface; first concrete adapter picked when the owner chooses a BD gateway                                                            | In `NODE_ENV=development` a console adapter prints OTPs. Production refuses to start without a configured SMS provider. |
+| Email    | SMTP via nodemailer (works with SES)                                                                                                                  | Optional; skipped if unset                                                                                              |
+| Storage  | `StorageDriver`: local disk (dev) and S3-compatible (prod)                                                                                            | Admin uploads; images served through Next/Image                                                                         |
 
 - **Credentials.**
   - Stored in `payment_providers.config_encrypted` and `couriers.config_encrypted` with AES-256-GCM. The key comes from the `CREDENTIALS_KEY` env var.
