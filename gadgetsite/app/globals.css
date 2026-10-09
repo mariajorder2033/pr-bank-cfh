@@ -21,8 +21,26 @@
   --br: #b9722a;
 }
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
-    @apply bg-bg font-sans text-sm text-tx;
+    @apply bg-bg font-sans text-sm text-tx antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--sand) 45%, transparent);
+  }
+  /* Keyboard focus is always visible; mouse clicks do not leave rings behind. */
+  :focus-visible {
+    outline: 2px solid var(--sand);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+  button,
+  a {
+    @apply transition-colors duration-200 ease-smooth;
   }
   a {
     @apply no-underline;
@@ -32,10 +50,22 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  * {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Loading placeholder shimmer. */
+.skeleton {
+  background: linear-gradient(90deg, #3a332c 25%, #4a4138 37%, #3a332c 63%);
+  background-size: 400% 100%;
+  @apply animate-shimmer rounded-2xl;
 }
 
 /* Hero geometry (TRD §9): slide width and gap per breakpoint, read by HeroSlider. */

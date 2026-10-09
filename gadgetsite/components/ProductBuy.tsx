@@ -74,7 +74,7 @@ export default function ProductBuy({ p }: { p: ProductDetail }) {
                       data-unavailable={unavailable}
                       aria-pressed={variant[dim] === value}
                       onClick={() => setVariant(pickVariant(p.variants, variant, dim, value))}
-                      className={`m-1 inline-block rounded-lg border px-3 py-1.5 text-ink transition ${variant[dim] === value ? 'border-2 border-[#d2893a] bg-[#fff3e2]' : 'border-[#6d6154] bg-[#f4f4f4]'} ${unavailable ? 'line-through opacity-50' : ''}`}
+                      className={`m-1 inline-block rounded-lg border px-3 py-1.5 text-ink transition-[background-color,border-color,transform,opacity] duration-200 ease-smooth hover:-translate-y-px active:scale-[.97] ${variant[dim] === value ? 'border-2 border-[#d2893a] bg-[#fff3e2]' : 'border-[#6d6154] bg-[#f4f4f4]'} ${unavailable ? 'line-through opacity-50' : ''}`}
                     >
                       {value}
                     </button>
@@ -87,7 +87,7 @@ export default function ProductBuy({ p }: { p: ProductDetail }) {
       )}
 
       <div className="grid gap-3.5 min-[701px]:grid-cols-2">
-        <div className="rounded-2xl border border-sand bg-[#f4f4f4] p-3 text-ink">
+        <div className="rounded-2xl border border-sand bg-[#f6f5f3] p-3 text-ink shadow-[0_6px_18px_-10px_#d2a679]">
           {t('pd.offer')} <b data-testid="offer-price">{formatBDT(variant.offerPrice, locale)}</b>
           {variant.discountPercent > 0 && (
             <span className="ml-2 rounded-full bg-sale px-2 py-0.5 text-[11px] text-white">
@@ -97,7 +97,7 @@ export default function ProductBuy({ p }: { p: ProductDetail }) {
           <br />
           <small>{t('pd.offerNote')}</small>
         </div>
-        <div className="rounded-2xl bg-[#f4f4f4] p-3 text-ink">
+        <div className="rounded-2xl bg-[#f6f5f3] p-3 text-ink">
           {t('pd.regular')} <b>{formatBDT(variant.regularPrice, locale)}</b>
           {lowestMonthly !== null && (
             <>

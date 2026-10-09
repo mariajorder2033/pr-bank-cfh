@@ -18,13 +18,13 @@ export default function CartDrawer({ freeOver }: { freeOver: number }) {
   return (
     <>
       <div
-        className={`fixed inset-0 z-[59] bg-black/60 transition-opacity duration-300 ${open ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+        className={`fixed inset-0 z-[59] bg-black/50 backdrop-blur-[3px] transition-opacity duration-300 ease-smooth ${open ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
         onClick={() => toggle(false)}
       />
       <aside
         data-testid="cart-drawer"
         aria-hidden={!open}
-        className={`fixed bottom-0 right-0 top-0 z-[60] flex w-[min(420px,100%)] flex-col bg-[#272320] p-4 text-[#f4ede5] shadow-2xl transition-transform duration-300 ease-[cubic-bezier(.22,.8,.2,1)] ${open ? 'translate-x-0' : 'invisible translate-x-[105%]'}`}
+        className={`fixed bottom-0 right-0 top-0 z-[60] flex w-[min(420px,100%)] flex-col bg-[#272320] p-4 text-[#f4ede5] shadow-[-20px_0_40px_-12px_#000a] transition-[transform,visibility] duration-[400ms] ease-smooth ${open ? 'visible translate-x-0' : 'invisible translate-x-[105%]'}`}
       >
         <div className="flex items-center justify-between">
           <h2 className="text-[22px] font-semibold">{t('title')}</h2>
@@ -36,7 +36,7 @@ export default function CartDrawer({ freeOver }: { freeOver: number }) {
           <>
             <div className="my-1.5 h-1.5 overflow-hidden rounded-full bg-[#3a332c]">
               <i
-                className="block h-full bg-sand transition-all duration-500"
+                className="block h-full rounded-full bg-sand transition-[width] duration-500 ease-smooth"
                 style={{ width: `${Math.min(100, (sum / freeOver) * 100)}%` }}
               />
             </div>
@@ -52,10 +52,14 @@ export default function CartDrawer({ freeOver }: { freeOver: number }) {
           {shown.map((l) => (
             <div
               key={l.variantId}
-              className="mb-2 flex animate-fi items-center gap-2.5 rounded-xl bg-[#1c1814] p-2.5"
+              className="mb-2 flex animate-rise items-center gap-2.5 rounded-xl bg-[#1c1814] p-2.5 transition-colors duration-200 hover:bg-[#221d18]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={l.image} alt="" className="size-[54px] rounded-lg object-cover" />
+              <img
+                src={l.image}
+                alt=""
+                className="size-[54px] rounded-lg bg-white object-contain p-1"
+              />
               <div className="min-w-0 flex-1">
                 <div className="truncate">{text(l.title, locale)}</div>
                 <b>{formatBDT(l.price, locale)}</b>

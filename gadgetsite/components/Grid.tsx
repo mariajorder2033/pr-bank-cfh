@@ -15,8 +15,8 @@ export default function Grid({
     <div
       className={`grid grid-cols-2 gap-3.5 min-[701px]:grid-cols-3 ${cols === 5 ? 'min-[1101px]:grid-cols-5' : 'min-[1101px]:grid-cols-4'}`}
     >
-      {items.map((p) => (
-        <ProductCard key={p.slug} p={p} />
+      {items.map((p, i) => (
+        <ProductCard key={p.slug} p={p} index={i} />
       ))}
     </div>
   )

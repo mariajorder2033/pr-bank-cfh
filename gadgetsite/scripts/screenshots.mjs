@@ -43,7 +43,7 @@ async function capture(ctx, name, path, act, fullPage = true) {
   page.on('pageerror', (e) => problems.push(`${name}: ${e.message}`))
   await page.goto(base + path, { waitUntil: 'networkidle' })
   if (act) await act(page)
-  await page.waitForTimeout(350)
+  await page.waitForTimeout(1000) // let entrance animations finish
   const file = `${out}/${String(++shot).padStart(2, '0')}-${name}.png`
   await page.screenshot({ path: file, fullPage })
   await page.close()

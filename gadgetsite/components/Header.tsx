@@ -22,7 +22,7 @@ const COLS: Record<MegaMenu['layout'], string> = {
 }
 // ≤1100 px panels are full-width sheets (TRD §10).
 const PANEL =
-  'absolute inset-x-0 top-full z-30 mt-1.5 max-h-[62vh] animate-wipe overflow-auto rounded-xl border border-pn bg-[#1c1814] shadow-2xl min-[1101px]:right-auto min-[1101px]:max-h-none'
+  'absolute inset-x-0 top-full z-30 mt-1.5 max-h-[62vh] animate-wipe overflow-auto rounded-xl border border-white/5 bg-[#1c1814]/95 shadow-[0_24px_48px_-12px_#000c] backdrop-blur-md min-[1101px]:right-auto min-[1101px]:max-h-none'
 
 const EXPLORE = '__explore'
 
@@ -94,7 +94,7 @@ export default function Header({ site, menu, megaMenus, exploreBrands, customer 
           </nav>
           <form
             role="search"
-            className="order-last min-w-0 flex-[1_1_100%] rounded-[10px] bg-[#2a2521] px-3.5 py-2.5 text-xs text-mut min-[1101px]:order-none min-[1101px]:flex-1"
+            className="focus-within:ring-sand/50 order-last min-w-0 flex-[1_1_100%] rounded-[10px] bg-[#2a2521] px-3.5 py-2.5 text-xs text-mut ring-1 ring-transparent transition-[box-shadow,background-color] duration-200 ease-smooth focus-within:bg-[#312b26] min-[1101px]:order-none min-[1101px]:flex-1"
             onSubmit={(e) => {
               e.preventDefault()
               const q = new FormData(e.currentTarget).get('q')?.toString().trim() ?? ''
@@ -145,7 +145,7 @@ export default function Header({ site, menu, megaMenus, exploreBrands, customer 
             data-testid="explore-all"
             onPointerEnter={(e) => e.pointerType === 'mouse' && setOpen(EXPLORE)}
             onClick={() => setOpen(open === EXPLORE ? null : EXPLORE)}
-            className="whitespace-nowrap rounded-[10px] bg-sand px-[18px] py-[11px] text-[11px] font-semibold tracking-wide text-ink"
+            className="whitespace-nowrap rounded-[10px] bg-sand px-[18px] py-[11px] text-[11px] font-semibold tracking-wide text-ink shadow-[0_4px_14px_-6px_#d2a679a0] transition-[filter,transform] duration-200 ease-smooth hover:brightness-105 active:scale-[.97]"
           >
             {t('exploreAll')} <span aria-hidden>&nbsp;⌄</span>
           </button>
@@ -159,7 +159,7 @@ export default function Header({ site, menu, megaMenus, exploreBrands, customer 
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition-colors duration-150 hover:text-sand"
+                  className="group whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition-[color,background-color] duration-150 ease-smooth hover:bg-[#3a312a] hover:text-sand"
                   onPointerEnter={(e) => {
                     if (e.pointerType !== 'mouse') return
                     setOpen(panel?.categorySlug ?? null)
@@ -196,7 +196,7 @@ export default function Header({ site, menu, megaMenus, exploreBrands, customer 
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-[#e8e0d6] transition hover:text-sand"
+                  className="rounded-md px-1.5 py-1 text-[#e8e0d6] transition-[color,background-color,transform] duration-150 ease-smooth hover:translate-x-0.5 hover:bg-white/5 hover:text-sand"
                   onClick={() => setOpen(null)}
                 >
                   {text(item.label, locale)}
@@ -216,7 +216,7 @@ export default function Header({ site, menu, megaMenus, exploreBrands, customer 
                     key={m.categorySlug}
                     href={`/category/${m.categorySlug}`}
                     onPointerEnter={() => setExploreCat(m.categorySlug)}
-                    className={`block rounded-lg px-2.5 py-2 text-[11px] ${exploreCat === m.categorySlug ? 'bg-[#5e5243]' : 'hover:bg-[#5b4a38]'}`}
+                    className={`block rounded-lg px-2.5 py-2 text-[11px] transition-colors duration-150 ease-smooth ${exploreCat === m.categorySlug ? 'bg-[#5e5243]' : 'hover:bg-[#5b4a38]'}`}
                   >
                     {text(m.name, locale)}
                   </Link>
@@ -231,7 +231,7 @@ export default function Header({ site, menu, megaMenus, exploreBrands, customer 
                   <Link
                     key={b.slug}
                     href={`/category/${exploreCat}?brands=${b.slug}`}
-                    className="rounded-lg bg-white px-1 py-[18px] text-center text-[11px] font-bold text-ink"
+                    className="rounded-lg bg-white px-1 py-[18px] text-center text-[11px] font-bold text-ink transition-[transform,box-shadow] duration-200 ease-smooth hover:-translate-y-0.5 hover:shadow-[0_8px_18px_-8px_#000]"
                   >
                     {text(b.name, locale)}
                   </Link>

@@ -23,7 +23,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <div className="mt-3 grid gap-5 min-[1101px]:grid-cols-[1fr_1.1fr]">
         <div className={`${ui.panel} self-start min-[1101px]:sticky min-[1101px]:top-14`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={p.image} alt={title} className="w-full rounded-xl" />
+          <img
+            src={p.image}
+            alt={title}
+            className="aspect-square w-full animate-fi rounded-xl bg-white object-contain p-6"
+          />
         </div>
         <ProductBuy p={p} />
       </div>

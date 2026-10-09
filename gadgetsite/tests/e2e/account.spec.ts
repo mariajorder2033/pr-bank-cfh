@@ -5,14 +5,14 @@ import { SMS_FILE } from './marker'
 let n = 0
 const phone = () => `019${String(Date.now()).slice(-6)}${String(++n).padStart(2, '0')}`
 
-const codeFor = (p: string) =>
+const codesFor = (p: string) =>
   readFileSync(SMS_FILE, 'utf8')
     .trim()
     .split('\n')
     .map((l) => JSON.parse(l) as { phone: string; text: string })
     .filter((m) => m.phone === p)
-    .at(-1)!
-    .text.match(/\d{6}/)![0]
+    .map((m) => m.text.match(/\d{6}/)![0])
+const codeFor = (p: string) => codesFor(p).at(-1)!
 
 async function signUp(page: import('@playwright/test').Page, p: string, name = 'Rafi Ahmed') {
   await page.goto('/account/signup')
@@ -72,8 +72,10 @@ test('the code step can resend a code and change the number', async ({ page }) =
   await page.getByRole('button', { name: 'Change number' }).click()
   await page.getByLabel('Mobile number').fill(p)
   await page.getByRole('button', { name: 'Send code' }).click()
+  await expect.poll(() => codesFor(p).length).toBe(1)
   await page.getByRole('button', { name: 'Send a new code' }).click()
-  await expect(page.getByText(`We sent a code to ${p}`)).toBeVisible()
+  // The confirmation text is already on screen, so wait for the second SMS itself.
+  await expect.poll(() => codesFor(p).length).toBe(2)
   await page.getByLabel('6-digit code').fill(codeFor(p))
   await page.getByRole('button', { name: 'Log in with code' }).click()
   await expect(page).toHaveURL(/\/account$/)
