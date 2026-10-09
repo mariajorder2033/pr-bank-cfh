@@ -29,6 +29,7 @@ jobs:
       REDIS_URL: redis://localhost:6379
       # Test-only secret; production sets its own.
       SESSION_SECRET: ci-only-session-secret-0123456789abcdef0123456789abcdef
+      CREDENTIALS_KEY: '0000000000000000000000000000000000000000000000000000000000000001'
     services:
       postgres:
         image: postgres:16
