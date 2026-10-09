@@ -388,3 +388,63 @@ They can also read the audit log. Every write is validated with Zod, sanitised w
 - [ ] **Step 3:** Fix whatever the e2e run exposes. Update CI and the README.
 - [ ] **Step 4:** Run the full suite (unit, integration, e2e, typecheck, lint, build). Expected: all green.
 - [ ] **Step 5:** Commit: `test(gadgetsite): admin e2e; ci and docs`. Then push.
+
+---
+
+## Addendum (2026-10-10): owner requests folded into Stage 3
+
+Already done by the customer-accounts plan, so these tasks reuse that code rather than rebuild it:
+
+- **Task 1:** the `(store)` route group.
+- **From Task 2:** `lib/crypto.ts`, `lib/auth/password.ts`, `lib/auth/token.ts` and `lib/server/rate-limit.ts`.
+
+Admin passwords use the same `hashPassword` with `PASSWORD_MIN = 12`.
+
+### Task A1: Product sales (in Task 7)
+
+- **Schema:** `Variant` gains `salePrice Int?`, `saleStartsAt DateTime?` and `saleEndsAt DateTime?`.
+- **Active sale:** a sale counts when `salePrice` is set, `salePrice < offerPrice`, and `now` falls within `[saleStartsAt ?? -∞, saleEndsAt ?? +∞)`.
+- **Computed price:** `lib/domain/pricing.ts` `effectivePrice(v, now)` returns `{ price, onSale, saleEndsAt }`. The storefront shows `price` as the offer price, with discount computed against `regularPrice`, plus a "Sale" badge and its end time.
+- **Editor:** the product editor and bulk table edit `salePrice`, start and end. Validation: `salePrice < offerPrice`, and end after start.
+- **Tests:**
+  - unit: `effectivePrice` before, during and after the window, with no end date, and with a sale price at or above the offer price
+  - integration: an active sale changes the `listProducts` price and an expired one doesn't
+  - e2e: a sale set in admin shows on the storefront
+
+### Task A2: API and service keys (in Task 5)
+
+- **Screen:** `/admin/settings/services`, with permission `settings.write` for SMS and `payments.config` / `couriers.config` for later providers.
+- **SMS form:** provider (`bulksmsbd`), API key, sender ID, enabled, and a "Send test SMS" button that goes to a phone number entered on the form.
+- **Write-only keys:** values show masked (`describeCredential`). Leaving a key blank keeps the stored value.
+- **Audit:** the `audited` row stores the masked config, never the plain one.
+- **Tests:**
+  - A save, then `readCredential`, gives the new values.
+  - The audit `after` contains `••••`, not the key.
+  - A blank key keeps the old one.
+
+### Task A3: Footer management (with Task 6)
+
+- **Settings key `footer`** (Zod `FooterSettings`):
+  - `columns: { title: Bilingual; links: MenuItem[] }[]`
+  - `branches: { name: Bilingual; address: Bilingual; phone?: string; mapUrl?: string }[]`
+  - `socials: { network: 'facebook'|'instagram'|'youtube'|'tiktok'|'linkedin'|'whatsapp'; url }[]`
+  - `appLinks: { store: 'google_play'|'app_store'; url }[]`
+  - `copyright: Bilingual`
+- **Storefront:** the footer is rebuilt to the zip prototype's layout: brand and branches, the link columns, the branch list with "see more", the social icons, the app badge, and the copyright pill. Empty parts are hidden. The seed migrates the existing `footer` menu into one column.
+- **Admin:** `/admin/content/footer` edits all of it, with row add/remove/reorder.
+- **Tests:**
+  - integration: save → `getSettings().footer` round-trips, and a bad URL → fieldError
+  - e2e: a column added in admin shows on the storefront footer
+
+### Task A4: Customers (in Task 8)
+
+- **List:** `/admin/customers` (`customers.read`) shows phone, name, created, last login time and IP, verified, order count, plus search.
+- **Detail:** sessions (IP, user agent, created) with a "sign out everywhere" button that needs `users.manage`.
+- **Test:** the list shows `lastLoginIp` after a login.
+
+### Task A5: Share previews (Open Graph)
+
+- **Product pages:** `generateMetadata` sets `title`, `description` (spec text + price), `openGraph` (`type: 'website'`, `url`, absolute `images` from `APP_URL` + the first variant image, `siteName`) and `twitter: summary_large_image`.
+- **Other pages:** category and home pages get title and site name.
+- **Default image:** `app/opengraph-image.tsx` renders the site name when a product has no image.
+- **Test:** e2e reads `meta[property="og:image"]` on a product page; it is an absolute URL that returns 200 `image/*`.
