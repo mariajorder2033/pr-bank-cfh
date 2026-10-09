@@ -5,8 +5,11 @@ import { createInterface } from 'node:readline'
 import { parseArgs } from 'node:util'
 
 if (existsSync('.env')) process.loadEnvFile('.env')
-const { values } = parseArgs({ options: { email: { type: 'string' }, role: { type: 'string', default: 'owner' } } })
-if (!values.email) throw new Error('Usage: npm run admin:create -- --email you@shop.bd [--role owner]')
+const { values } = parseArgs({
+  options: { email: { type: 'string' }, role: { type: 'string', default: 'owner' } },
+})
+if (!values.email)
+  throw new Error('Usage: npm run admin:create -- --email you@shop.bd [--role owner]')
 
 async function askHidden(question: string): Promise<string> {
   const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true })
