@@ -31,6 +31,11 @@ test('product page follows the chosen variant', async ({ page }) => {
   await page.goto('/products/iphone-16-pro')
   const price = page.getByTestId('offer-price')
   await expect(price).toHaveText('৳1,59,999')
+  // Black Titanium exists only in 256GB, so it is marked unavailable next to 128GB.
+  await expect(page.getByRole('button', { name: 'Black Titanium' })).toHaveAttribute(
+    'data-unavailable',
+    'true',
+  )
   await page.getByRole('button', { name: '256GB' }).click()
   await expect(price).toHaveText('৳1,74,999')
   await page.getByRole('button', { name: 'Black Titanium' }).click()

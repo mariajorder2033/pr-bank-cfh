@@ -125,6 +125,12 @@ describe('searchProducts', () => {
     expect(slugs).toContain('galaxy-s25-ultra')
   })
 
+  test('survives a NUL byte and other control characters', async () => {
+    await expect(searchProducts('ab\u0000cd')).resolves.toBeInstanceOf(Array)
+    await expect(searchProducts('_')).resolves.toEqual([])
+    await expect(searchProducts('')).resolves.toEqual([])
+  })
+
   test('survives hostile input', async () => {
     await expect(searchProducts('%')).resolves.toBeInstanceOf(Array)
     await expect(searchProducts("'; drop table products;--")).resolves.toBeInstanceOf(Array)
@@ -145,4 +151,34 @@ test('price filter applies to the shown offer price', async () => {
   const { items } = await listProducts({ min: MIN, pageSize: 48 })
   expect(items.length).toBeGreaterThan(0)
   for (const p of items) expect(p.offerPrice).toBeGreaterThanOrEqual(MIN)
+})
+
+describe('untrusted slugs', () => {
+  test('a NUL byte in a slug or filter is a miss, not a database error', async () => {
+    expect(await getProduct('a\u0000b')).toBeNull()
+    expect(await getProductsBySlugs(['a\u0000b', 'pixel-9'])).toHaveLength(1)
+    await expect(listProducts({ brands: ['a\u0000b'] })).resolves.toEqual({ items: [], total: 0 })
+    await expect(listProducts({ category: 'a\u0000b' })).resolves.toEqual({ items: [], total: 0 })
+  })
+})
+
+describe('inactive brands and categories', () => {
+  test('hide their products everywhere', async () => {
+    await db.brand.update({ where: { slug: 'jbl' }, data: { active: false } })
+    try {
+      const all = await listProducts({ pageSize: 48 })
+      expect(all.items.map((p) => p.slug)).not.toContain('jbl-flip-6')
+      expect(await getProduct('jbl-flip-6')).toBeNull()
+      expect((await searchProducts('flip')).map((p) => p.slug)).not.toContain('jbl-flip-6')
+    } finally {
+      await db.brand.update({ where: { slug: 'jbl' }, data: { active: true } })
+    }
+  })
+})
+
+test('a fully held product shows out of stock on its card', async () => {
+  await holdAll(10)
+  const { items } = await listProducts({ category: 'phones', pageSize: 48 })
+  expect(items.find((p) => p.slug === 't2-held')!.stockStatus).toBe('out_of_stock')
+  await holdAll(-10)
 })

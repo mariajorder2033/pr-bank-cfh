@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import { SLUG } from '@/lib/domain/slug'
+
+const slug = z.string().max(120).regex(SLUG)
 
 // Admin-editable content is stored as JSON; these schemas are the contract between
 // the admin panel (writes, Stage 3+) and the storefront (reads).
@@ -50,9 +53,9 @@ export type MegaMenuItem = MenuItem
 export const SORTS = ['newest', 'price_asc', 'price_desc', 'discount'] as const
 
 export const ProductQueryInput = z.object({
-  category: z.string().min(1).optional(),
-  brands: z.array(z.string().min(1)).optional(),
-  badge: z.string().min(1).optional(),
+  category: slug.optional(),
+  brands: z.array(slug).optional(),
+  badge: slug.optional(),
   inStock: z.boolean().optional(),
   min: z.number().int().nonnegative().optional(),
   max: z.number().int().nonnegative().optional(),

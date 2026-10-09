@@ -29,3 +29,21 @@ export function pickVariant<V extends VariantOptions>(
   const score = (v: V) => DIMENSIONS.filter((d) => d !== dim && v[d] === current[d]).length
   return candidates.reduce((best, v) => (score(v) > score(best) ? v : best))
 }
+
+/** Whether some variant has `value` for `dim` together with the current other choices. */
+export function exists(
+  variants: VariantOptions[],
+  current: VariantOptions,
+  dim: Dimension,
+  value: string,
+): boolean {
+  return variants.some(
+    (v) => v[dim] === value && DIMENSIONS.every((d) => d === dim || v[d] === current[d]),
+  )
+}
+
+/** A slide order valid for `n` slides: kept if it is a permutation of 0..n-1, else reset. */
+export function normalizeOrder(order: number[], n: number): number[] {
+  const valid = order.length === n && [...order].sort((a, b) => a - b).every((x, i) => x === i)
+  return valid ? order : Array.from({ length: n }, (_, i) => i)
+}

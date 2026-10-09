@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { emiOptions } from '@/lib/domain/emi'
 import { formatBDT } from '@/lib/domain/money'
-import { optionValues, pickVariant, type Dimension } from '@/lib/domain/variants'
+import { exists, optionValues, pickVariant, type Dimension } from '@/lib/domain/variants'
 import { text, type Locale } from '@/lib/i18n'
 import type { ProductDetail } from '@/lib/server/catalog'
 import { ui } from '@/lib/ui'
@@ -63,17 +63,23 @@ export default function ProductBuy({ p }: { p: ProductDetail }) {
             <div key={dim} className="mb-2">
               <b>{t(`pd.${LABEL[dim]}`)}</b>
               <div>
-                {values.map((value) => (
-                  <button
-                    type="button"
-                    key={value}
-                    aria-pressed={variant[dim] === value}
-                    onClick={() => setVariant(pickVariant(p.variants, variant, dim, value))}
-                    className={`m-1 inline-block rounded-lg border px-3 py-1.5 text-ink transition ${variant[dim] === value ? 'border-2 border-[#d2893a] bg-[#fff3e2]' : 'border-[#6d6154] bg-[#f4f4f4]'}`}
-                  >
-                    {value}
-                  </button>
-                ))}
+                {values.map((value) => {
+                  // Not sold with the other current choices: still clickable (the picker
+                  // switches to the nearest variant), but shown as unavailable.
+                  const unavailable = !exists(p.variants, variant, dim, value)
+                  return (
+                    <button
+                      type="button"
+                      key={value}
+                      data-unavailable={unavailable}
+                      aria-pressed={variant[dim] === value}
+                      onClick={() => setVariant(pickVariant(p.variants, variant, dim, value))}
+                      className={`m-1 inline-block rounded-lg border px-3 py-1.5 text-ink transition ${variant[dim] === value ? 'border-2 border-[#d2893a] bg-[#fff3e2]' : 'border-[#6d6154] bg-[#f4f4f4]'} ${unavailable ? 'line-through opacity-50' : ''}`}
+                    >
+                      {value}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           ))}

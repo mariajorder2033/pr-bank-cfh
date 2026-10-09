@@ -10,6 +10,7 @@ import {
   parseSetting,
   type Section,
 } from '@/lib/content/schemas'
+import { isSlug } from '@/lib/domain/slug'
 import { bilingual, type Bilingual } from '@/lib/i18n'
 
 // Admin-managed content for the storefront chrome and CMS pages (spec §6.1).
@@ -61,7 +62,10 @@ export async function getMegaMenus(): Promise<MegaMenu[]> {
     include: { category: true },
     orderBy: [{ category: { sort: 'asc' } }, { sort: 'asc' }],
   })
-  return rows.map((m) => ({
+  // One panel per category: MegaMenu has no natural key, so keep the first row only.
+  const seen = new Set<string>()
+  const unique = rows.filter((m) => !seen.has(m.categoryId) && seen.add(m.categoryId))
+  return unique.map((m) => ({
     categorySlug: m.category.slug,
     name: bilingual(m.category, 'name'),
     layout: m.layout,
@@ -153,6 +157,7 @@ const toPage = (p: {
  * they have a body (they are seeded as empty shells for admin to fill).
  */
 export async function getPage(slug: string, now = new Date()): Promise<CmsPage | null> {
+  if (!isSlug(slug)) return null
   const p = await db.page.findUnique({ where: { slug } })
   if (!p) return null
   const visible =
@@ -182,4 +187,9 @@ export async function getFooterLinks(now = new Date()): Promise<MenuItem[]> {
     const slug = i.href.slice(1)
     return !cms.has(slug) || visible.has(slug)
   })
+}
+
+/** Slugs of every CMS page; bounds which page slugs may become cache keys. */
+export async function listPageSlugs(): Promise<string[]> {
+  return (await db.page.findMany({ select: { slug: true } })).map((p) => p.slug)
 }

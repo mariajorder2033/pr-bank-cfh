@@ -31,3 +31,7 @@ test('ignores malformed values instead of failing', () => {
   expect(q.min).toBeUndefined()
   expect(q.max).toBeUndefined()
 })
+
+test('drops brand slugs that are not plain slugs', () => {
+  expect(queryFromSearchParams({ brands: 'apple,a\u0000b' }).brands).toEqual(['apple'])
+})

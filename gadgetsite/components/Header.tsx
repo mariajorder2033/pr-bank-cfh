@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
-import type { SiteSettings } from '@/lib/content/schemas'
+import type { MenuItem, SiteSettings } from '@/lib/content/schemas'
 import { text, type Locale } from '@/lib/i18n'
 import type { ExploreBrand, MegaMenu } from '@/lib/server/content'
 import { ui } from '@/lib/ui'
@@ -28,11 +28,14 @@ const EXPLORE = '__explore'
 
 type Props = {
   site: SiteSettings
+  /** The admin header menu: the menu-row chips, in order. */
+  menu: MenuItem[]
+  /** Dropdown panels, matched to chips by their `/category/<slug>` link. */
   megaMenus: MegaMenu[]
   exploreBrands: Record<string, ExploreBrand[]>
 }
 
-export default function Header({ site, megaMenus, exploreBrands }: Props) {
+export default function Header({ site, menu, megaMenus, exploreBrands }: Props) {
   const t = useTranslations('nav')
   const locale = useLocale() as Locale
   const router = useRouter()
@@ -140,26 +143,34 @@ export default function Header({ site, megaMenus, exploreBrands }: Props) {
             data-testid="menu-row"
             className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto rounded-[10px] bg-[#1c1814] p-1.5 [scrollbar-width:none]"
           >
-            {megaMenus.map((m) => (
-              <Link
-                key={m.categorySlug}
-                href={`/category/${m.categorySlug}`}
-                className="group whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition-colors duration-150 hover:text-sand"
-                onPointerEnter={(e) => {
-                  if (e.pointerType !== 'mouse') return
-                  setOpen(m.categorySlug)
-                  setLeft(e.currentTarget.offsetLeft)
-                }}
-              >
-                {text(m.name, locale)}{' '}
-                <span
-                  aria-hidden
-                  className="inline-block transition-transform duration-200 group-hover:rotate-180"
+            {menu.map((item) => {
+              const panel = megaMenus.find((m) => item.href === `/category/${m.categorySlug}`)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group whitespace-nowrap rounded-md bg-[#2c2621] px-3 py-[7px] text-[11px] text-[#e8e0d6] transition-colors duration-150 hover:text-sand"
+                  onPointerEnter={(e) => {
+                    if (e.pointerType !== 'mouse') return
+                    setOpen(panel?.categorySlug ?? null)
+                    setLeft(e.currentTarget.offsetLeft)
+                  }}
                 >
-                  ⌄
-                </span>
-              </Link>
-            ))}
+                  {text(item.label, locale)}
+                  {panel && (
+                    <>
+                      {' '}
+                      <span
+                        aria-hidden
+                        className="inline-block transition-transform duration-200 group-hover:rotate-180"
+                      >
+                        ⌄
+                      </span>
+                    </>
+                  )}
+                </Link>
+              )
+            })}
           </div>
 
           {/* Keyed by item, so switching items remounts the panel and replays the wipe;

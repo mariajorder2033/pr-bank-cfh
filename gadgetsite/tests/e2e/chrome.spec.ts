@@ -1,4 +1,6 @@
+import { readFileSync } from 'node:fs'
 import { WIDTHS, expect, expectNoHorizontalOverflow, test } from './fixtures'
+import { E2E_MARKER_FILE } from './marker'
 
 for (const width of WIDTHS) {
   test(`home has no sideways scroll at ${width}px`, async ({ page }) => {
@@ -35,6 +37,13 @@ test.describe('desktop chrome', () => {
     await expect(page.getByTestId('explore-brands')).toContainText('Lenovo')
   })
 
+  test('the menu row comes from the admin header menu', async ({ page }) => {
+    await page.goto('/')
+    await expect(
+      page.getByTestId('menu-row').getByRole('link', { name: 'E2E deals' }),
+    ).toBeVisible()
+  })
+
   test('locale toggle switches the menu to Bangla', async ({ page }) => {
     await page.goto('/')
     await page.getByTestId('locale-toggle').click()
@@ -45,7 +54,7 @@ test.describe('desktop chrome', () => {
     await page.setViewportSize({ width: 1536, height: 300 })
     await page.goto('/')
     const ribbon = page.getByTestId('ribbon')
-    await expect(ribbon).toContainText('E2E ribbon item')
+    await expect(ribbon).toContainText(readFileSync(E2E_MARKER_FILE, 'utf8'))
     await page.evaluate(() => window.scrollTo(0, 400))
     await expect(ribbon).toHaveClass(/stuck/)
     expect(Math.round((await ribbon.boundingBox())!.y)).toBe(0)

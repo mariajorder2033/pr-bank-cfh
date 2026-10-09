@@ -4,6 +4,11 @@ import * as content from './content'
 
 // Storefront reads go through Next's data cache. Admin writes (Stage 3) call
 // revalidateTag(TAGS.x) so changes show up immediately; revalidate is the safety net.
+//
+// Cache keys must stay bounded: self-hosted Next writes one file per key and never evicts,
+// so anonymous input (filters, search terms, unknown slugs) must never become a key.
+// Filters run in memory over one cached catalog; per-slug reads are cached only for slugs
+// that exist; search is not cached.
 
 export const TAGS = { catalog: 'catalog', content: 'content', settings: 'settings' } as const
 
@@ -17,26 +22,35 @@ function cached<A extends unknown[], R>(
   return unstable_cache(fn, [name], { tags: [tag], revalidate: REVALIDATE_S })
 }
 
-// Catalog reads take no `now` argument here: reservation-aware stock is fresh to the
-// revalidate window, and checkout (Stage 5) always re-checks stock on the server.
-export const listProducts = cached(
-  'listProducts',
-  TAGS.catalog,
-  (q: catalog.ProductQueryInputArg) => catalog.listProducts(q),
-)
-export const getProductsBySlugs = cached('getProductsBySlugs', TAGS.catalog, (slugs: string[]) =>
-  catalog.getProductsBySlugs(slugs),
-)
-export const getProduct = cached('getProduct', TAGS.catalog, (slug: string) =>
-  catalog.getProduct(slug),
-)
-export const searchProducts = cached('searchProducts', TAGS.catalog, (q: string, limit?: number) =>
-  catalog.searchProducts(q, limit),
-)
+// Reservation-aware stock is fresh to the revalidate window; checkout (Stage 5) always
+// re-checks stock on the server.
+const allCards = cached('allCards', TAGS.catalog, () => catalog.allCards())
 export const listCategories = cached('listCategories', TAGS.catalog, catalog.listCategories)
-export const getCategory = cached('getCategory', TAGS.catalog, catalog.getCategory)
 export const listBrands = cached('listBrands', TAGS.catalog, catalog.listBrands)
 export const listEmiBanks = cached('listEmiBanks', TAGS.catalog, catalog.listEmiBanks)
+
+export async function listProducts(q: catalog.ProductQueryInputArg) {
+  const [cards, categories] = await Promise.all([allCards(), listCategories()])
+  return catalog.filterCards(cards, q, categories)
+}
+
+export async function getProductsBySlugs(slugs: string[]) {
+  return catalog.pickCards(await allCards(), slugs)
+}
+
+/** Uncached: every term is different, so caching would only grow the cache. */
+export const searchProducts = (q: string, limit?: number) => catalog.searchProducts(q, limit)
+
+const productBySlug = cached('getProduct', TAGS.catalog, (slug: string) => catalog.getProduct(slug))
+export async function getProduct(slug: string) {
+  const known = (await allCards()).some((c) => c.slug === slug)
+  return known ? productBySlug(slug) : null
+}
+
+export async function getCategory(slug: string) {
+  const c = (await listCategories()).find((x) => x.slug === slug)
+  return c ? { slug: c.slug, name: c.name } : null
+}
 
 export const getSettings = cached('getSettings', TAGS.settings, content.getSettings)
 export const getMenu = cached('getMenu', TAGS.content, content.getMenu)
@@ -50,5 +64,10 @@ export const getBanners = cached('getBanners', TAGS.content, (placement: string)
   content.getBanners(placement),
 )
 export const getTicker = cached('getTicker', TAGS.content, content.getTicker)
-export const getPage = cached('getPage', TAGS.content, (slug: string) => content.getPage(slug))
 export const listBlogPosts = cached('listBlogPosts', TAGS.content, () => content.listBlogPosts())
+
+const pageSlugs = cached('listPageSlugs', TAGS.content, content.listPageSlugs)
+const pageBySlug = cached('getPage', TAGS.content, (slug: string) => content.getPage(slug))
+export async function getPage(slug: string) {
+  return (await pageSlugs()).includes(slug) ? pageBySlug(slug) : null
+}

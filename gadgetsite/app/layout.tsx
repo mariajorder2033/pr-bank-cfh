@@ -18,6 +18,7 @@ import {
   getExploreBrands,
   getMegaMenus,
   getFooterLinks,
+  getMenu,
   getSettings,
   getTicker,
 } from '@/lib/server/cached'
@@ -41,14 +42,16 @@ function themeCss(theme: ThemeSettings): string {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = (await getLocale()) as Locale
-  const [messages, settings, megaMenus, exploreBrands, ticker, footerLinks] = await Promise.all([
-    getMessages(),
-    getSettings(),
-    getMegaMenus(),
-    getExploreBrands(),
-    getTicker(),
-    getFooterLinks(),
-  ])
+  const [messages, settings, headerMenu, megaMenus, exploreBrands, ticker, footerLinks] =
+    await Promise.all([
+      getMessages(),
+      getSettings(),
+      getMenu('header'),
+      getMegaMenus(),
+      getExploreBrands(),
+      getTicker(),
+      getFooterLinks(),
+    ])
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -61,7 +64,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       >
         <NextIntlClientProvider messages={messages}>
           <MotionProvider value={settings.motion}>
-            <Header site={settings.site} megaMenus={megaMenus} exploreBrands={exploreBrands} />
+            <Header
+              site={settings.site}
+              menu={headerMenu}
+              megaMenus={megaMenus}
+              exploreBrands={exploreBrands}
+            />
             <Ribbon items={ticker} />
             <main className="mx-auto max-w-[1240px] px-3 pt-[18px] min-[701px]:px-5">
               {children}

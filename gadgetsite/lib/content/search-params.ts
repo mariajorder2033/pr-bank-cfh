@@ -1,3 +1,4 @@
+import { isSlug } from '@/lib/domain/slug'
 import { ProductQueryInput, SORTS, type ProductQuery } from './schemas'
 
 type Params = Record<string, string | string[] | undefined>
@@ -13,7 +14,7 @@ export function queryFromSearchParams(
   const brands = one(params.brands)
     ?.split(',')
     .map((b) => b.trim())
-    .filter(Boolean)
+    .filter(isSlug)
   const sort = one(params.sort)
   const candidate = {
     ...base,

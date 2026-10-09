@@ -53,3 +53,18 @@ test('footer links skip CMS pages shoppers cannot see yet', async () => {
   expect(await hrefs()).toContain('/terms')
   await db.page.update({ where: { slug: 'terms' }, data: { bodyHtmlEn: '' } })
 })
+
+test('a category with two mega menu rows appears once', async () => {
+  const phones = await db.category.findUniqueOrThrow({ where: { slug: 'phones' } })
+  const extra = await db.megaMenu.create({ data: { categoryId: phones.id, items: [] } })
+  try {
+    const menus = await getMegaMenus()
+    expect(menus.filter((m) => m.categorySlug === 'phones')).toHaveLength(1)
+  } finally {
+    await db.megaMenu.delete({ where: { id: extra.id } })
+  }
+})
+
+test('a NUL byte in a page slug is a miss, not a database error', async () => {
+  expect(await getPage('a\u0000b')).toBeNull()
+})

@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useLocale } from 'next-intl'
+import { normalizeOrder } from '@/lib/domain/variants'
 import { text, type Locale } from '@/lib/i18n'
 import type { Banner } from '@/lib/server/content'
 import { useMotion } from './MotionProvider'
@@ -16,14 +17,20 @@ const ENTER_FROM_LEFT = 'translateX(calc(-1 * (var(--sw) + var(--gap))))'
 export default function HeroSlider({ banners }: { banners: Banner[] }) {
   const locale = useLocale() as Locale
   const { heroCycleMs, heroSlideMs, heroEasing } = useMotion()
-  const [order, setOrder] = useState(banners.map((_, i) => i))
+  const [rawOrder, setOrder] = useState(banners.map((_, i) => i))
+  // Banners can change under a kept client state (router.refresh after an admin edit).
+  const order = normalizeOrder(rawOrder, banners.length)
   const track = useRef<HTMLDivElement>(null)
   const firstRender = useRef(true)
 
   useEffect(() => {
     if (banners.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const id = setInterval(() => {
-      if (!document.hidden) setOrder((o) => [o[o.length - 1], ...o.slice(0, -1)])
+      if (!document.hidden)
+        setOrder((o) => {
+          const n = normalizeOrder(o, banners.length)
+          return [n[n.length - 1], ...n.slice(0, -1)]
+        })
     }, heroCycleMs)
     return () => clearInterval(id)
   }, [banners.length, heroCycleMs])
@@ -39,7 +46,7 @@ export default function HeroSlider({ banners }: { banners: Banner[] }) {
     void el.offsetHeight // force reflow so the jump is not animated
     el.style.transition = `transform ${heroSlideMs}ms ${heroEasing}`
     el.style.transform = 'none'
-  }, [order, heroSlideMs, heroEasing])
+  }, [rawOrder, heroSlideMs, heroEasing])
 
   if (!banners.length) return null
   return (

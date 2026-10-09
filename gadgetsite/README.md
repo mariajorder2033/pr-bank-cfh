@@ -53,7 +53,10 @@ Playwright browser, set `PLAYWRIGHT_CHROMIUM_PATH` to a local Chromium binary.
 `/compare`. JSON: `GET /api/products?slugs=`, `GET /api/search?q=`, `POST /api/preorder-requests`.
 
 All content (menus, ribbon, banners, home rows, pages, settings, theme, motion) is read from the
-database. Policy pages and the footer links to them appear once admin gives them a body.
+database through Next's data cache (`lib/server/cached.ts`, 5-minute revalidate, tags `catalog`,
+`content`, `settings`). Admin saves revalidate those tags. **A database change made outside the
+admin** (a restore, a SQL fix, a reseed) needs `rm -rf .next/cache/fetch-cache` or a restart
+with a clean cache, or shoppers may see the old data for up to five minutes. Policy pages and the footer links to them appear once admin gives them a body.
 
 ## Layout
 
