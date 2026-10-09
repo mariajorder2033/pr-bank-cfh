@@ -47,6 +47,41 @@ describe('one-time SMS codes', () => {
     expect(await verifyOtp(p, code)).toEqual({ error: 'invalid' })
   })
 
+  test('parallel wrong guesses still burn the code after five', async () => {
+    const p = phone()
+    await requestOtp(p, '1.1.1.1')
+    const code = lastCode(p)
+    const wrong = code === '000000' ? '111111' : '000000'
+    const results = await Promise.all([
+      ...Array.from({ length: 9 }, () => verifyOtp(p, wrong)),
+      verifyOtp(p, code),
+    ])
+    const accepted = results.filter((r) => 'ok' in r).length
+    const row = await db.otpCode.findFirst({ where: { phone: p } })
+    // Either the right code won one of the first five slots, or it was refused.
+    expect(accepted <= 1).toBe(true)
+    if (row) expect(row.attempts).toBeLessThanOrEqual(5)
+  })
+
+  test('two parallel verifies of the right code log in only once', async () => {
+    const p = phone()
+    await requestOtp(p, '1.1.1.1')
+    const code = lastCode(p)
+    const results = await Promise.all([verifyOtp(p, code), verifyOtp(p, code)])
+    expect(results.filter((r) => 'ok' in r)).toHaveLength(1)
+  })
+
+  test('the SMS budget for the whole shop caps sends per hour', async () => {
+    process.env.SMS_HOURLY_BUDGET = '2'
+    try {
+      expect(await requestOtp(phone(), '3.3.3.1')).toEqual({ ok: true })
+      expect(await requestOtp(phone(), '3.3.3.2')).toEqual({ ok: true })
+      expect(await requestOtp(phone(), '3.3.3.3')).toEqual({ error: 'rate_limited' })
+    } finally {
+      delete process.env.SMS_HOURLY_BUDGET
+    }
+  })
+
   test('a code expires after five minutes', async () => {
     const p = phone()
     await requestOtp(p, '1.1.1.1')

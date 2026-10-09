@@ -36,6 +36,7 @@ export default defineConfig({
       APP_URL: `http://localhost:${PORT}`,
       REDIS_URL: E2E_REDIS_URL,
       SMS_PROVIDER: 'console',
+      SMS_CONSOLE_ALLOWED: '1',
       SMS_CONSOLE_FILE: 'node_modules/.cache/gadgetsite-e2e/sms.jsonl',
     },
   },

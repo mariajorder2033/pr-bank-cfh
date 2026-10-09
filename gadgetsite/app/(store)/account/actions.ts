@@ -1,4 +1,5 @@
 'use server'
+import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
@@ -30,7 +31,8 @@ async function startSession(token: string) {
   ;(await cookies()).set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production' && process.env.APP_URL?.startsWith('https'),
+    // Browsers accept Secure cookies on http://localhost, so this holds for local runs too.
+    secure: process.env.NODE_ENV === 'production',
     path: '/',
     maxAge: SESSION_TTL_MS / 1000,
   })
@@ -105,7 +107,9 @@ export async function saveProfileAction(_: FormState, f: FormData): Promise<Form
     where: { id: customer.id },
     data: { name: parsed.data.name, email: parsed.data.email || null },
   })
-  return { ok: true }
+  // The header shows the name too, so refresh the whole layout.
+  revalidatePath('/', 'layout')
+  return { ok: true, values: { name: parsed.data.name, email: parsed.data.email } }
 }
 
 export async function changePasswordAction(_: FormState, f: FormData): Promise<FormState> {

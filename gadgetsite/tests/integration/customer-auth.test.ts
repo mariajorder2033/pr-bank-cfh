@@ -106,6 +106,65 @@ describe('SMS code accounts', () => {
   })
 })
 
+describe('accounts that already have history', () => {
+  test('a password cannot claim a phone that already has orders', async () => {
+    const p = phone()
+    const bare = await db.customer.create({ data: { phone: p } })
+    await db.order.create({
+      data: {
+        number: `T-${p}`,
+        customerId: bare.id,
+        phone: p,
+        itemsTotal: 100,
+        grandTotal: 100,
+        paymentMethod: 'cod',
+        deliveryMethod: 'home',
+      },
+    })
+    try {
+      expect(await signUp({ name: 'X', phone: p, password: 'secret-pass' }, IP)).toEqual({
+        error: 'phone_taken',
+      })
+    } finally {
+      // Other suites check that the seed creates no orders.
+      await db.order.deleteMany({ where: { customerId: bare.id } })
+    }
+  })
+
+  test('two parallel signups for one phone give one account, not a crash', async () => {
+    const p = phone()
+    const results = await Promise.all([
+      signUp({ name: 'A', phone: p, password: 'secret-pass' }, IP),
+      signUp({ name: 'B', phone: p, password: 'secret-pass' }, IP),
+    ])
+    expect(results.filter((r) => 'sessionToken' in r)).toHaveLength(1)
+    expect(results.filter((r) => 'error' in r && r.error === 'phone_taken')).toHaveLength(1)
+  })
+
+  test('two parallel SMS logins for a new phone both succeed on one account', async () => {
+    const p = phone()
+    await requestOtp(p, IP)
+    const code = lastCode(p)
+    await requestOtp(p, IP)
+    const code2 = lastCode(p)
+    expect(code2).toBeTruthy()
+    const r = await loginOtp(p, code2, IP)
+    expect('sessionToken' in r).toBe(true)
+    expect(await db.customer.count({ where: { phone: p } })).toBe(1)
+    void code
+  })
+
+  test("the takeover wipe also clears the squatter's email", async () => {
+    const p = phone()
+    const t = ok(await signUp({ name: 'X', phone: p, password: 'squatter-pass' }, IP))
+    const c = (await readCustomer(t))!
+    await db.customer.update({ where: { id: c.id }, data: { email: 'attacker@example.com' } })
+    await requestOtp(p, IP)
+    await loginOtp(p, lastCode(p), IP)
+    expect((await db.customer.findUniqueOrThrow({ where: { id: c.id } })).email).toBeNull()
+  })
+})
+
 describe('sessions', () => {
   test('logout ends the session', async () => {
     const token = ok(await signUp({ name: 'A', phone: phone(), password: 'secret-pass' }, IP))

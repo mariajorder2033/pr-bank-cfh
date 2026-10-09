@@ -54,12 +54,14 @@ Signing in by SMS creates the account for a new number. The first SMS sign-in on
 number was never verified wipes its password and signs out its sessions, so nobody can keep a
 number they registered without owning it. Each login records its time and IP on the customer.
 
-| Variable           | Purpose                                                                                                                                                            |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `SESSION_SECRET`   | 32+ random characters; signs SMS codes. Required.                                                                                                                  |
-| `REDIS_URL`        | Rate limits for login, signup and SMS codes. If Redis is down, login is refused.                                                                                   |
-| `SMS_PROVIDER`     | Unset: SMS login hidden. `console`: prints codes to the log (dev/test only, **never production**). A real Bangladeshi gateway adapter is added once one is chosen. |
-| `SMS_CONSOLE_FILE` | With `console`, also appends `{phone, text}` lines here (used by e2e).                                                                                             |
+| Variable             | Purpose                                                                                                                                                                                                                                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SESSION_SECRET`     | 32+ random characters; signs SMS codes. Required.                                                                                                                                                                                                                                                                    |
+| `REDIS_URL`          | Rate limits for login, signup and SMS codes. If Redis is down, login is refused.                                                                                                                                                                                                                                     |
+| `SMS_PROVIDER`       | Unset: SMS login hidden. `console`: prints codes to the log (dev/test only, **never production**). A real Bangladeshi gateway adapter is added once one is chosen.                                                                                                                                                   |
+| `TRUSTED_PROXY_HOPS` | Proxies in front of the app that append `X-Forwarded-For` (default 1). The client IP for rate limits and login records is that many hops from the right. **Run production behind a proxy that appends** (nginx `$proxy_add_x_forwarded_for`, Cloud Run, a load balancer); otherwise clients can choose their own IP. |
+| `SMS_HOURLY_BUDGET`  | Shop-wide cap on SMS codes per hour (default 200), plus 10 per phone per day.                                                                                                                                                                                                                                        |
+| `SMS_CONSOLE_FILE`   | With `console`, also appends `{phone, text}` lines here (used by e2e).                                                                                                                                                                                                                                               |
 
 ## Storefront routes
 

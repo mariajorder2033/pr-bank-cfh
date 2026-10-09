@@ -10,7 +10,10 @@ export interface SmsProvider {
 function build(provider: string | undefined, config: Record<string, string | undefined>) {
   switch (provider) {
     case 'console':
-      return consoleSms
+      // Prints login codes to the log: never in production, except the e2e server.
+      return process.env.NODE_ENV !== 'production' || process.env.SMS_CONSOLE_ALLOWED === '1'
+        ? consoleSms
+        : null
     case 'bulksmsbd':
       return config.apiKey && config.senderId
         ? bulkSmsBd({ apiKey: config.apiKey, senderId: config.senderId })

@@ -39,7 +39,10 @@ export async function requestOtp(
   if (!sms) return { error: 'disabled' }
   const limited = await limit([
     [`otp:req:phone:${phone}`, 3, 600],
+    [`otp:req:phone-day:${phone}`, 10, 86_400],
     [`otp:req:ip:${ip}`, 10, 3600],
+    // Shop-wide SMS spend cap: one abuser cannot run up the gateway bill.
+    ['otp:req:all', Number(process.env.SMS_HOURLY_BUDGET ?? 200) || 200, 3600],
   ])
   if (limited) return limited
 
@@ -71,12 +74,16 @@ export async function verifyOtp(
   if (limited) return limited
 
   const otp = await db.otpCode.findFirst({ where: { phone }, orderBy: { createdAt: 'desc' } })
-  if (!otp || otp.attempts >= MAX_ATTEMPTS) return { error: 'invalid' }
+  if (!otp) return { error: 'invalid' }
   if (otp.expiresAt.getTime() <= Date.now()) return { error: 'expired' }
-  if (!/^\d{6}$/.test(code) || otp.codeHash !== codeHash(phone, code)) {
-    await db.otpCode.update({ where: { id: otp.id }, data: { attempts: { increment: 1 } } })
-    return { error: 'invalid' }
-  }
-  await db.otpCode.deleteMany({ where: { phone } })
-  return { ok: true }
+  // Reserve an attempt atomically before comparing, so parallel guesses cannot exceed five.
+  const reserved = await db.otpCode.updateMany({
+    where: { id: otp.id, attempts: { lt: MAX_ATTEMPTS } },
+    data: { attempts: { increment: 1 } },
+  })
+  if (reserved.count === 0) return { error: 'invalid' }
+  if (!/^\d{6}$/.test(code) || otp.codeHash !== codeHash(phone, code)) return { error: 'invalid' }
+  // Consuming the row is the single-use check: only one parallel verify can delete it.
+  const consumed = await db.otpCode.deleteMany({ where: { id: otp.id } })
+  return consumed.count === 1 ? { ok: true } : { error: 'invalid' }
 }

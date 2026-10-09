@@ -21,7 +21,9 @@ export default function LoginForm({ smsEnabled, next }: { smsEnabled: boolean; n
   const [pw, pwAction, pwPending] = useActionState<FormState, FormData>(loginPasswordAction, {})
   const [req, reqAction, reqPending] = useActionState<FormState, FormData>(requestCodeAction, {})
   const [code, codeAction, codePending] = useActionState<FormState, FormData>(loginCodeAction, {})
-  const codePhone = code.phone ?? req.phone
+  const [editing, setEditing] = useState(false)
+  // The number the latest code went to; editing goes back to the number form.
+  const codePhone = editing ? undefined : (req.phone ?? code.phone)
   const nextField = <input type="hidden" name="next" value={next ?? ''} />
 
   return (
@@ -86,9 +88,32 @@ export default function LoginForm({ smsEnabled, next }: { smsEnabled: boolean; n
           <button type="submit" className={ui.btn} disabled={codePending}>
             {t('loginWithCode')}
           </button>
+          <div className="flex flex-wrap justify-between gap-2 text-sm">
+            <button
+              type="submit"
+              formAction={reqAction}
+              formNoValidate
+              className="text-sand underline-offset-4 hover:underline"
+              disabled={reqPending}
+            >
+              {t('resend')}
+            </button>
+            <button
+              type="button"
+              className="text-mut underline-offset-4 hover:underline"
+              onClick={() => setEditing(true)}
+            >
+              {t('changeNumber')}
+            </button>
+          </div>
         </form>
       ) : (
-        <form action={reqAction} className="grid gap-3" noValidate>
+        <form
+          action={reqAction}
+          onSubmit={() => setEditing(false)}
+          className="grid gap-3"
+          noValidate
+        >
           <FormError code={req.error} />
           <Field
             label={t('phone')}

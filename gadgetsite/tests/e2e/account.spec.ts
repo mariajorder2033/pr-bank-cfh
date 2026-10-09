@@ -62,6 +62,39 @@ test('SMS code login creates and opens an account', async ({ page }) => {
   await expect(page).toHaveURL(/\/account$/)
 })
 
+test('the code step can resend a code and change the number', async ({ page }) => {
+  const wrongNumber = phone()
+  const p = phone()
+  await page.goto('/account/login')
+  await page.getByRole('tab', { name: 'SMS code' }).click()
+  await page.getByLabel('Mobile number').fill(wrongNumber)
+  await page.getByRole('button', { name: 'Send code' }).click()
+  await page.getByRole('button', { name: 'Change number' }).click()
+  await page.getByLabel('Mobile number').fill(p)
+  await page.getByRole('button', { name: 'Send code' }).click()
+  await page.getByRole('button', { name: 'Send a new code' }).click()
+  await expect(page.getByText(`We sent a code to ${p}`)).toBeVisible()
+  await page.getByLabel('6-digit code').fill(codeFor(p))
+  await page.getByRole('button', { name: 'Log in with code' }).click()
+  await expect(page).toHaveURL(/\/account$/)
+})
+
+test('saving the profile keeps the new name on the page and in the header', async ({ page }) => {
+  await signUp(page, phone())
+  await page.getByLabel('Full name').fill('Karim Uddin')
+  await page.getByRole('button', { name: 'Save' }).first().click()
+  await expect(page.getByText('Saved.')).toBeVisible()
+  await expect(page.getByLabel('Full name')).toHaveValue('Karim Uddin')
+  await expect(page.getByTestId('account-link')).toContainText('Karim')
+})
+
+test('the session cookie is httpOnly', async ({ page, context }) => {
+  await signUp(page, phone())
+  const cookie = (await context.cookies()).find((c) => c.name === 'gs_customer')!
+  expect(cookie.httpOnly).toBe(true)
+  expect(cookie.sameSite).toBe('Lax')
+})
+
 test('the login page works in Bangla and on a phone', async ({ page }) => {
   await page.goto('/')
   await setLocale(page, 'bn')

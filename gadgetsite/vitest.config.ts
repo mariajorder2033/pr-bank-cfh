@@ -23,7 +23,9 @@ export default defineConfig({
           globalSetup: ['tests/integration/global-setup.ts'],
           env: {
             DATABASE_URL: process.env.TEST_DATABASE_URL ?? '',
-            REDIS_URL: process.env.REDIS_URL ?? 'redis://localhost:6379',
+            // Its own Redis database: tests flush it, and must never flush the developer's.
+            REDIS_URL:
+              (process.env.REDIS_URL ?? 'redis://localhost:6379').replace(/\/\d*$/, '') + '/1',
           },
         },
       },

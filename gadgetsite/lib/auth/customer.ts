@@ -14,6 +14,9 @@ export const SESSION_TTL_MS = 30 * 24 * 3600_000
 export const PASSWORD_MIN = 8
 
 type Limited = { error: 'rate_limited' | 'unavailable' }
+
+const isPrismaError = (e: unknown, code: string) =>
+  typeof e === 'object' && e !== null && 'code' in e && (e as { code: unknown }).code === code
 type Session = { sessionToken: string }
 type Meta = { ip: string; userAgent?: string }
 
@@ -71,19 +74,29 @@ export async function signUp(
   const limited = await limit([[`signup:ip:${ip}`, 10, 3600]])
   if (limited) return limited
 
-  const existing = await db.customer.findUnique({ where: { phone } })
-  // A bare row (e.g. a future guest checkout) may claim a password; a real account may not.
-  if (existing && (existing.passwordHash || existing.phoneVerifiedAt)) {
+  const existing = await db.customer.findUnique({
+    where: { phone },
+    include: { _count: { select: { orders: true } } },
+  })
+  // A bare row may claim a password; a real account, or one with order history (which a
+  // password alone must never reveal), may not — its owner proves the number by SMS.
+  if (existing && (existing.passwordHash || existing.phoneVerifiedAt || existing._count.orders)) {
     return { error: 'phone_taken' }
   }
   const passwordHash = await hashPassword(password)
-  const customer = existing
-    ? await db.customer.update({
-        where: { id: existing.id },
-        data: { name, passwordHash, passwordChangedAt: new Date() },
-      })
-    : await db.customer.create({ data: { name, phone, passwordHash } })
-  return { sessionToken: await createSession(customer.id, { ip, userAgent }) }
+  try {
+    const customer = existing
+      ? await db.customer.update({
+          where: { id: existing.id, passwordHash: null, phoneVerifiedAt: null },
+          data: { name, passwordHash, passwordChangedAt: new Date() },
+        })
+      : await db.customer.create({ data: { name, phone, passwordHash } })
+    return { sessionToken: await createSession(customer.id, { ip, userAgent }) }
+  } catch (e) {
+    // A parallel signup for the same phone won the race.
+    if (isPrismaError(e, 'P2002') || isPrismaError(e, 'P2025')) return { error: 'phone_taken' }
+    throw e
+  }
 }
 
 export async function loginPassword(
@@ -125,13 +138,20 @@ export async function loginOtp(
   const existing = await db.customer.findUnique({ where: { phone } })
   let customer: Customer
   if (!existing) {
-    customer = await db.customer.create({ data: { phone, phoneVerifiedAt: now } })
+    customer = await db.customer
+      .create({ data: { phone, phoneVerifiedAt: now } })
+      .catch(async (e) => {
+        // A parallel login created it first.
+        if (!isPrismaError(e, 'P2002')) throw e
+        return db.customer.findUniqueOrThrow({ where: { phone } })
+      })
   } else if (!existing.phoneVerifiedAt) {
     ;[, customer] = await db.$transaction([
       db.customerSession.deleteMany({ where: { customerId: existing.id } }),
       db.customer.update({
         where: { id: existing.id },
-        data: { phoneVerifiedAt: now, passwordHash: null, passwordChangedAt: now },
+        // Whoever registered the number without owning it loses the password and email.
+        data: { phoneVerifiedAt: now, passwordHash: null, email: null, passwordChangedAt: now },
       }),
     ])
   } else {

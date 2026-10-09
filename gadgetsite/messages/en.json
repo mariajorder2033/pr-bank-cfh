@@ -154,6 +154,7 @@
       "email": "Enter a valid email address.",
       "wrongCurrent": "Your current password is not right.",
       "send_failed": "We could not send the SMS. Please try again or log in with your password."
-    }
+    },
+    "changeNumber": "Change number"
   }
 }
