@@ -2,6 +2,8 @@ import sanitizeHtml from 'sanitize-html'
 
 // Rich text written in admin (descriptions, pages) is cleaned before it is stored
 // (spec §10): structure and links only — no scripts, styles, handlers or embeds.
+const SAFE_HREF = /^(https?:|mailto:|tel:|\/(?!\/)|#)/i
+
 const OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
     'p',
@@ -28,7 +30,8 @@ const OPTIONS: sanitizeHtml.IOptions = {
   transformTags: {
     a: (tagName, attribs) => ({
       tagName,
-      attribs: attribs.href
+      // Runs before scheme filtering, so only links that will keep their href get a rel.
+      attribs: SAFE_HREF.test(attribs.href ?? '')
         ? { ...attribs, rel: 'noopener noreferrer' }
         : Object.fromEntries(Object.entries(attribs).filter(([k]) => k !== 'rel')),
     }),
