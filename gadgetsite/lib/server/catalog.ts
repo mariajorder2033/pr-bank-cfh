@@ -48,6 +48,8 @@ export type ProductDetail = ProductCard & {
   category: { slug: string; name: Bilingual }
 }
 
+export type ProductQueryInputArg = ProductQueryInput
+
 const PLACEHOLDER_IMAGE = '/ph.svg'
 
 const cardInclude = {

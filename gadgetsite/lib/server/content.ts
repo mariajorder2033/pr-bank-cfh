@@ -128,7 +128,8 @@ export type CmsPage = {
   title: Bilingual
   bodyHtml: Bilingual
   kind: 'policy' | 'about' | 'blog' | 'custom'
-  publishedAt: Date | null
+  /** ISO string, so the page survives the JSON data cache unchanged. */
+  publishedAt: string | null
 }
 
 const toPage = (p: {
@@ -144,7 +145,7 @@ const toPage = (p: {
   title: bilingual(p, 'title'),
   bodyHtml: bilingual(p, 'bodyHtml'),
   kind: p.kind,
-  publishedAt: p.publishedAt,
+  publishedAt: p.publishedAt?.toISOString() ?? null,
 })
 
 /**
