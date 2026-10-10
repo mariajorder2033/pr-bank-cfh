@@ -45,7 +45,14 @@ export const ThemeSettings = z.object({
 })
 export type ThemeSettings = z.infer<typeof ThemeSettings>
 
-export const MenuItem = z.object({ label: Bilingual, href: z.string().min(1) })
+/** A link admins may enter: a site path, or an https / mailto / tel URL — never javascript:. */
+export const Href = z
+  .string()
+  .trim()
+  .max(500)
+  .regex(/^(\/(?!\/)[^\s]*|https:\/\/[^\s]+|mailto:[^\s]+|tel:[+\d][\d\s-]*)$/, 'invalid_value')
+
+export const MenuItem = z.object({ label: Bilingual, href: Href })
 export type MenuItem = z.infer<typeof MenuItem>
 export const MegaMenuItem = MenuItem
 export type MegaMenuItem = MenuItem
@@ -91,3 +98,39 @@ export function parseSetting<T>(schema: z.ZodType<T>, raw: unknown, fallback: T)
   const parsed = schema.safeParse(raw)
   return parsed.success ? parsed.data : fallback
 }
+
+const HttpsUrl = z
+  .string()
+  .trim()
+  .max(500)
+  .regex(/^https:\/\/[^\s]+$/, 'invalid_value')
+
+export const SOCIAL_NETWORKS = [
+  'facebook',
+  'instagram',
+  'youtube',
+  'tiktok',
+  'linkedin',
+  'whatsapp',
+] as const
+
+/** The whole storefront footer, edited in admin (Content → Footer). */
+export const FooterSettings = z.object({
+  columns: z.array(z.object({ title: Bilingual, links: z.array(MenuItem).max(30) })).max(6),
+  branches: z
+    .array(
+      z.object({
+        name: Bilingual,
+        address: Bilingual,
+        phone: z.string().trim().max(20).optional(),
+        mapUrl: z.union([z.literal(''), HttpsUrl]).optional(),
+      }),
+    )
+    .max(30),
+  socials: z.array(z.object({ network: z.enum(SOCIAL_NETWORKS), url: HttpsUrl })).max(10),
+  appLinks: z
+    .array(z.object({ store: z.enum(['google_play', 'app_store']), url: HttpsUrl }))
+    .max(2),
+  copyright: Bilingual,
+})
+export type FooterSettings = z.infer<typeof FooterSettings>

@@ -66,6 +66,8 @@ export function adminAction<S extends z.ZodType, R>(
   schema: S,
   tags: (keyof typeof TAGS)[],
   handler: (input: z.infer<S>, ctx: { actorId: string; ip: string }) => Promise<R>,
+  /** Optional pre-processing of the parsed form before validation (e.g. dropping blank rows). */
+  prepare: (raw: Record<string, unknown>) => unknown = (raw) => raw,
 ) {
   return async (_prev: ActionState, formData: FormData): Promise<ActionState<R>> => {
     let actorId: string
@@ -75,7 +77,7 @@ export function adminAction<S extends z.ZodType, R>(
       if (e instanceof Forbidden) return { ok: false, error: 'forbidden' }
       throw e
     }
-    const parsed = schema.safeParse(formDataToObject(formData))
+    const parsed = schema.safeParse(prepare(formDataToObject(formData)))
     if (!parsed.success) {
       const flat = z.flattenError(parsed.error)
       const fieldErrors: Record<string, string[]> = { ...flat.fieldErrors } as Record<

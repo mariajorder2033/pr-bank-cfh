@@ -1,4 +1,10 @@
-import type { DeliverySettings, MotionSettings, SiteSettings, ThemeSettings } from './schemas'
+import type {
+  DeliverySettings,
+  FooterSettings,
+  MotionSettings,
+  SiteSettings,
+  ThemeSettings,
+} from './schemas'
 
 // Built-in defaults: seeded into `settings`, and used by the storefront whenever a stored
 // value is missing or invalid, so a bad admin edit can never break a page.
@@ -35,6 +41,14 @@ export const defaultTheme: ThemeSettings = {
   ink: '#14181b',
   success: '#1a9b3a',
   sale: '#ff6b6b',
+}
+
+export const defaultFooter: FooterSettings = {
+  columns: [],
+  branches: [],
+  socials: [],
+  appLinks: [],
+  copyright: { en: 'All rights reserved', bn: 'সর্বস্বত্ব সংরক্ষিত' },
 }
 
 export const settings = {

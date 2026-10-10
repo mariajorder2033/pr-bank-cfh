@@ -28,7 +28,7 @@ export const roles: Record<string, readonly PermissionCode[]> = {
   finance: ['orders.read', 'refunds.write', 'payments.config', 'audit.read'],
 }
 
-export { settings } from '../../lib/content/defaults'
+import { defaultFooter, settings as baseSettings } from '../../lib/content/defaults'
 
 /** Created disabled in sandbox mode, except the ones that need no gateway. */
 export const paymentProviders = [
@@ -93,4 +93,18 @@ export const layouts: Record<string, unknown[]> = {
       query: { sort: 'discount', pageSize: 20 },
     },
   ],
+}
+
+/** Footer: one column linking the policy pages (shown once admin gives each a body). */
+export const settings = {
+  ...baseSettings,
+  footer: {
+    ...defaultFooter,
+    columns: [
+      {
+        title: { en: 'Information', bn: 'তথ্য' },
+        links: pages.map((p) => ({ label: { en: p.titleEn, bn: p.titleBn }, href: `/${p.slug}` })),
+      },
+    ],
+  },
 }

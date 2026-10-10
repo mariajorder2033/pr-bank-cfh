@@ -1,7 +1,14 @@
 import { db } from '@/lib/db'
-import { defaultDelivery, defaultMotion, defaultSite, defaultTheme } from '@/lib/content/defaults'
+import {
+  defaultDelivery,
+  defaultFooter,
+  defaultMotion,
+  defaultSite,
+  defaultTheme,
+} from '@/lib/content/defaults'
 import {
   DeliverySettings,
+  FooterSettings,
   MenuItem,
   MotionSettings,
   SiteSettings,
@@ -175,9 +182,8 @@ export async function listBlogPosts(now = new Date()): Promise<CmsPage[]> {
   return rows.map(toPage)
 }
 
-/** Footer menu without links to CMS pages that are not visible yet (getPage rules). */
-export async function getFooterLinks(now = new Date()): Promise<MenuItem[]> {
-  const items = await getMenu('footer')
+/** Drops links to CMS pages that shoppers cannot see yet (getPage rules). */
+async function visibleLinks(items: MenuItem[], now: Date): Promise<MenuItem[]> {
   const slugs = items.flatMap((i) => (/^\/[a-z0-9-]+$/.test(i.href) ? [i.href.slice(1)] : []))
   const pages = await db.page.findMany({ where: { slug: { in: slugs } }, select: { slug: true } })
   const cms = new Set(pages.map((p) => p.slug))
@@ -187,6 +193,21 @@ export async function getFooterLinks(now = new Date()): Promise<MenuItem[]> {
     const slug = i.href.slice(1)
     return !cms.has(slug) || visible.has(slug)
   })
+}
+
+/** Footer menu without links to CMS pages that are not visible yet (getPage rules). */
+export async function getFooterLinks(now = new Date()): Promise<MenuItem[]> {
+  return visibleLinks(await getMenu('footer'), now)
+}
+
+/** The footer as admin set it, minus links to pages not visible yet and empty columns. */
+export async function getFooter(now = new Date()): Promise<FooterSettings> {
+  const row = await db.setting.findUnique({ where: { key: 'footer' } })
+  const footer = parseSetting(FooterSettings, row?.value, defaultFooter)
+  const columns = await Promise.all(
+    footer.columns.map(async (c) => ({ ...c, links: await visibleLinks(c.links, now) })),
+  )
+  return { ...footer, columns: columns.filter((c) => c.links.length) }
 }
 
 /** Slugs of every CMS page; bounds which page slugs may become cache keys. */

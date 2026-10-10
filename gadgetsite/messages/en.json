@@ -339,6 +339,37 @@
       "changed": "{count} variants updated.",
       "view": "View in shop",
       "filter": "Filter"
+    },
+    "footer": {
+      "title": "Footer",
+      "intro": "Everything in the shop footer. Links to policy pages appear once that page has text. Empty rows are ignored.",
+      "columns": "Link columns",
+      "addColumn": "Add column",
+      "titleEn": "English",
+      "titleBn": "বাংলা",
+      "labelEn": "Link text (English)",
+      "labelBn": "Link text (বাংলা)",
+      "href": "Link (/page or https://…)",
+      "addLink": "Add link",
+      "branches": "Branches",
+      "addBranch": "Add branch",
+      "branchNameEn": "Branch name (English)",
+      "branchNameBn": "Branch name (বাংলা)",
+      "addressEn": "Address (English)",
+      "addressBn": "Address (বাংলা)",
+      "phone": "Phone",
+      "mapUrl": "Google Maps link (https://…)",
+      "socials": "Social links",
+      "apps": "App download links",
+      "add": "Add",
+      "copyright": "Copyright line"
     }
+  },
+  "foot": {
+    "app": "Download our app:",
+    "branches": "Branch locations",
+    "map": "Map",
+    "more": "See more",
+    "less": "See less"
   }
 }
