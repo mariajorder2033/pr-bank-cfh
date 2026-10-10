@@ -191,7 +191,8 @@
       "end_before_start": "The sale must end after it starts.",
       "booking_invalid": "Set a booking amount no higher than the lowest price.",
       "variant_has_orders": "A variant with orders cannot be removed; set its stock to 0 instead.",
-      "invalid_image": "Only JPEG, PNG or WebP images up to 5 MB."
+      "invalid_image": "Only JPEG, PNG or WebP images up to 5 MB.",
+      "password_short": "Use at least 12 characters."
     },
     "nav": {
       "dashboard": "Dashboard",
@@ -363,6 +364,36 @@
       "apps": "App download links",
       "add": "Add",
       "copyright": "Copyright line"
+    },
+    "u": {
+      "invite": "Add staff",
+      "tempPassword": "First password (12+ characters)",
+      "inviteHint": "Share the password privately. They set up 2FA when they first sign in.",
+      "twoFactor": "Two-factor sign-in",
+      "pending": "Not set up yet",
+      "twoFactorOn": "Set up and required at every sign-in.",
+      "reset2fa": "Reset 2FA",
+      "lastLogin": "Last login",
+      "access": "Roles and access",
+      "newPassword": "New password",
+      "keepPassword": "Leave blank to keep",
+      "sessions": "Sessions",
+      "started": "Started",
+      "device": "Device",
+      "permission": "Permission",
+      "ownerNote": "Owners always have every permission."
+    },
+    "c": {
+      "search": "Phone, name or email",
+      "phone": "Phone",
+      "name": "Name",
+      "verified": "Verified",
+      "orders": "Orders",
+      "joined": "Joined",
+      "signOutAll": "Sign out everywhere"
+    },
+    "a": {
+      "allEntities": "Everything"
     }
   },
   "foot": {
