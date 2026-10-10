@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { discountPercent } from '@/lib/domain/pricing'
+import { discountPercent, effectivePrice } from '@/lib/domain/pricing'
 
 describe('discountPercent', () => {
   test('is the floored percentage saved', () => {
@@ -21,5 +21,45 @@ describe('discountPercent', () => {
 
   test('rejects amounts that are not whole taka', () => {
     expect(() => discountPercent(1000.5, 1)).toThrow(RangeError)
+  })
+})
+
+describe('effectivePrice', () => {
+  const now = new Date('2026-10-10T12:00:00Z')
+  const v = {
+    offerPrice: 50000,
+    salePrice: 45000 as number | null,
+    saleStartsAt: null as Date | null,
+    saleEndsAt: null as Date | null,
+  }
+
+  test('a sale with no window applies', () => {
+    expect(effectivePrice(v, now)).toEqual({ price: 45000, onSale: true, saleEndsAt: null })
+  })
+
+  test('applies only inside its window', () => {
+    const start = new Date('2026-10-11T00:00:00Z')
+    const end = new Date('2026-10-12T00:00:00Z')
+    expect(effectivePrice({ ...v, saleStartsAt: start, saleEndsAt: end }, now).onSale).toBe(false)
+    expect(
+      effectivePrice(
+        { ...v, saleStartsAt: start, saleEndsAt: end },
+        new Date('2026-10-11T06:00:00Z'),
+      ),
+    ).toEqual({
+      price: 45000,
+      onSale: true,
+      saleEndsAt: end,
+    })
+    expect(effectivePrice({ ...v, saleEndsAt: now }, now).onSale).toBe(false)
+  })
+
+  test('a sale price at or above the offer price is ignored', () => {
+    expect(effectivePrice({ ...v, salePrice: 50000 }, now)).toEqual({
+      price: 50000,
+      onSale: false,
+      saleEndsAt: null,
+    })
+    expect(effectivePrice({ ...v, salePrice: null }, now).price).toBe(50000)
   })
 })

@@ -36,10 +36,14 @@ export default function ProductCard({ p, index = 0 }: { p: Card; index?: number 
       {p.discountPercent > 0 && (
         <span className={`${pill} left-2.5 bg-sale`}>-{p.discountPercent}%</span>
       )}
-      {badge && (
-        <span className={`${pill} right-2.5`} style={{ backgroundColor: badge.color }}>
-          {text(badge.label, locale)}
-        </span>
+      {p.onSale ? (
+        <span className={`${pill} right-2.5 bg-[#e0242e]`}>{t('pd.sale')}</span>
+      ) : (
+        badge && (
+          <span className={`${pill} right-2.5`} style={{ backgroundColor: badge.color }}>
+            {text(badge.label, locale)}
+          </span>
+        )
       )}
       <div className="relative mb-2.5 aspect-square overflow-hidden rounded-xl bg-white">
         <Link href={`/products/${p.slug}`} className="block size-full" tabIndex={-1}>

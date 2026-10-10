@@ -1,7 +1,7 @@
 import { db } from '@/lib/db'
 import { ProductQueryInput, type ProductQuery } from '@/lib/content/schemas'
 import { emiOptions, type EmiOption, type EmiRate } from '@/lib/domain/emi'
-import { discountPercent } from '@/lib/domain/pricing'
+import { discountPercent, effectivePrice } from '@/lib/domain/pricing'
 import { stockStatus, type StockStatus } from '@/lib/domain/stock'
 import type { Prisma } from '@/lib/generated/prisma/client'
 import { isSlug } from '@/lib/domain/slug'
@@ -21,6 +21,10 @@ export type ProductCard = {
   image: string
   badges: { code: string; label: Bilingual; color: string }[]
   variantId: string
+  /** A timed sale is setting the shown price. */
+  onSale: boolean
+  /** ISO end of that sale, if it has one. */
+  saleEndsAt: string | null
   /** Category slug, used to filter the cached catalog in memory. */
   categorySlug: string
 }
@@ -38,6 +42,8 @@ export type ProductVariant = {
   available: number
   stockStatus: StockStatus
   images: string[]
+  onSale: boolean
+  saleEndsAt: string | null
 }
 
 export type EmiBank = {
@@ -85,9 +91,10 @@ async function heldByVariant(variantIds: string[], now: Date): Promise<Map<strin
   return new Map(rows.map((r) => [r.variantId, r._sum.qty ?? 0]))
 }
 
-function toVariants(row: CardRow, held: Map<string, number>): ProductVariant[] {
+function toVariants(row: CardRow, held: Map<string, number>, now: Date): ProductVariant[] {
   return row.variants.map((v) => {
     const available = Math.max(0, v.stock - (held.get(v.id) ?? 0))
+    const sale = effectivePrice(v, now)
     return {
       id: v.id,
       sku: v.sku,
@@ -95,15 +102,17 @@ function toVariants(row: CardRow, held: Map<string, number>): ProductVariant[] {
       storage: v.storage,
       ram: v.ram,
       region: v.region,
-      offerPrice: v.offerPrice,
+      offerPrice: sale.price,
       regularPrice: v.regularPrice,
-      discountPercent: discountPercent(v.regularPrice, v.offerPrice),
+      discountPercent: discountPercent(v.regularPrice, sale.price),
       available,
       stockStatus: stockStatus(available, {
         lowThreshold: row.lowStockThreshold,
         preorder: row.preorder,
       }),
       images: v.images,
+      onSale: sale.onSale,
+      saleEndsAt: sale.saleEndsAt?.toISOString() ?? null,
     }
   })
 }
@@ -132,6 +141,8 @@ function toCard(row: CardRow, variants: ProductVariant[]): ProductCard | null {
       color: badge.color,
     })),
     variantId: v.id,
+    onSale: v.onSale,
+    saleEndsAt: v.saleEndsAt,
     categorySlug: row.category.slug,
   }
 }
@@ -142,7 +153,7 @@ async function toCards(rows: CardRow[], now: Date): Promise<ProductCard[]> {
     now,
   )
   return rows.flatMap((row) => {
-    const card = toCard(row, toVariants(row, held))
+    const card = toCard(row, toVariants(row, held, now))
     return card ? [card] : []
   })
 }
@@ -261,7 +272,7 @@ export async function getProduct(slug: string, now = new Date()): Promise<Produc
     row.variants.map((v) => v.id),
     now,
   )
-  const variants = toVariants(row, held)
+  const variants = toVariants(row, held, now)
   const card = toCard(row, variants)
   if (!card) return null
 

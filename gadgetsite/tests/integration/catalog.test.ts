@@ -182,3 +182,37 @@ test('a fully held product shows out of stock on its card', async () => {
   expect(items.find((p) => p.slug === 't2-held')!.stockStatus).toBe('out_of_stock')
   await holdAll(-10)
 })
+
+describe('sales', () => {
+  test('an open sale sets the shown price and marks the card; an expired one does not', async () => {
+    const variant = await db.variant.findUniqueOrThrow({ where: { sku: 'T2-HELD' } })
+    await db.stockReservation.deleteMany({ where: { variantId: variant.id } })
+    const card = async () =>
+      (await listProducts({ category: 'phones', pageSize: 48 })).items.find(
+        (p) => p.slug === 't2-held',
+      )!
+    await db.variant.update({
+      where: { id: variant.id },
+      data: {
+        salePrice: 900,
+        saleStartsAt: new Date(Date.now() - 60_000),
+        saleEndsAt: new Date(Date.now() + 3600_000),
+      },
+    })
+    expect(await card()).toMatchObject({
+      offerPrice: 900,
+      regularPrice: 1200,
+      onSale: true,
+      discountPercent: 25,
+    })
+    await db.variant.update({
+      where: { id: variant.id },
+      data: { saleEndsAt: new Date(Date.now() - 1000) },
+    })
+    expect(await card()).toMatchObject({ offerPrice: 1000, onSale: false })
+    await db.variant.update({
+      where: { id: variant.id },
+      data: { salePrice: null, saleStartsAt: null, saleEndsAt: null },
+    })
+  })
+})

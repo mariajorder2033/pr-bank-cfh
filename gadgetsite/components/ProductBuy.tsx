@@ -96,6 +96,20 @@ export default function ProductBuy({ p }: { p: ProductDetail }) {
           )}
           <br />
           <small>{t('pd.offerNote')}</small>
+          {variant.onSale && variant.saleEndsAt && (
+            <small data-testid="sale-ends" className="mt-1 block font-semibold text-[#c0262e]">
+              {t('pd.saleEnds', {
+                when: new Date(variant.saleEndsAt).toLocaleString(
+                  locale === 'bn' ? 'bn-BD' : 'en-GB',
+                  {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                    timeZone: 'Asia/Dhaka',
+                  },
+                ),
+              })}
+            </small>
+          )}
         </div>
         <div className="rounded-2xl bg-[#f6f5f3] p-3 text-ink">
           {t('pd.regular')} <b>{formatBDT(variant.regularPrice, locale)}</b>

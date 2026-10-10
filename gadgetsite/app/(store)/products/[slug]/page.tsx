@@ -1,11 +1,44 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import ProductBuy from '@/components/ProductBuy'
 import { text } from '@/lib/i18n'
-import { getProduct } from '@/lib/server/cached'
+import { formatBDT } from '@/lib/domain/money'
+import { getProduct, getSettings } from '@/lib/server/cached'
 import { currentLocale } from '@/lib/server/locale'
 import { ui } from '@/lib/ui'
+
+type Props = { params: Promise<{ slug: string }> }
+
+/** Title, description and share-preview tags (Open Graph / Twitter) for a product link. */
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const [p, { site }, locale] = await Promise.all([
+    getProduct(slug),
+    getSettings(),
+    currentLocale(),
+  ])
+  if (!p) return {}
+  const title = `${text(p.title, locale)} – ${site.nameEn}`
+  const plain = text(p.descriptionHtml, locale)
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  const description =
+    `${formatBDT(p.offerPrice, locale)} · ${text(p.brand.name, locale)}${plain ? ` · ${plain}` : ''}`.slice(
+      0,
+      200,
+    )
+  const url = `/products/${slug}`
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: 'website', url, title, description, siteName: site.nameEn },
+    twitter: { card: 'summary_large_image', title, description },
+  }
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

@@ -16,7 +16,13 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ site }, locale] = await Promise.all([getSettings(), getLocale()])
-  return { title: loc(site, 'name', locale as Locale) }
+  // Absolute URLs for share previews (og:image, canonical) come from APP_URL.
+  const base = process.env.APP_URL
+  return {
+    title: loc(site, 'name', locale as Locale),
+    metadataBase: base ? new URL(base) : undefined,
+    openGraph: { siteName: site.nameEn },
+  }
 }
 
 // Saved light/dark choice, applied before paint.
