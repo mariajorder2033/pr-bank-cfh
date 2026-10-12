@@ -58,7 +58,7 @@ number they registered without owning it. Each login records its time and IP on 
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SESSION_SECRET`     | 32+ random characters; signs SMS codes. Required.                                                                                                                                                                                                                                                                    |
 | `REDIS_URL`          | Rate limits for login, signup and SMS codes. If Redis is down, login is refused.                                                                                                                                                                                                                                     |
-| `SMS_PROVIDER`       | Unset: SMS login hidden. `console`: prints codes to the log (dev/test only, **never production**). A real Bangladeshi gateway adapter is added once one is chosen.                                                                                                                                                   |
+| `SMS_PROVIDER`       | Unset: SMS login hidden. `console`: prints codes to the log (dev/test only, **never production**). `bulksmsbd`: BulkSMSBD with `BULKSMSBD_API_KEY` and `BULKSMSBD_SENDER_ID`. Keys saved in Admin → Settings → API keys take precedence.                                                                             |
 | `TRUSTED_PROXY_HOPS` | Proxies in front of the app that append `X-Forwarded-For` (default 1). The client IP for rate limits and login records is that many hops from the right. **Run production behind a proxy that appends** (nginx `$proxy_add_x_forwarded_for`, Cloud Run, a load balancer); otherwise clients can choose their own IP. |
 | `SMS_HOURLY_BUDGET`  | Shop-wide cap on SMS codes per hour (default 200), plus 10 per phone per day.                                                                                                                                                                                                                                        |
 | `SMS_CONSOLE_FILE`   | With `console`, also appends `{phone, text}` lines here (used by e2e).                                                                                                                                                                                                                                               |
@@ -89,9 +89,11 @@ with a clean cache, or shoppers may see the old data for up to five minutes. Pol
 
 ## Roadmap (spec §12)
 
+Detailed status: [`docs/PROGRESS.md`](docs/PROGRESS.md).
+
 1. **Foundation** — scaffold, schema, domain logic, seed, CI _(done)_
 2. **Catalog read path and storefront port** _(done)_
-3. Admin core: auth, 2FA, roles, audit log, settings, catalog
+3. **Admin core:** auth, 2FA, roles, audit log, settings, catalog, footer, customers, service keys _(built; e2e and review pending)_
 4. Admin content: home builder, banners, menus, pages, promotions, EMI tables
 5. Checkout: cart, stock holds, OTP, addresses, orders, COD and bank transfer
 6. Payments: bKash, SSLCommerz, aamarPay, webhooks, reconciliation, refunds
